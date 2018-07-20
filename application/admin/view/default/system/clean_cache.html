@@ -1,0 +1,61 @@
+{extend name="default/base/base" /}
+{block name="main"}
+<div class="right_col" role="main">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>清理缓存 </h2>
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Settings 1</a>
+              </li>
+              <li><a href="#">Settings 2</a>
+              </li>
+            </ul>
+          </li>
+          <li><a class="close-link"><i class="fa fa-close"></i></a>
+          </li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <div class="x_content">
+        <form action="{:url('/admin/cleanCache')}" class="ajax-form" method="post">
+          <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+              <td>清理范围</td>
+              <td>
+                <input type="checkbox" name="path[]" value="cache"/>缓存&nbsp;&nbsp;
+                <input type="checkbox" name="path[]" value="log"/>日志&nbsp;&nbsp;
+                <input type="checkbox" name="path[]" value="temp"/>视图模板
+              </td>
+            </tr>
+            <tr>
+              <td>空文件夹</td>
+              <td>
+                <input type="radio" name="delete" value="0" checked/>保留
+                <input type="radio" name="delete" value="1"/>删除
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" align="center" style="padding-right: 15%">
+                <button class="btn btn-success ajax-post">清理</button>
+              </td>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
+
+

@@ -1,0 +1,241 @@
+{extend name="default/base/base" /}
+{block name="main"}
+<div class="right_col" role="main">
+  <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_content">
+            <br>
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="title" value="{:input('title')}" placeholder="名称" >
+                <span class="fa fa-header form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="submit" class="btn btn-success">搜索</button>
+                <button class="btn btn-primary reset" type="button">重置</button>
+                <button class="btn btn-primary reset"  type="button" onclick="add()">添加</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="x_panel">
+          <div class="x_content">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>url</th>
+                  <th>图标</th>
+                  <th>排序</th>
+                  <th>类型</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name='list' id='vo'}
+                  <tr>
+                    <td onclick="showChild('{$vo.id}')" ><i id="icon-{$vo.id}" data-toggle="1" class="fa fa-plus-circle"></i>  {$vo.title}</th>
+                    <td>{$vo.name}</td>
+                    <td><i class="{$vo.icon}"></i>  {$vo.icon}</td>
+                    <td>{$vo.sort}</td>
+                    <td>{$vo.menu?'菜单':'行为'}</td>
+                    <td>{$vo.status?'启用':'禁用'}</td>
+                    <td> <button class="btn btn-primary btn-xs" onclick="edit('{$vo.id}')">编辑</button> | <button class="btn btn-warning btn-xs" onclick="deleteMenu('{$vo.id}')">删除</button></td>
+                  </tr>
+                  {if(isset($vo['child']))}
+                    {volist name="vo['child']" id='child'}
+                      <tr class="show-{$vo.id}" style="display: none">
+                        <td style="text-indent:2em">|-- {$child.title}</th>
+                        <td>{$child.name}</td>
+                        <td>{$child.icon}</td>
+                        <td>{$child.sort}</td>
+                        <td>{$child.menu?'菜单':'行为'}</td>
+                        <td>{$child.status?'启用':'禁用'}</td>
+                        <td> <button class="btn btn-primary btn-xs" onclick="edit('{$child.id}')">编辑</button> | <button class="btn btn-warning btn-xs" onclick="deleteMenu('{$child.id}')">删除</button></td>
+                      </tr>
+                    {/volist}
+                  {/if}
+                {/volist}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+  </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <form id="editMenu" data-parsley-validate="" class="form-horizontal form-label-left modal-body" action="{:url('/admin/editMenu')}">
+        <div class="form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">所属层级 <span class="required">*</span>
+          </label>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <select class="form-control col-md-7 col-xs-12" name="pid">
+              <option value="0">--顶级菜单--</option>
+              {volist name='menu' id='v'}
+                <option value="{$v.id}">--{$v.title}--</option>
+              {/volist}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="title">名称 <span class="required">*</span>
+          </label>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <input type="text" id="title" name="title" required="required" class="form-control col-md-7 col-xs-12" value="" datatype="*" nullmsg="请输入名称!">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="control-label col-md-3 col-sm-3 col-xs-12">url<span class="required">*</span></label>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="name" class="form-control col-md-7 col-xs-12" type="text" name="name" required="required" datatype="*" nullmsg="请输入名称!">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="icon" class="control-label col-md-3 col-sm-3 col-xs-12">图标</label>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="icon" class="form-control col-md-7 col-xs-12" type="text" name="icon">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sort" class="control-label col-md-3 col-sm-3 col-xs-12">排序</label>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="sort" class="form-control col-md-7 col-xs-12" type="text" name="sort" value="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label  class="control-label col-md-3 col-sm-3 col-xs-12">类型</label>
+          <div class="col-md-6 col-sm-6 col-xs-12 menu">
+              菜单:<input type="radio"  name="menu"  value="1" checked />&nbsp;&nbsp;
+              行为:<input type="radio"  name="menu"  value="0"  required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3 col-sm-3 col-xs-12">状态</label>
+          <div class="col-md-6 col-sm-6 col-xs-12 status">
+            启用:<input type="radio"  name="status"  value="1"  checked />&nbsp;&nbsp;
+            禁用:<input type="radio"  name="status"  value="0"  required />
+          </div>
+        </div>
+        <div class="ln_solid"></div>
+        <div class="form-group">
+          <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3"></div>
+          <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+            <input type="hidden"  name="type" id="type"  value="0"  required>
+            <input type="hidden"  name="id" id="id"  value=""  required>
+            <button class="btn btn-primary" type="reset">清空</button>
+            <button type="submit" class="btn btn-success">提交</button>
+          </div>
+        </div>
+
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{/block}
+{block name="script"}
+<script type="application/javascript" src="__STATIC__/DatePicker/WdatePicker.js"></script>
+<script>
+  function add() {
+      $.post("{:url('/admin/editMenu')}",{type:1},function (data) {
+          if(data.code){
+              $('#editMenu')[0].reset();
+              $("#myModal").find('select').removeAttr('disabled');
+              $('#type').val(3);
+              $('#id').val('');
+              $('.modal-title').text('添加菜单');
+              // $('input[type=text]').val('');
+              // $('select').val(0);
+              // $(".menu").find(":radio[value=1]").prop("checked",'checked');
+              // $(".status").find(":radio[value=1]").prop("checked",'checked');
+              $('#myModal').modal();
+          }else{
+              layer.msg(data.msg, {time: 2000});
+          }
+      });
+  }
+  function edit(id) {
+      $.post("{:url('/admin/editMenu')}",{type:2,id:id},function (data) {
+          if(data.code){
+              $('.modal-title').text('编辑菜单');
+              $("#myModal").find('select').val(data.data.pid);
+              if(data.data.pid==0){
+                  $("#myModal").find('select').attr('disabled','disabled');
+              }else{
+                  $("#myModal").find('select').removeAttr('disabled');
+              }
+              $("#title").val(data.data.title);
+              $("#name").val(data.data.name);
+              $("#icon").val(data.data.icon);
+              $("#sort").val(data.data.sort);
+              $(".menu").find(":radio[value="+data.data.menu+"]").prop("checked",'checked');
+              $(".status").find(":radio[value="+data.data.status+"]").prop("checked",'checked');
+              $('#type').val(4);
+              $('#id').val(data.data.id);
+              $('#myModal').modal();
+          }else{
+              layer.msg(data.msg, {time: 2000});
+          }
+      });
+  }
+
+  /**
+   * 表单提交
+   */
+  $("#editMenu").Validform({
+      ajaxPost:true,
+      tiptype:function (msg,o,cssctl) {
+          if(o.type==3){
+              layer.msg(msg, {time: 1500});//验证错误的提示
+          }
+      },
+      callback:function(data){     //ajax提交后的返回调用方法（相当于ajax里面的success那个方法）
+          layer.msg(data.msg, {time: 1500}, function () {   //提示的插件，可以使用alert代替
+              if (data.code) {
+                  location.href = data.url;             //成功后调整的地址
+              }
+          });
+      }
+  });
+  function deleteMenu(id){
+      if(confirm('您确定要删除菜单么？')){
+          $.post("{:url('/admin/deleteMenu')}",{id:id},function (data) {
+              layer.msg(data.msg, {time: 2000}, function () {   //提示的插件，可以使用alert代替
+                  if (data.code) {
+                      location.href = data.url;             //成功后调整的地址
+                  }
+              });
+          });
+      }
+  }
+
+  /**
+   * 收起与展开效果
+   * @param id 分类id
+   */
+  function showChild(id) {
+      var toggle=$('#icon-'+id).data('toggle');
+      if(toggle==1){
+          $('#icon-'+id).attr('class','fa fa-minus-circle');
+          $('#icon-'+id).data('toggle',0)
+      }else{
+          $('#icon-'+id).attr('class','fa fa-plus-circle');
+          $('#icon-'+id).data('toggle',1)
+      }
+      $('.show-'+id).toggle();
+  }
+</script>
+{/block}
+
+
+

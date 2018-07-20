@@ -1,0 +1,210 @@
+{extend name="default/base/base" /}
+{block name="css"}
+{css href="/static/iCheck/skins/flat/green.css" /}
+{css href="__STATIC__/switchery/dist/switchery.min.css" /}
+{/block}
+{block name="main"}
+
+<div class="right_col" role="main">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_content">
+          <br>
+          <form class="form-horizontal form-label-left input_mask">
+            <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+              <input type="text" class="form-control has-feedback-left" name="id" value="{:input('id')}" placeholder="组ID">
+              <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+              <input type="text" class="form-control has-feedback-left" name="title" value="{:input('title')}" placeholder="组名">
+              <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+            </div>
+            <div class="col-md-5 col-sm-5 col-xs-12 form-group has-feedback">
+              <button type="submit" class="btn btn-success">搜索</button>
+              <button class="btn btn-primary reset" type="button">重置</button>
+              <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal" data-id="" data-title="" data-modaltitle="添加用户组" >添加用户组</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="x_panel">
+        <div class="x_content">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+              <thead>
+              <tr>
+                <th>id</th>
+                <th>组名</th>
+                <th>规则ID</th>
+                <th>是否禁用</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody>
+              {volist name='list' id='vo'}
+              <tr>
+                <th scope="row">{$vo.id}</th>
+                <td>{$vo.title}</td>
+                <td>{$vo.rules}</td>
+                <td>
+                  <input type="checkbox" class="js-switch" name="status" value="{$vo.status}" data-id="{$vo.id}" data-status="{$vo.status}" onchange="editStatus(this)" {eq name="vo.status" value="1"}checked{/eq}/>
+                </td>
+                <td>
+                  <a href="#" data-toggle="modal" data-target="#myModal"  data-id="{$vo.id}" data-title="{$vo.title}" data-modaltitle="编辑用户组">编辑</a> |
+                  <a href="#" data-toggle="modal" data-target="#treeModal" data-id="{$vo.id}"  data-rules="{$vo.rules}" data-title="{$vo.title}">访问控制</a>
+              </tr>
+              {/volist}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {$list|raw}
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <form id="edit-form" action="{:url('/admin/grouplist')}" class="form-horizontal form-label-left">
+          <div class="form-group modal-body">
+            <label class="control-label col-md-3 col-sm-3 col-xs-12">组名 <span class="required">*</span>
+            </label>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <input type="text" name="title" id="title"  class="form-control col-md-7 col-xs-12" value="" datatype="*" nullmsg="请输入组名！">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" id="id" name="id" value="">
+            <input type="hidden"  name="type" value="1">
+            <button  class="btn btn-primary">保存</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          </div>
+        </form>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="treeModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <form id="form" class="form-horizontal form-label-left">
+          <div class="form-group modal-body">
+            <div id="tree"></div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" id="groupid" name="id" value="">
+            <button type="button"  class="btn btn-primary" onclick="saveRule()">保存</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          </div>
+        </form>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</div>
+{/block}
+{block name="script"}
+{css href="__STATIC__/jstree/themes/default/style.min.css"/}
+{js href="__STATIC__/jstree/jstree.js" /}
+{js href="__STATIC__/iCheck/icheck.js" /}
+{js href="__STATIC__/switchery/dist/switchery.min.js" /}
+<script>
+    triggerTree();
+    //表单验证
+    $("#edit-form").Validform({
+        ajaxPost:true,
+        tiptype:function (msg,o,cssctl) {
+            if(o.type==3){
+                layer.msg(msg, {time: 1500});
+            }
+        },
+        callback:function(data){
+            layer.msg(data.msg, {time: 1500}, function () {
+                if (data.code) {
+                    window.location.reload();
+                }
+            });
+        }
+    });
+    //添加、编辑模态框
+    $('#myModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var id = button.data('id')
+        var title = button.data('title')
+        var modaltitle = button.data('modaltitle');
+        var modal = $(this)
+        modal.find('#title').val(title);
+        modal.find('#id').val(id);
+        modal.find('.modal-title').text(modaltitle);
+    })
+    /**
+     * 是否禁用
+     * @param event
+     */
+    function editStatus(event) {
+       var status=$(event).data('status')?0:1;
+       var id=$(event).data('id');
+       $.post("{:url('/admin/grouplist')}",{id:id,status:status,type:2},function (data) {
+           if(data.code){
+               $(event).data('status',status);
+           }
+       });
+    }
+    /**
+     * js树形
+     */
+    function triggerTree(){
+        $('#tree').jstree({
+            'core' : {
+                'data' : {
+                    'method':"POST",
+                    'url' : "{:url('/admin/grouplist')}",
+                    'data' : function () {
+                        return { 'type':3 };
+                    },
+                },
+            },
+            'checkbox' : {
+                "visible" : true,
+                "keep_selected_style" : false,
+                'three_state' : false
+
+            },
+            'plugins' : ['checkbox']
+        });
+
+    }
+    //访问控制模态框
+    $('#treeModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var rules=String(button.data('rules')).split(',');
+        var groupid = button.data('id');
+        $('#tree').jstree("uncheck_all");  //清除所有选中
+        $('#tree').jstree('select_node',[rules],true); //选中指定节点
+        $('#tree').jstree().close_all(); //关闭所有节点
+        var modal = $(this)
+        modal.find('.modal-title').text('访问控制');
+        modal.find('#groupid').val(groupid);
+    });
+    function saveRule() {
+        var rules=$("#tree").jstree("get_checked");
+        var id=$('#groupid').val();
+        $.post("{:url('/admin/grouplist')}",{rules:rules,id:id,type:4},function (data) {
+            layer.msg(data.msg, {time: 1500}, function () {
+                if (data.code) {
+                    window.location.reload();
+                }
+            });
+        });
+    }
+</script>
+{/block}
+
+

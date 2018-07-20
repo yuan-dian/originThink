@@ -1,0 +1,123 @@
+{extend name="default/base/base" /}
+{block name="css"}
+{css href="__STATIC__/iCheck/skins/flat/green.css" /}
+{css href="__STATIC__/switchery/dist/switchery.min.css" /}
+{/block}
+{block name="main"}
+<div class="right_col" role="main">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>{if condition="isset($list['uid'])"}编辑{else /}添加{/if}用户</small></h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Settings 1</a>
+                </li>
+                <li><a href="#">Settings 2</a>
+                </li>
+              </ul>
+            </li>
+            <li><a class="close-link"><i class="fa fa-close"></i></a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <br>
+            <form id="editform" method="post" class="form-horizontal form-label-left" action="{:url('/admin/edit')}">
+
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" >账号 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input type="text" name="user" value="{:isset($list.user)?$list.user:''}" class="form-control col-md-7 col-xs-12" {if condition="isset($list['uid'])"}disabled {else /} datatype="*" ajaxurl="{:url('/admin/check')}" nullmsg="请输入账号！" {/if}>
+                 </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">昵称 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input type="text" name="name" value="{:isset($list.name)?$list.name:''}" class="form-control col-md-7 col-xs-12" datatype="*" nullmsg="请输入昵称！">
+                </div>
+              </div>
+              {if condition="!isset($list['uid'])"}
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">密码 <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="password" name="password" value="" class="form-control col-md-7 col-xs-12" datatype="*6-16" nullmsg="请设置密码！" errormsg="密码范围在6~16位之间！">
+                  </div>
+                </div>
+              {/if}
+              <div class="form-group">
+                <label for="group_id" class="control-label col-md-3 col-sm-3 col-xs-12">所属组</label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <select class="form-control col-md-7 col-xs-12" name="group_id" id="group_id" datatype="*" nullmsg="请选择组！">
+                    <option value="">请选择</option>
+                    {volist name='grouplist' id='vo'}
+                    <option value="{$vo.id}" {eq name=":(isset($list['group_id'])?$list['group_id']:'')" value="$vo['id']"}selected="selected"{/eq}>{$vo.title}</option>
+                    {/volist}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否禁用</label>
+                <div class="col-md-6 col-sm-6 col-xs-12" name="">
+                  是<input type="radio" class="flat" name="status" value="0" {eq name=":isset($list['status'])?$list['status']:''" value="0"}checked{/eq}  />
+                  否<input type="radio" class="flat" name="status" value="1" {eq name=":isset($list['status'])?$list['status']:''" value="1"}checked{/eq}/>
+                </div>
+              </div>
+              <div class="ln_solid"></div>
+              <div class="form-group">
+                <input type="hidden" name="uid" value="{:isset($list['uid'])?$list['uid']:''}">
+                <input type="hidden" name="__token__" id="token" value="{$Request.token}" />
+                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                  <button class="btn btn-primary" type="reset">重置</button>
+                  <button class="btn btn-success">保存</button>
+                </div>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
+{block name="script"}
+{js href="__STATIC__/iCheck/icheck.js" /}
+{js href="__STATIC__/switchery/dist/switchery.min.js" /}
+<script>
+    $("#editform").Validform({
+        ajaxPost:true,
+        tiptype:function (msg,o,cssctl) {
+            if(o.type==3){
+                layer.msg(msg, {time: 1500});//验证错误的提示
+            }
+        },
+        callback:function(data){     //ajax提交后的返回调用方法（相当于ajax里面的success那个方法）
+            layer.msg(data.msg, {time: 1500}, function () {   //提示的插件，可以使用alert代替
+                if (data.code) {
+                    location.href = data.url;             //成功后调整的地址
+                }else{
+                    $('#token').val(data.data.token);
+                }
+            });
+        }
+    });
+    function writeObj(obj){
+        var description = "";
+        for(var i in obj){
+            var property=obj[i];
+            description+=i+" = "+property+"\n";
+        }
+        alert(description);
+    }
+</script>
+{/block}
+
+
