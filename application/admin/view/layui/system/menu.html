@@ -1,0 +1,112 @@
+{block name="css"}{css href="__STATIC__/font-awesome/css/font-awesome.min.css" /}{/block}
+{extend name="layui/base/base" /}
+{block name="main"}
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input searchVal" placeholder="请输入账号或昵称" />
+                </div>
+                <a class="layui-btn search_btn" data-type="reload">搜索</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>
+            </div>
+        </form>
+    </blockquote>
+</form>
+<table  lay-filter="demo" class="layui-table" >
+    <colgroup>
+        <col width="200">
+        <col width="200">
+        <col>
+    </colgroup>
+    <thead>
+    <tr>
+        <th>名称</th>
+        <th>url</th>
+        <th>图标</th>
+        <th>排序</th>
+        <th>类型</th>
+        <th>状态</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {volist name='list' id='vo'}
+        <tr>
+            <td onclick="showChild('{$vo.id}')" ><i id="icon-{$vo.id}" data-toggle="1" class="fa fa-plus-circle"></i>  {$vo.title}</th>
+            <td>{$vo.name}</td>
+            <td><i class="{$vo.icon}"></i>  {$vo.icon}</td>
+            <td>{$vo.sort}</td>
+            <td>{$vo.menu?'菜单':'行为'}</td>
+            <td>{$vo.status?'启用':'禁用'}</td>
+            <td> <button class="layui-btn layui-btn-xs" onclick="edit('{$vo.id}')">编辑</button>  <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteMenu('{$vo.id}')">删除</button></td>
+        </tr>
+        {if(isset($vo['child']))}
+            {volist name="vo['child']" id='child'}
+                <tr class="show-{$vo.id}" style="display: none">
+                    <td style="text-indent:2em">|-- {$child.title}</th>
+                    <td>{$child.name}</td>
+                    <td>{$child.icon}</td>
+                    <td>{$child.sort}</td>
+                    <td>{$child.menu?'菜单':'行为'}</td>
+                    <td>{$child.status?'启用':'禁用'}</td>
+                    <td> <button class="layui-btn layui-btn-xs"  onclick="edit('{$child.id}')" >编辑</button> <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteMenu('{$child.id}')">删除</button></td>
+                </tr>
+            {/volist}
+        {/if}
+    {/volist}
+    </tbody>
+</table>
+{/block}
+{block name="script"}
+<script>
+    var $='';
+    var layer='';
+    var table='';
+    layui.use(['form','layer','table'],function(){
+        $ = layui.jquery;
+        layer = parent.layer === undefined ? layui.layer : top.layer;
+        table = layui.table;
+        var form = layui.form;
+    })
+    /**
+     * 收起与展开效果
+     * @param id 分类id
+     */
+    function showChild(id) {
+        var toggle=$('#icon-'+id).data('toggle');
+        if(toggle==1){
+            $('#icon-'+id).attr('class','fa fa-minus-circle');
+            $('#icon-'+id).data('toggle',0)
+        }else{
+            $('#icon-'+id).attr('class','fa fa-plus-circle');
+            $('#icon-'+id).data('toggle',1)
+        }
+        $('.show-'+id).toggle();
+    }
+
+    function edit(id) {
+        var index=layui.layer.open({
+            type: 2,
+            title: '编辑菜单',
+            content : "{:url('/admin/editMenu')}"+'?id='+id,
+            success : function(layero, index){
+                var body = layui.layer.getChildFrame('body', index);
+                setTimeout(function(){
+                    layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                },500)
+            }
+        });
+        layui.layer.full(index);
+        //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+        $(window).on("resize",function(){
+            layui.layer.full(index);
+        })
+    }
+</script>
+{/block}

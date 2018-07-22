@@ -1,0 +1,83 @@
+{extend name="layui/base/base" /}
+{block name="main"}
+<form id="form" method="post" class="layui-form layui-form-pane" action="{:url('/admin/editMenu')}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属层级</label>
+        <div class="layui-input-block">
+            {form:select name="pid" list="$menu" value="$data['pid']" option="['datatype'=>'*','nullmsg'=>'请选择层级！']"}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($data.title)?$data.title:''}" datatype="*" nullmsg="请输入名称!">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">url</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.name)?$data.name:''}" datatype="*" nullmsg="请输入名称！">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-block">
+            <input type="text" name="icon" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.icon)?$data.icon:''}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="sort" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.sort)?$data.sort:'1'}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-block">
+            {form:radio name="menu" list="['1'=>'菜单','0'=>'行为']" value="isset($data['menu'])?$data['menu']:1"}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否禁用</label>
+        <div class="layui-input-block">
+            {form:radio name="status" list="['1'=>'启用','0'=>'禁用']" value="isset($data['status'])?$data['status']:1"}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="id" value="{:isset($data['id'])?$data['id']:''}">
+            <input type="hidden" name="__token__" id="token" value="{$Request.token}" />
+            <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+{js href="__STATIC__/jquery/jquery.min.js" /}
+{js href="__STATIC__/jquery/Validform_v5.3.2_min.js" /}
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+    });
+    $("#form").Validform({
+        ajaxPost:true,
+        tiptype:function (msg,o,cssctl) {
+            if(o.type==3 && msg!='所填信息没有经过验证，请稍后…'){
+                layer.msg(msg, {time: 1500});//验证错误的提示
+            }
+        },
+        callback:function(data){     //ajax提交后的返回调用方法（相当于ajax里面的success那个方法）
+            layer.msg(data.msg, {time: 1500}, function () {   //提示的插件，可以使用alert代替
+                if (data.code) {
+                    location.href = data.url;             //成功后调整的地址
+                }else{
+                    $('#token').val(data.data.token);
+                }
+            });
+        }
+    });
+
+
+</script>
+{/block}

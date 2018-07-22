@@ -1,0 +1,60 @@
+{extend name="layui/base/base" /}
+{block name="main"}
+<form action="" id="form" class="layui-form" method="post">
+    <table class="layui-table mag0">
+        <colgroup>
+            <col width="25%">
+            <col width="45%">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>参数说明</th>
+            <th>参数值</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>清理范围</td>
+            <td>
+                <input type="checkbox" name="path[]" value="cache" title="缓存">
+                <input type="checkbox" name="path[]" value="log" title="日志">
+                <input type="checkbox" name="path[]" value="temp" title="视图模板">
+            </td>
+        </tr>
+        <tr>
+            <td>空文件夹</td>
+            <td>
+                <input type="radio" name="delete" value="0" title="保留" checked>
+                <input type="radio" name="delete" value="1" title="删除" >
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding-right: 15%">
+                <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</form>
+{/block}
+{block name="script"}
+<script>
+layui.use(['form','jquery'], function(){
+    var form = layui.form;
+    var $ = layui.jquery;
+    //监听提交
+    form.on('submit(save)', function(data){
+        $.post("{:url('/admin/cleanCache')}",data.field,function (res) {
+            layer.msg(res.msg, {time: 1500}, function () {
+                if (res.code) {
+                    document.getElementById("form").reset();
+                }
+            });
+        });
+        return false;
+    });
+});
+</script>
+{/block}

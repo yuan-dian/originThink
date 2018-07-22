@@ -35,5 +35,6 @@ return [
     'tpl_replace_string'  =>  [
         '__STATIC__'=>'/static',
         '__JS__' => '/static/javascript',
-    ]
+    ],
+    'taglib_pre_load'=>'\taglib\Form'
 ];

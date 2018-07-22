@@ -215,8 +215,7 @@ class User extends Common
             $list=[];
             if($this->view_path!='layui' or request()->isAjax()){
                 $map=[];
-                empty($data['id']) || $map['id']=$data['id'];
-                empty($data['title']) || $map['title']=$data['title'];
+                empty($data['key']) || $map[]=$map[]=['title','like','%'.$data['key'].'%'];
                 $list=model('AuthGroup')->where($map)->paginate(10,false,['query'=>$data]);
             }
             if($this->view_path=='layui' && request()->isAjax()){

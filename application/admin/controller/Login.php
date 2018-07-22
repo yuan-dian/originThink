@@ -8,6 +8,8 @@
 
 namespace app\admin\controller;
 use think\Controller;
+use think\Loader;
+
 class Login extends Controller
 {
     /**
@@ -41,7 +43,7 @@ class Login extends Controller
 //            $this->redirect(url('/admin/index'));
 //        }else{
             if(!request()->isPost()){
-                return $this->fetch();
+                return $this->return_fetch();
             }else{
                 $data=input();
                 $result=model('User')->login($data);
@@ -93,6 +95,25 @@ class Login extends Controller
         }else{
             return $this->fetch();
         }
+    }
+    protected function getActionTemplate($request)
+    {
+        $rule = [$request->action(true), Loader::parseName($request->action(true)), $request->action()];
+        $type = config('template.auto_rule');
+
+        return isset($rule[$type]) ? $rule[$type] : $rule[0];
+    }
+
+    public function return_fetch($template='')
+    {
+        $this->view_path='default';
+        if($template==''){
+            $request = $this->app['request'];
+            $controller = Loader::parseName($request->controller());
+            $template=str_replace('.', DIRECTORY_SEPARATOR, $controller) . DIRECTORY_SEPARATOR .$this->getActionTemplate($request);
+        }
+        $template=$this->view_path.DIRECTORY_SEPARATOR.$template;
+        return $this->fetch($template);
     }
 
 }

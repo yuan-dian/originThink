@@ -19,7 +19,7 @@ class System extends Common
     {
 
         if(!request()->isPost()){
-            return $this->fetch();
+            return $this->return_fetch();
         }else{
             $data=input();
             if(isset($data['path'])){
@@ -72,7 +72,7 @@ class System extends Common
         empty($data['name']) || $map['a.name']=$data['name'];
         $list=db('login_log')->where($map)->paginate(10,false,['query'=>$data]);
         $this->assign('list',$list);
-        return $this->fetch();
+        return $this->return_fetch();
     }
 
     /**
@@ -91,9 +91,7 @@ class System extends Common
         $list=db('auth_rule','',false)->where($map)->order('sort desc')->select();
         empty($data['title']) && $list=list_to_tree($list);
         $this->assign('list',$list);
-        $menu=db('auth_rule','',false)->where('pid',0)->order('sort desc')->select();
-        $this->assign('menu',$menu);
-        return $this->fetch();
+        return $this->return_fetch();
     }
 
     /**
@@ -107,57 +105,91 @@ class System extends Common
      */
     public function editMenu()
     {
-        $data=input();
-        isset($data['type']) || $this->error('参数错误');
-        switch ($data['type']){
-            case 1:     //打开添加模态框
-                $this->result([],1);
-                break;
-            case 2:     //打开编辑模态框
-                $list=db('auth_rule')->where('id',$data['id'])->find();
-                $this->result($list,1);
-                break;
-            case 3:     //添加菜单
-                $add=[
-                    'name'=>$data['name'],
-                    'title'=>$data['title'],
-                    'pid'=>$data['pid'],
-                    'status'=>$data['status'],
-                    'menu'=>$data['menu'],
-                    'icon'=>$data['icon'],
-                    'sort'=>$data['sort'],
-                ];
-                $res=db('auth_rule')->insert($add);
-                if($res){
-                    Cache::clear('ruleslist');
-                    $this->success('添加成功',url('/admin/menu'));
-                }else{
-                    $this->error('添加失败');
-                }
-                break;
-            case 4:     //编辑菜单
-                !empty($data['id']) || $this->error('参数错误');
-                $save=[
-                    'name'=>$data['name'],
-                    'title'=>$data['title'],
-                    'pid'=>isset($data['pid'])?$data['pid']:0,
-                    'status'=>$data['status'],
-                    'menu'=>$data['menu'],
-                    'icon'=>$data['icon'],
-                    'sort'=>$data['sort'],
-                ];
+        if(request()->isPost()){
+            $data=input();
+            $save=[
+                'name'=>$data['name'],
+                'title'=>$data['title'],
+                'pid'=>$data['pid'],
+                'status'=>$data['status'],
+                'menu'=>$data['menu'],
+                'icon'=>$data['icon'],
+                'sort'=>$data['sort'],
+            ];
+            if(isset($data['id']) && $data['id']){
                 $res=db('auth_rule')->where('id',$data['id'])->update($save);
-                if($res){
-                    Cache::clear('ruleslist');
-                    $this->success('编辑成功',url('/admin/menu'));
-                }else{
-                    $this->error('编辑失败');
-                }
-                break;
-            default:
-                break;
+            }else{
+                $res=db('auth_rule')->insert($save);
+            }
+            if($res){
+                Cache::clear('ruleslist');
+                $this->success('保存成功',url('/admin/menu'));
+            }else{
+                $this->error('保存失败');
+            }
+        }else{
+            $id=input('get.id','','intval');
+            if($id){
+                $data=db('auth_rule','',false)->where('id','=',$id)->find();
+                $this->assign('data',$data);
+            }
+            $menu=db('auth_rule','',false)->where('pid','=',0)->order('sort desc')->column('id,title');
+            $menu[0]='顶级菜单';
+            ksort($menu);
+            $this->assign('menu',$menu);
+            return $this->return_fetch();
         }
-        $this->error('参数错误');
+//        $data=input();
+//        isset($data['type']) || $this->error('参数错误');
+//        switch ($data['type']){
+//            case 1:     //打开添加模态框
+//                $this->result([],1);
+//                break;
+//            case 2:     //打开编辑模态框
+//                $list=db('auth_rule')->where('id',$data['id'])->find();
+//                $this->result($list,1);
+//                break;
+//            case 3:     //添加菜单
+//                $add=[
+//                    'name'=>$data['name'],
+//                    'title'=>$data['title'],
+//                    'pid'=>$data['pid'],
+//                    'status'=>$data['status'],
+//                    'menu'=>$data['menu'],
+//                    'icon'=>$data['icon'],
+//                    'sort'=>$data['sort'],
+//                ];
+//                $res=db('auth_rule')->insert($add);
+//                if($res){
+//                    Cache::clear('ruleslist');
+//                    $this->success('添加成功',url('/admin/menu'));
+//                }else{
+//                    $this->error('添加失败');
+//                }
+//                break;
+//            case 4:     //编辑菜单
+//                !empty($data['id']) || $this->error('参数错误');
+//                $save=[
+//                    'name'=>$data['name'],
+//                    'title'=>$data['title'],
+//                    'pid'=>isset($data['pid'])?$data['pid']:0,
+//                    'status'=>$data['status'],
+//                    'menu'=>$data['menu'],
+//                    'icon'=>$data['icon'],
+//                    'sort'=>$data['sort'],
+//                ];
+//                $res=db('auth_rule')->where('id',$data['id'])->update($save);
+//                if($res){
+//                    Cache::clear('ruleslist');
+//                    $this->success('编辑成功',url('/admin/menu'));
+//                }else{
+//                    $this->error('编辑失败');
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//        $this->error('参数错误');
     }
 
     /**

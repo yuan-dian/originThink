@@ -21,7 +21,7 @@ Route::group('admin', [
     'logout$'=>'admin/Login/logout',                                         //退出
     'check$'=>'admin/User/check',                                            //验证用户是否存在
     'test$'=>'admin/Login/test',                                            //验证用户是否存在
-    'api'=>'admin/index/api',                                            //验证用户是否存在
+    'getMenu'=>'admin/index/getMenu',                                            //验证用户是否存在
 ])->ext('html');
 /**
  * 需要权限验证路由

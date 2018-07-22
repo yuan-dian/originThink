@@ -16,6 +16,16 @@ class Index extends Common
         return $this->return_fetch();
     }
 
+    public function getMenu()
+    {
+        if($this->uid!=1){
+            $ruleslist= cache('ruleslist_'.$this->group_id );//获取当前用户组菜单
+        }else{
+            $ruleslist= cache('ruleslist_admin' );//获取当前用户组菜单
+        }
+        return json_encode($ruleslist);
+    }
+
     /**
      * layui 首页
      * @return mixed
