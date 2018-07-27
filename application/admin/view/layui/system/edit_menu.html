@@ -70,14 +70,16 @@
         callback:function(data){     //ajax提交后的返回调用方法（相当于ajax里面的success那个方法）
             layer.msg(data.msg, {time: 1500}, function () {   //提示的插件，可以使用alert代替
                 if (data.code) {
-                    location.href = data.url;             //成功后调整的地址
+                    setTimeout(function () {
+                        //刷新父页面
+                        parent.location.reload();
+                    }, 500);
                 }else{
                     $('#token').val(data.data.token);
                 }
             });
         }
     });
-
 
 </script>
 {/block}

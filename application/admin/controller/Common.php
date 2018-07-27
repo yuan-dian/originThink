@@ -47,7 +47,8 @@ class Common extends Controller
             config('app_debug',$list['value']['debug']);
             config('app_trace',$list['value']['trace']);
             config('trace.type',$list['value']['trace_type']==0?'Html':'Console');
-            $this->view_path=$list['value']['view_path'];
+            $this->view_path='layui';
+//            $this->view_path=$list['value']['view_path'];
         }else{
 //            $this->view_path='default';
             $this->view_path='layui';

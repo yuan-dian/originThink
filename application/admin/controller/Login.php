@@ -106,7 +106,7 @@ class Login extends Controller
 
     public function return_fetch($template='')
     {
-        $this->view_path='default';
+        $this->view_path='layui';
         if($template==''){
             $request = $this->app['request'];
             $controller = Loader::parseName($request->controller());

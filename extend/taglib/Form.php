@@ -123,7 +123,7 @@ class Form extends Taglib
             if($value==$key){
                 $checked=\'checked\';
             }
-            $radio[]=\'<input type="radio" name="\'.$name.\'" value="\'.$key.\'" \'.$checked.\' \'.$tmp.\'>\'.$val;
+            $radio[]=\'<input type="radio" name="\'.$name.\'" value="\'.$key.\'" title="\'.$val.\'" \'.$checked.\' \'.$tmp.\'>\';
         }
         $list = implode(\'\', $radio);
         echo $list;
@@ -172,7 +172,7 @@ class Form extends Taglib
             if($value==$key){
                 $checked=\'checked\';
             }
-            $radio[]=\'<input type="checkbox" name="\'.$name.\'" value="\'.$key.\'" \'.$checked.\' \'.$tmp.\'>\'.$val;
+            $radio[]=\'<input type="checkbox" name="\'.$name.\'" value="\'.$key.\'" title="\'.$val.\'" \'.$checked.\' \'.$tmp.\'>\';
         }
         $list = implode(\'\', $radio);
         echo $list;

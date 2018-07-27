@@ -14,15 +14,27 @@
         </tr>
         </thead>
         <tr>
-            <td>清理范围</td>
+            <td>配置状态</td>
             <td>
-                {form:checkbox name="path[]" list="['cache'=>'缓存','log'=>'log','temp'=>'视图模板']"}
+                {form:radio name="status" list="['0'=>'禁用','1'=>'开启']" value="isset($data['status'])?$data['status']:0"}
             </td>
         </tr>
         <tr>
-            <td>空文件夹</td>
+            <td>应用调试模式</td>
             <td>
-                {form:radio name="delete" list="['0'=>'保留','1'=>'删除']"}
+                {form:radio name="debug" list="['0'=>'关闭','1'=>'开启']" value="isset($data['value']['debug'])?$data['value']['debug']:0"}
+            </td>
+        </tr>
+        <tr>
+            <td>应用Trace</td>
+            <td>
+                {form:radio name="trace" list="['0'=>'关闭','1'=>'开启']" value="isset($data['value']['trace'])?$data['value']['trace']:0"}
+            </td>
+        </tr>
+        <tr>
+            <td>应用Trace类型</td>
+            <td>
+                {form:radio name="trace_type" list="['0'=>'Html','1'=>'Console']" value="isset($data['value']['trace_type'])?$data['value']['trace_type']:0"}
             </td>
         </tr>
         <tr>
@@ -43,10 +55,10 @@ layui.use(['form','jquery'], function(){
     var $ = layui.jquery;
     //监听提交
     form.on('submit(save)', function(data){
-        $.post("{:url('/admin/cleanCache')}",data.field,function (res) {
+        $.post("{:url('/admin/config')}",data.field,function (res) {
             layer.msg(res.msg, {time: 1500}, function () {
                 if (res.code) {
-                    document.getElementById("form").reset();
+                    location.reload();
                 }
             });
         });

@@ -63,14 +63,24 @@ class System extends Common
      */
     public function loginLog()
     {
-        $data=input();
-        $map=[];
-        if(isset($data['starttime']) || isset($data['endtime'])){
-            $map[]=['create_time', 'between time', [$data['starttime'], $data['endtime']]];
+        $list=[];
+        if($this->view_path!='layui' or request()->isAjax()){
+            $data=input();
+            $map=[];
+            if(isset($data['starttime']) && isset($data['endtime'])){
+                if($data['starttime'] && $data['endtime']){
+                    $map[]=['create_time', 'between time', [$data['starttime'], $data['endtime']]];
+                }
+            }
+            empty($data['key']) || $map[]=['user|name','like','%'.$data['key'].'%'];
+            $list=db('login_log')->where($map)->withAttr('create_time', function($value, $data) {
+                return date('Y-m-d H:i:s',$value);
+            })->fetchSql(false)->paginate(10,false,['query'=>$data]);
         }
-        empty($data['user']) || $map['a.user']=$data['user'];
-        empty($data['name']) || $map['a.name']=$data['name'];
-        $list=db('login_log')->where($map)->paginate(10,false,['query'=>$data]);
+        if($this->view_path=='layui' && request()->isAjax()){
+            $data=$list->toarray();
+            return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
+        }
         $this->assign('list',$list);
         return $this->return_fetch();
     }
@@ -224,9 +234,9 @@ class System extends Common
     public function config()
     {
         if(!request()->isPost()){
-            $list=db('config')->where('name','system_config')->json(['value'])->find();
-            $this->assign('list',$list);
-            return $this->fetch();
+            $data=db('config')->where('name','system_config')->json(['value'])->find();
+            $this->assign('data',$data);
+            return $this->return_fetch();
         }else{
             $data=input();
             if(!$data) $this->error('参数错误');
