@@ -29,7 +29,7 @@ class AuthCheck extends Controller
     {
         $this->checkLogin();//验证是否登录
         $this->check();     //验证权限
-        $this->getMenu();   //获取菜单
+//        $this->getMenu();   //获取菜单
     }
 
     /**

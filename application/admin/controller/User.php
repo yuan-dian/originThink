@@ -20,24 +20,23 @@ class User extends Common
     public function userList()
     {
         $list=[];
-        if($this->view_path!='layui' or request()->isAjax()){
+        if(request()->isAjax()){
             $data=input();
             $map=[];
             empty($data['key']) || $map[]=['a.user|a.name','like','%'.$data['key'].'%'];
+            isset($data['limit'])?$limit=$data['limit'] : $limit=10;
             $list=model('User')
                 ->alias('a')
                 ->field('a.*,c.title')
                 ->join('auth_group_access b','a.uid = b.uid')
                 ->join('auth_group c','b.group_id = c.id')
                 ->where($map)
-                ->paginate(10,false,['query'=>$data]);
-        }
-        if($this->view_path=='layui' && request()->isAjax()){
+                ->paginate($limit,false,['query'=>$data]);
             $data=$list->toarray();
             return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
         }
         $this->assign('list',$list);
-        return $this->return_fetch();
+        return $this->fetch();
     }
 
     /**
@@ -111,7 +110,7 @@ class User extends Common
             }
             $grouplist=model('AuthGroup')->select();
             $this->assign('grouplist',$grouplist);
-            return $this->return_fetch();
+            return $this->fetch();
         }
     }
     /**
@@ -213,17 +212,16 @@ class User extends Common
         }
         else{
             $list=[];
-            if($this->view_path!='layui' or request()->isAjax()){
+            if(request()->isAjax()){
                 $map=[];
                 empty($data['key']) || $map[]=$map[]=['title','like','%'.$data['key'].'%'];
-                $list=model('AuthGroup')->where($map)->paginate(10,false,['query'=>$data]);
-            }
-            if($this->view_path=='layui' && request()->isAjax()){
+                isset($data['limit'])?$limit=$data['limit'] : $limit=10;
+                $list=model('AuthGroup')->where($map)->paginate($limit,false,['query'=>$data]);
                 $data=$list->toarray();
                 return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
             }
             $this->assign('list',$list);
-            return $this->return_fetch();
+            return $this->fetch();
         }
     }
 }

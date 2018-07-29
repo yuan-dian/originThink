@@ -1,51 +1,47 @@
-{extend name="layui/base/base" /}
+{extend name="base/base" /}
 {block name="main"}
-<form id="form" method="post" class="layui-form layui-form-pane" action="{:url('/admin/editMenu')}">
+<form id="form" method="post" class="layui-form layui-form-pane" action="{:url('/admin/edit')}">
     <div class="layui-form-item">
-        <label class="layui-form-label">所属层级</label>
+        <label class="layui-form-label">账号</label>
         <div class="layui-input-block">
-            {form:select name="pid" list="$menu" value="$data['pid']" option="['datatype'=>'*','nullmsg'=>'请选择层级！']"}
+            <input type="text" name="user" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($list.user)?$list.user:''}" {if condition="isset($list['uid'])"}readonly {else /} datatype="*" ajaxurl="{:url('/admin/check')}"{/if}>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
+        <label class="layui-form-label">昵称</label>
         <div class="layui-input-block">
-            <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($data.title)?$data.title:''}" datatype="*" nullmsg="请输入名称!">
+            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($list.name)?$list.name:''}" datatype="*" nullmsg="请输入昵称！">
         </div>
     </div>
+    {if condition="!isset($list['uid'])"}
     <div class="layui-form-item">
-        <label class="layui-form-label">url</label>
+        <label class="layui-form-label">密码</label>
         <div class="layui-input-block">
-            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.name)?$data.name:''}" datatype="*" nullmsg="请输入名称！">
+            <input type="text" name="password" placeholder="请输入" autocomplete="off" class="layui-input" value="" datatype="*6-16" nullmsg="请设置密码！" errormsg="密码范围在6~16位之间！">
         </div>
     </div>
+    {/if}
     <div class="layui-form-item">
-        <label class="layui-form-label">图标</label>
+        <label class="layui-form-label">所属组</label>
         <div class="layui-input-block">
-            <input type="text" name="icon" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.icon)?$data.icon:''}">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">排序</label>
-        <div class="layui-input-block">
-            <input type="text" name="sort" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.sort)?$data.sort:'1'}">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">类型</label>
-        <div class="layui-input-block">
-            {form:radio name="menu" list="['1'=>'菜单','0'=>'行为']" value="isset($data['menu'])?$data['menu']:1"}
+            <select name="group_id" id="group_id" datatype="*" nullmsg="请选择组！" >
+                <option value="">请选择</option>
+                {volist name='grouplist' id='vo'}
+                    <option value="{$vo.id}" {eq name=":(isset($list['group_id'])?$list['group_id']:'')" value="$vo['id']"}selected="selected"{/eq}>{$vo.title}</option>
+                {/volist}
+            </select>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">是否禁用</label>
         <div class="layui-input-block">
-            {form:radio name="status" list="['1'=>'启用','0'=>'禁用']" value="isset($data['status'])?$data['status']:1"}
+            <input type="radio" name="status" value="0" title="是" {eq name=":isset($list['status'])?$list['status']:''" value="0"}checked{/eq}>
+            <input type="radio" name="status" value="1" title="否" {eq name=":isset($list['status'])?$list['status']:'1'" value="1"}checked{/eq}>
         </div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <input type="hidden" name="id" value="{:isset($data['id'])?$data['id']:''}">
+            <input type="hidden" name="uid" value="{:isset($list['uid'])?$list['uid']:''}">
             <input type="hidden" name="__token__" id="token" value="{$Request.token}" />
             <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -57,8 +53,8 @@
 {js href="__STATIC__/jquery/jquery.min.js" /}
 {js href="__STATIC__/jquery/Validform_v5.3.2_min.js" /}
 <script>
-    layui.use('form', function(){
-        var form = layui.form;
+    layui.use(['form'], function () {
+       var form = layui.form;
     });
     $("#form").Validform({
         ajaxPost:true,
@@ -80,6 +76,7 @@
             });
         }
     });
+
 
 </script>
 {/block}

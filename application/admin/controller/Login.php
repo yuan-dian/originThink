@@ -39,17 +39,17 @@ class Login extends Controller
      */
     public function login()
     {
-//        if(get_user_id()){
-//            $this->redirect(url('/admin/index'));
-//        }else{
+        if(get_user_id()){
+            $this->redirect(url('/admin/index'));
+        }else{
             if(!request()->isPost()){
-                return $this->return_fetch();
+                return $this->fetch();
             }else{
                 $data=input();
                 $result=model('User')->login($data);
                 return $result;
             }
-//        }
+        }
 
     }
     /**
@@ -96,24 +96,4 @@ class Login extends Controller
             return $this->fetch();
         }
     }
-    protected function getActionTemplate($request)
-    {
-        $rule = [$request->action(true), Loader::parseName($request->action(true)), $request->action()];
-        $type = config('template.auto_rule');
-
-        return isset($rule[$type]) ? $rule[$type] : $rule[0];
-    }
-
-    public function return_fetch($template='')
-    {
-        $this->view_path='layui';
-        if($template==''){
-            $request = $this->app['request'];
-            $controller = Loader::parseName($request->controller());
-            $template=str_replace('.', DIRECTORY_SEPARATOR, $controller) . DIRECTORY_SEPARATOR .$this->getActionTemplate($request);
-        }
-        $template=$this->view_path.DIRECTORY_SEPARATOR.$template;
-        return $this->fetch($template);
-    }
-
 }

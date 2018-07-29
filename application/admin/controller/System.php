@@ -19,7 +19,7 @@ class System extends Common
     {
 
         if(!request()->isPost()){
-            return $this->return_fetch();
+            return $this->fetch();
         }else{
             $data=input();
             if(isset($data['path'])){
@@ -64,7 +64,7 @@ class System extends Common
     public function loginLog()
     {
         $list=[];
-        if($this->view_path!='layui' or request()->isAjax()){
+        if(request()->isAjax()){
             $data=input();
             $map=[];
             if(isset($data['starttime']) && isset($data['endtime'])){
@@ -73,16 +73,15 @@ class System extends Common
                 }
             }
             empty($data['key']) || $map[]=['user|name','like','%'.$data['key'].'%'];
+            isset($data['limit'])?$limit=$data['limit'] : $limit=10;
             $list=db('login_log')->where($map)->withAttr('create_time', function($value, $data) {
                 return date('Y-m-d H:i:s',$value);
-            })->fetchSql(false)->paginate(10,false,['query'=>$data]);
-        }
-        if($this->view_path=='layui' && request()->isAjax()){
+            })->fetchSql(false)->paginate($limit,false,['query'=>$data]);
             $data=$list->toarray();
             return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
         }
         $this->assign('list',$list);
-        return $this->return_fetch();
+        return $this->fetch();
     }
 
     /**
@@ -101,7 +100,7 @@ class System extends Common
         $list=db('auth_rule','',false)->where($map)->order('sort desc')->select();
         empty($data['title']) && $list=list_to_tree($list);
         $this->assign('list',$list);
-        return $this->return_fetch();
+        return $this->fetch();
     }
 
     /**
@@ -147,7 +146,7 @@ class System extends Common
             $menu[0]='顶级菜单';
             ksort($menu);
             $this->assign('menu',$menu);
-            return $this->return_fetch();
+            return $this->fetch();
         }
 //        $data=input();
 //        isset($data['type']) || $this->error('参数错误');
@@ -236,7 +235,7 @@ class System extends Common
         if(!request()->isPost()){
             $data=db('config')->where('name','system_config')->json(['value'])->find();
             $this->assign('data',$data);
-            return $this->return_fetch();
+            return $this->fetch();
         }else{
             $data=input();
             if(!$data) $this->error('参数错误');

@@ -1,4 +1,4 @@
-{extend name="layui/base/base" /}
+{extend name="base/base" /}
 {block name="main"}
 <form class="layui-form">
     <blockquote class="layui-elem-quote quoteBox">
@@ -60,7 +60,7 @@
             cellMinWidth : 95,
             page : true,
             limit:10,
-            limits:[10],
+            limits:[5,10,15,20],
             height : "full-125",
             id:'usersListTable',
             cols : [[
