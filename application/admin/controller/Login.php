@@ -64,14 +64,14 @@ class Login extends Controller
         return ['msg'=>'退出成功','url'=>url('/admin/login')];
     }
     /**
-     * 重置密码
+     * 修改密码
      * @return mixed
      * @author 原点 <467490186@qq.com>
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function resetpassword()
+    public function editPassword()
     {
         if(request()->isPost()){
             $data=input();
@@ -87,6 +87,7 @@ class Login extends Controller
                 ];
                 $res=model('User')->isUpdate(true)->save($save,['uid'=>get_user_id()]);
                 if($res){
+                    $this->logout();
                     $this->success('重置成功,请重新登录',url('/admin/login'));
                 }else{
                     $this->error('修改失败');

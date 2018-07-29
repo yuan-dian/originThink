@@ -43,7 +43,7 @@ class AuthCheck extends Controller
         }
         //验证是否需要重置密码
         if($user['updatapassword']==0){
-            return $this->error('重置密码后使用',url('/admin/resetpassword') );
+            return $this->error('重置密码后使用',url('/admin/editPassword') );
         }
         $this->uid=$user['uid'];
         $this->group_id=$user['group_id'];
