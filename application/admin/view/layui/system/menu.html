@@ -21,6 +21,10 @@
         <col width="200">
         <col width="200">
         <col>
+        <col>
+        <col>
+        <col>
+        <col width="200">
     </colgroup>
     <thead>
     <tr>
@@ -107,6 +111,14 @@
         $(window).on("resize",function(){
             layui.layer.full(index);
         })
+    }
+    function deleteMenu(id) {
+        $.post("{:url('/admin/deleteMenu')}",{id:id},function (data) {
+            layer.msg(data.msg);
+            if(data.code){
+                location.reload();
+            }
+        });
     }
 </script>
 {/block}

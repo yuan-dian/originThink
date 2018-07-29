@@ -22,11 +22,13 @@ class Common extends Controller
         $user = session('user_auth');
         $this->uid=$user['uid'];
         $this->group_id=$user['group_id'];
+        $auth_config=config('auth.');
         if($this->uid!=1){
-            $ruleslist= cache('ruleslist_'.$this->group_id );//获取当前用户组菜单
+            $key=$auth_config['prefix'].$auth_config['name'].$this->group_id;
         }else{
-            $ruleslist= cache('ruleslist_admin' );//获取当前用户组菜单
+            $key=$auth_config['prefix'].$auth_config['name'].'super';
         }
+        $ruleslist=cache($key);
         $this->assign('ruleslist',$ruleslist);
         $this->config();
     }

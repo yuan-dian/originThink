@@ -126,11 +126,9 @@
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
                     $.post("{:url('/admin/delete')}",{uid:data.uid},function(data){
+                        layer.msg(data.msg);
                         if(data.code){
-                            layer.msg(data.msg);
                             tableIns.reload();
-                        }else{
-                            layer.alert(data.msg)
                         }
                     })
                 });
