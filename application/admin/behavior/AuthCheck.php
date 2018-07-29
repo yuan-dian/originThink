@@ -29,7 +29,6 @@ class AuthCheck extends Controller
     {
         $this->checkLogin();//验证是否登录
         $this->check();     //验证权限
-//        $this->getMenu();   //获取菜单
     }
 
     /**
@@ -65,41 +64,5 @@ class AuthCheck extends Controller
                 }
             }
         }
-    }
-
-    /**
-     * 获取菜单
-     */
-    private function getMenu(){
-        if($this->config['is_cache']){//判断是否开启缓存
-            if($this->uid!=1){
-                $key=$this->config['prefix'].$this->config['name'].$this->group_id;
-            }else{
-                $key=$this->config['prefix'].$this->config['name'].'super';
-            }
-            $ruleslist= cache($key);//获取对应用户缓存菜单列表
-            if(!$ruleslist){
-                $this->getMenuData();
-            }
-        }else{
-            $this->getMenuData();
-        }
-    }
-
-    /**
-     * 获取菜单数据
-     */
-    private function getMenuData(){
-        if($this->uid!=1){
-            $rules_id=db('AuthGroup')->where(['id'=>$this->group_id])->value('rules');
-            $ruleslist=db('auth_rule')->where([['id','in',$rules_id],['menu','=',1]])->order('sort desc')->select();
-            $ruleslist=list_to_tree($ruleslist);
-            $key=$this->config['prefix'].$this->config['name'].$this->group_id;
-        }else{
-            $ruleslist=db('auth_rule')->where(['menu'=>1])->order('sort desc')->select();
-            $ruleslist=list_to_tree($ruleslist);
-            $key=$this->config['prefix'].$this->config['name'].'super';
-        }
-        cache($key, $ruleslist ,$this->config['expire'],'ruleslist');//将用户对应的菜单写入缓存
     }
 }
