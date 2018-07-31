@@ -1,9 +1,0 @@
-@charset "UTF-8";
-.Wdate{
-	background:#fff url(datePicker.gif) no-repeat right;
-}
-
-.WdateFmtErr{
-	font-weight:bold;
-	color:red;
-}
