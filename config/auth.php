@@ -11,5 +11,7 @@ return [
     'expire' => 3600,                   //缓存时间
     'prefix' => '',                     //缓存前缀
     'name' => 'user_auth',             //缓存key
-    'exclude_rule' => []               //不验证权限的url
+    'exclude_rule' => [
+        'admin/index'
+    ]               //不验证权限的url
 ];

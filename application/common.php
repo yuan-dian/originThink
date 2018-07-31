@@ -107,4 +107,21 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
     //打印获得的数据
     return $output;
 }
+/**
+ * $msg 待提示的消息
+ * $icon 这里主要有两个，5和6，代表两种表情（哭和笑）
+ * $time 弹出维持时间（单位秒）
+ */
+function alert_error($msg='',$time=3){
+    $str='<script type="text/javascript" src="/layui/layui.js"></script>';
+    $str.='<script>
+        layui.use([\'layer\'],function(){
+           layer.msg("'.$msg.'",{icon:"5",time:'.($time*1000).'},function() {
+              parent.location.reload();
+           });
+	    })
+    </script>';//主要方法
+    echo $str;
+    exit;
+}
 

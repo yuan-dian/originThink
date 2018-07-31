@@ -60,7 +60,8 @@ class AuthCheck extends Controller
             //当免权限验证规则为 * 时不进行验证
             if(!in_array($path,$exclude_rule) && !in_array('*',$exclude_rule)){//判断是否是免权限验证的规则
                 if(!$Auth->check(request()->path(),$this->uid)) { //验证当前访问页面的权限
-                    $this->error($this->config['not_auth_tip']);
+//                    $this->error($this->config['not_auth_tip'],'');
+                    alert_error($this->config['not_auth_tip']);
                 }
             }
         }

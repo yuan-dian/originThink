@@ -15,9 +15,6 @@
                 </div>
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
             </div>
-            <div class="layui-inline">
-                <a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>
-            </div>
         </form>
     </blockquote>
     <table id="usersList" lay-filter="usersList"></table>
@@ -84,73 +81,6 @@
                     endtime: $(".endtime").val()  //搜索的关键字
                 }
             })
-        });
-
-        //添加文章
-        function add(){
-            var index = layui.layer.open({
-                title : "添加用户",
-                type : 2,
-                content : "{:url('/admin/edit')}",
-                success : function(layero, index){
-                    var body = layui.layer.getChildFrame('body', index);
-                    setTimeout(function(){
-                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
-                            tips: 3
-                        });
-                    },500)
-                }
-            })
-            layui.layer.full(index);
-            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-            $(window).on("resize",function(){
-                layui.layer.full(index);
-            })
-        }
-        //添加文章
-        function edit(uid){
-            var index = layui.layer.open({
-                title : "编辑用户",
-                type : 2,
-                content : "{:url('/admin/edit')}"+'?uid='+uid,
-                success : function(layero, index){
-                    var body = layui.layer.getChildFrame('body', index);
-                    setTimeout(function(){
-                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
-                            tips: 3
-                        });
-                    },500)
-                }
-            })
-            layui.layer.full(index);
-            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-            $(window).on("resize",function(){
-                layui.layer.full(index);
-            })
-        }
-        $(".adduser_btn").click(function(){
-            add();
-        })
-
-        //列表操作
-        table.on('tool(usersList)', function(obj){
-            var layEvent = obj.event,
-                data = obj.data;
-
-            if(layEvent === 'edit'){ //编辑
-                edit(data.uid);
-            } else if(layEvent === 'del'){ //删除
-                layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
-                    $.post("{:url('/admin/delete')}",{uid:data.uid},function(data){
-                        if(data.code){
-                            layer.msg(data.msg);
-                            tableIns.reload();
-                        }else{
-                            layer.alert(data.msg)
-                        }
-                    })
-                });
-            }
         });
 
     })

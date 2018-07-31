@@ -11,7 +11,7 @@
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
             </div>
             <div class="layui-inline">
-                <a class="layui-btn layui-btn-danger layui-btn-normal adduser_btn">添加</a>
+                <a class="layui-btn layui-btn-danger layui-btn-normal" onclick="add()">添加</a>
             </div>
         </form>
     </blockquote>
@@ -92,6 +92,34 @@
         $('.show-'+id).toggle();
     }
 
+    /**
+     * 添加菜单
+     */
+    function add() {
+        var index=layui.layer.open({
+            type: 2,
+            title: '添加菜单',
+            content : "{:url('/admin/editMenu')}",
+            success : function(layero, index){
+                var body = layui.layer.getChildFrame('body', index);
+                setTimeout(function(){
+                    layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                },500)
+            }
+        });
+        layui.layer.full(index);
+        //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+        $(window).on("resize",function(){
+            layui.layer.full(index);
+        })
+    }
+
+    /**
+     * 编辑菜单
+     * @param id
+     */
     function edit(id) {
         var index=layui.layer.open({
             type: 2,
@@ -112,6 +140,11 @@
             layui.layer.full(index);
         })
     }
+
+    /**
+     * 删除菜单
+     * @param id
+     */
     function deleteMenu(id) {
         $.post("{:url('/admin/deleteMenu')}",{id:id},function (data) {
             layer.msg(data.msg);
