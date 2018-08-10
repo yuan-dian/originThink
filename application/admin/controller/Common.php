@@ -29,7 +29,6 @@ class Common extends Controller
      * @author 原点 <467490186@qq.com>
      */
     private function config(){
-        config('template.view_path','layui');
         if(cache('config')){
             $list=cache('config');
         }else{

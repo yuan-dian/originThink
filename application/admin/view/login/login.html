@@ -63,14 +63,16 @@
                 dataType: 'json',
                 data: data,
                 success: function (data) {
-                    if(data.code ){
-                        location.href = data.url;
-                    }else{
-                        obj.text("登录").removeAttr("disabled").removeClass("layui-disabled");
-                        layer.msg(data.msg, {icon: 5});
-                        $('#captcha').attr('src','{:captcha_src()}?d='+Math.random());
-                        $('#code').val('');
-                    }
+                    layer.msg(data.msg, {icon: 5},function () {
+                        if(data.code ){
+                            location.href = data.url;
+                        }else{
+                            obj.text("登录").removeAttr("disabled").removeClass("layui-disabled");
+                            $('#captcha').attr('src','{:captcha_src()}?d='+Math.random());
+                            $('#code').val('');
+                        }
+                    });
+
                 },
                 error: function (e) {
                     obj.text("登录").attr("disabled","").removeClass("layui-disabled");

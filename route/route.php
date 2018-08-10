@@ -56,6 +56,10 @@ Route::rule('client/start','admin/login/start');
 Route::rule('client/send','admin/Client/send');
 Route::rule('client/shutdown','admin/Client/shutdown');
 Route::rule('client/onReceive','admin/Client/onReceive');
+Route::get('captcha',function (){
+    $captcha = new think\captcha\Captcha();
+    return $captcha->entry();
+});
 /**
  * miss路由
  * 没有定义的路由全部使用该路由
