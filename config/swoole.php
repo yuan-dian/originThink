@@ -19,6 +19,8 @@ return [
     'host'     => '0.0.0.0', // 监听地址
     'port'     => 9601, // 监听端口
     'app_path' => '', // 应用地址 如果开启了 'daemonize'=>true 必须设置（使用绝对路径）
+//    'document_root' => '/wwwroot/tpswoole/public',
+//    'enable_static_handler' => true,
 
     // 可以支持swoole的所有配置参数
     'pid_file' => Env::get('runtime_path') . 'swoole.pid',

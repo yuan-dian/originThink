@@ -17,31 +17,28 @@ use think\facade\Env;
 return [
     // 扩展自身配置
     'host'         => '0.0.0.0', // 监听地址
-    'port'         => 9501, // 监听端口
-    'type'         => 'socket', // 服务类型 支持 socket http server
+    'port'         => 9601, // 监听端口
+    'type'         => 'server', // 服务类型 支持 socket http server
     'mode'         => SWOOLE_PROCESS,
-    'socket_type'  => SWOOLE_SOCK_TCP,
+//    'socket_type'  => SWOOLE_SOCK_TCP,
+    'sockType'  => SWOOLE_SOCK_TCP,
     'swoole_class' => '', // 自定义服务类名称
 
     // 可以支持swoole的所有配置参数
     'daemonize'    => false,
     'pid_file'     => Env::get('runtime_path') . 'swoole_server.pid',
     'log_file'     => Env::get('runtime_path') . 'swoole_server.log',
-
+    'task_worker_num'=>4,
     // 事件回调定义
-    'onOpen'       => function ($server, $request) {
-        echo "server: handshake success with fd{$request->fd}\n";
+    'onReceive'   => function($server, $fd,  $reactor_id,  $fromdata){
+       new http\Receive($server, $fd,  $reactor_id,  $fromdata);
     },
-
-    'onMessage'    => function ($server, $frame) {
-        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        $server->push($frame->fd, "this is server");
+    'onTask'=>function($server, $task_id,$from_id, $data){
+        return (new http\Task())->send($data);
     },
+    'onFinish'=>function($server,$task_id,$data){
 
-    'onRequest'    => function ($request, $response) {
-        $response->end("<h1>Hello Swoole. #" . rand(1000, 9999) . "</h1>");
     },
-
     'onClose'      => function ($ser, $fd) {
         echo "client {$fd} closed\n";
     },
