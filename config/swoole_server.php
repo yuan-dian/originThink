@@ -28,17 +28,17 @@ return [
     'daemonize'    => false,
     'pid_file'     => Env::get('runtime_path') . 'swoole_server.pid',
     'log_file'     => Env::get('runtime_path') . 'swoole_server.log',
-    'task_worker_num'=>4,
+//    'task_worker_num'=>4,
     // 事件回调定义
     'onReceive'   => function($server, $fd,  $reactor_id,  $fromdata){
        new http\Receive($server, $fd,  $reactor_id,  $fromdata);
     },
-    'onTask'=>function($server, $task_id,$from_id, $data){
-        return (new http\Task())->send($data);
-    },
-    'onFinish'=>function($server,$task_id,$data){
+//    'onTask'=>function($server, $task_id,$from_id, $data){
+//        return (new http\Task())->send($data);
+//    },
+//    'onFinish'=>function($server,$task_id,$data){
 
-    },
+//    },
     'onClose'      => function ($ser, $fd) {
         echo "client {$fd} closed\n";
     },

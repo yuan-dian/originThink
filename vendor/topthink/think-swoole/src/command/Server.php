@@ -11,10 +11,7 @@
 
 namespace think\swoole\command;
 
-use Swoole\Http\Server as HttpServer;
 use Swoole\Process;
-use Swoole\Server as SwooleServer;
-use Swoole\Websocket\Server as Websocket;
 use think\console\input\Argument;
 use think\console\input\Option;
 use think\facade\Config;
@@ -23,7 +20,7 @@ use think\swoole\Server as ThinkServer;
 
 /**
  * Swoole 命令行，支持操作：start|stop|restart|reload
- * 支持应用配置目录下的swoole.php文件进行参数配置
+ * 支持应用配置目录下的swoole_server.php文件进行参数配置
  */
 class Server extends Swoole
 {
@@ -31,6 +28,8 @@ class Server extends Swoole
     {
         $this->setName('swoole:server')
             ->addArgument('action', Argument::OPTIONAL, "start|stop|restart|reload", 'start')
+            ->addOption('host', 'H', Option::VALUE_OPTIONAL, 'the host of swoole server.', null)
+            ->addOption('port', 'p', Option::VALUE_OPTIONAL, 'the port of swoole server.', null)
             ->addOption('daemon', 'd', Option::VALUE_NONE, 'Run the swoole server in daemon mode.')
             ->setDescription('Swoole Server for ThinkPHP');
     }
@@ -42,6 +41,9 @@ class Server extends Swoole
         if (empty($this->config['pid_file'])) {
             $this->config['pid_file'] = Env::get('runtime_path') . 'swoole_server.pid';
         }
+
+        // 避免pid混乱
+        $this->config['pid_file'] .= '_' . $this->getPort();
     }
 
     /**
@@ -74,20 +76,24 @@ class Server extends Swoole
                 return false;
             }
         } else {
-            $host = !empty($this->config['host']) ? $this->config['host'] : '0.0.0.0';
-            $port = !empty($this->config['port']) ? $this->config['port'] : 9508;
-            $type = !empty($this->config['type']) ? $this->config['type'] : 'socket';
+            $host     = $this->getHost();
+            $port     = $this->getPort();
+            $type     = !empty($this->config['type']) ? $this->config['type'] : 'socket';
+            $mode     = !empty($this->config['mode']) ? $this->config['mode'] : SWOOLE_PROCESS;
+            $sockType = !empty($this->config['sock_type']) ? $this->config['sock_type'] : SWOOLE_SOCK_TCP;
 
             switch ($type) {
                 case 'socket':
-                    $swoole = new Websocket($host, $port);
+                    $swooleClass = 'Swoole\Websocket\Server';
                     break;
                 case 'http':
-                    $swoole = new HttpServer($host, $port);
+                    $swooleClass = 'Swoole\Http\Server';
                     break;
                 default:
-                    $swoole = new SwooleServer($host, $port, $this->config['mode'], $this->config['sockType']);
+                    $swooleClass = 'Swoole\Server';
             }
+
+            $swoole = new $swooleClass($host, $port, $mode, $sockType);
 
             // 开启守护进程模式
             if ($this->input->hasOption('daemon')) {
@@ -104,7 +110,7 @@ class Server extends Swoole
             // 设置服务器参数
             $swoole->set($this->config);
 
-            $this->output->writeln("Swoole http server started: <http://{$host}:{$port}>");
+            $this->output->writeln("Swoole {$type} server started: <{$host}:{$port}>");
             $this->output->writeln('You can exit with <info>`CTRL-C`</info>');
 
             // 启动服务

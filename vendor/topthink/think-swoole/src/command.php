@@ -9,12 +9,8 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+// 注册命令行指令
 \think\Console::addDefaultCommands([
     '\\think\\swoole\\command\\Swoole',
     '\\think\\swoole\\command\\Server',
-]);
-
-\think\Facade::bind([
-    \think\swoole\facade\Application::class => \think\swoole\Application::class,
-    \think\swoole\facade\Swoole::class      => \think\swoole\Swoole::class,
 ]);
