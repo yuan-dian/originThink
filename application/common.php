@@ -107,10 +107,11 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
     //打印获得的数据
     return $output;
 }
+
 /**
- * $msg 待提示的消息
- * $icon 这里主要有两个，5和6，代表两种表情（哭和笑）
- * $time 弹出维持时间（单位秒）
+ * @param string $msg 待提示的消息
+ * @param int $time   弹出维持时间（单位秒）
+ * @author 原点 <467490186@qq.com>
  */
 function alert_error($msg='',$time=3){
     $str='<script type="text/javascript" src="/layui/layui.js"></script>';
@@ -120,8 +121,8 @@ function alert_error($msg='',$time=3){
               parent.location.reload();
            });
 	    })
-    </script>';//主要方法
-    echo $str;
-    exit;
+    </script>';
+    $response = think\Response::create($str, 'html');
+    throw new think\exception\HttpResponseException($response);
 }
 
