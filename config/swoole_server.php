@@ -19,9 +19,9 @@ return [
     'host'         => '0.0.0.0', // 监听地址
     'port'         => 9601, // 监听端口
     'type'         => 'server', // 服务类型 支持 socket http server
-    'mode'         => SWOOLE_PROCESS,
+//    'mode'         => SWOOLE_PROCESS,
 //    'socket_type'  => SWOOLE_SOCK_TCP,
-    'sockType'  => SWOOLE_SOCK_TCP,
+//    'sockType'  => SWOOLE_SOCK_TCP,
     'swoole_class' => '', // 自定义服务类名称
 
     // 可以支持swoole的所有配置参数

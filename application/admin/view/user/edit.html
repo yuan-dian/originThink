@@ -24,10 +24,14 @@
     <div class="layui-form-item">
         <label class="layui-form-label">所属组</label>
         <div class="layui-input-block">
-            <select name="group_id" id="group_id" datatype="*" nullmsg="请选择组！" >
+            <select name="group_id" xm-select="selectId" id="group_id"  datatype="*" nullmsg="请选择组！" >
                 <option value="">请选择</option>
+                {php}
+                    //获取用户组信息
+                    $group_ids=isset($list['group_id'])?$list['group_id']:[];
+                {/php}
                 {volist name='grouplist' id='vo'}
-                    <option value="{$vo.id}" {eq name=":(isset($list['group_id'])?$list['group_id']:'')" value="$vo['id']"}selected="selected"{/eq}>{$vo.title}</option>
+                    <option value="{$vo.id}" {if (in_array($vo.id,$group_ids))}selected="selected"{/if}>{$vo.title}</option>
                 {/volist}
             </select>
         </div>
@@ -52,10 +56,20 @@
 {block name="script"}
 {js href="/js/jquery.min.js" /}
 {js href="/js/Validform_v5.3.2_min.js" /}
+{css href="/form-select/formSelects-v4.css" /}
 <script>
-    layui.use(['form'], function () {
-       var form = layui.form;
+    layui.config({
+        base: '/form-select/' //此处路径请自行处理, 可以使用绝对路径
+    }).extend({
+        formSelects: 'formSelects-v4'
     });
+    layui.use(['form','jquery', 'formSelects'], function(){
+        var formSelects = layui.formSelects;
+        formSelects.on('selectId', function(id, vals, val, isAdd, isDisabled){
+            $('#group_id').val(layui.formSelects.value(id, 'val'));
+        }, true);
+    });
+
     $("#form").Validform({
         ajaxPost:true,
         tiptype:function (msg,o,cssctl) {

@@ -72,6 +72,8 @@ class Auth
      * @var Request
      */
     protected $request;
+    protected $uid;
+    protected $group_id;
 
     //默认配置
     protected $config = [
@@ -101,6 +103,10 @@ class Auth
         }
         // 初始化request
         $this->request = Request::instance();
+        //获取当前用户登录信息
+        $user = session('user_auth');
+        $this->uid=$user['uid'];
+        $this->group_id=$user['group_id'];
     }
 
     /**
@@ -115,12 +121,16 @@ class Auth
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function check($name, $uid, $type = 1, $mode = 'url', $relation = 'or')
+    public function check($name, $uid=0, $type = 1, $mode = 'url', $relation = 'or')
     {
         //判断权限开关
         if (!$this->config['auth_on']) {
             return true;
         }
+        if(in_array($name,$this->config['exclude_rule'])){
+            return true;
+        }
+        $uid=$uid?$uid:$this->uid;
         // 获取用户需要验证的所有有效规则列表
         $authList = $this->getAuthList($uid, $type);
         if (is_string($name)) {
@@ -163,15 +173,14 @@ class Auth
     }
 
     /**
-     * 根据用户id获取用户组,返回值为数组
-     * @param $uid 用户id
+     * 获取用户组信息,返回值为数组
      * @return array|mixed|PDOStatement|string|\think\Collection
      * @author 原点 <467490186@qq.com>
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getGroups($uid)
+    public function getGroups()
     {
         //获取缓存开启状态
         $is_cache=$this->config['is_cache'];
@@ -179,7 +188,7 @@ class Auth
         //判断是否开启缓存
         if($is_cache){
             //设置缓存name
-            $cache_key=$this->config['prefix'].'groups_'.$uid;
+            $cache_key=$this->config['prefix'].'groups_'.implode('-',$this->group_id);
             //获取缓存
             $group=Cache::get($cache_key);
             if ($group) {
@@ -187,11 +196,7 @@ class Auth
             }
         }
         // 执行查询
-        $user_groups = \think\Db::name($this->_config['auth_group_access'])
-            ->alias('a')
-            ->join($this->_config['auth_group']." g", "g.id=a.group_id")
-            ->where([['a.uid','=',$uid],['g.status','=',1]])
-            ->field('uid,group_id,title,rules')->select();
+        $user_groups = \think\Db::name($this->config['auth_group'])->where('id','in',$this->group_id)->select();
         if($is_cache){
             //设置缓存
             Cache::tag($this->config['cache_tag'])->set($cache_key,$user_groups,$this->config['expire']);
@@ -218,7 +223,7 @@ class Auth
         if($is_cache){
             $t = implode(',', (array)$type);
             //设置缓存name
-            $cache_key= $this->config['prefix'].'authList_'.$uid.'_'.$t;
+            $cache_key= $this->config['prefix'].'authList_'.$t.'_'.implode('-',$this->group_id);
             //获取缓存数据
             $_authList=Cache::get($cache_key);
             if ($_authList) {

@@ -16,7 +16,10 @@ class User extends Model
     protected $type = [
         'last_login_time'  =>  'timestamp',
     ];
-
+    public function groupIds()
+    {
+        return $this->hasMany('AuthGroupAccess','uid');
+    }
     /**
      * @param $data
      * @return array
@@ -78,7 +81,7 @@ class User extends Model
             'last_login_time'=>time(),
         ];
         $this->isUpdate(true)->save($data,['uid'=>$user['uid']]);
-        $group_id=model('AuthGroupAccess')->where('uid',$user['uid'])->value('group_id');
+        $group_id=model('AuthGroupAccess')->where('uid',$user['uid'])->column('group_id');
         /* 记录登录SESSION */
         $auth = [
             'uid'               => $user['uid'],

@@ -9,7 +9,7 @@
 namespace app\admin\controller;
 
 
-
+use think\facade\Cache;
 class User extends Common
 {
     /**
@@ -23,16 +23,21 @@ class User extends Common
         if(request()->isAjax()){
             $data=input();
             $map=[];
-            empty($data['key']) || $map[]=['a.user|a.name','like','%'.$data['key'].'%'];
+            empty($data['key']) || $map[]=['user|name','like','%'.$data['key'].'%'];
             isset($data['limit'])?$limit=$data['limit'] : $limit=10;
-            $list=model('User')
-                ->alias('a')
-                ->field('a.*,c.title')
-                ->join('auth_group_access b','a.uid = b.uid')
-                ->join('auth_group c','b.group_id = c.id')
+            $list=model('User')->with(['groupIds'])
                 ->where($map)
                 ->paginate($limit,false,['query'=>$data]);
             $data=$list->toarray();
+            $auth_group=model('auth_group')->column('title','id');
+            foreach ($data['data'] as $key=>$val){
+                $title=[];
+                foreach ($val['group_ids'] as $v){
+                    $title[]=$auth_group[$v['group_id']];
+                }
+                unset( $data['data'][$key]['group_ids']);
+                $data['data'][$key]['title']=implode(',',$title);
+            }
             return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
         }
         $this->assign('list',$list);
@@ -60,11 +65,15 @@ class User extends Common
                 $res=$User->allowField(true)->isUpdate(true)->save($userdata,['uid'=>$data['uid']]);
                 if($res){
                     model('AuthGroupAccess')->where(['uid'=>$data['uid']])->delete();
-                    $save=[
-                        'uid'=>$data['uid'],
-                        'group_id'=>$data['group_id']
-                    ];
-                    $res2=model('AuthGroupAccess')->isUpdate(false)->save($save);
+                    $group_ids=explode(',',$data['group_id']);
+                    $save=[];
+                    foreach ($group_ids as $v){
+                        $save[]=[
+                            'uid'=>$data['uid'],
+                            'group_id'=>$v
+                        ];
+                    }
+                    $res2=model('AuthGroupAccess')->isUpdate(false)->saveAll($save);
                     if($res2){
                         $this->success('编辑成功',url('/admin/userlist'));
                     }else{
@@ -90,11 +99,15 @@ class User extends Common
                 ];
                 $res=$User->allowField(true)->isUpdate(false)->save($userdata);
                 if($res){
-                    $save=[
-                        'uid'=>$User->uid,
-                        'group_id'=>$data['group_id']
-                    ];
-                    $res2=model('AuthGroupAccess')->isUpdate(false)->save($save);
+                    $group_ids=explode(',',$data['group_id']);
+                    $save=[];
+                    foreach ($group_ids as $v){
+                        $save[]=[
+                            'uid'=>$User->uid,
+                            'group_id'=>$v
+                        ];
+                    }
+                    $res2=model('AuthGroupAccess')->isUpdate(false)->saveAll($save);
                     if($res2){
                         $this->success('添加成功',url('/admin/userList'));
                     }else{
@@ -105,7 +118,8 @@ class User extends Common
             }
         }else{
             if(isset($data['uid'])){
-                $list=model('User')->alias('a')->join('auth_group_access b','a.uid = b.uid')->where('a.uid','=',$data['uid'])->find($data['uid']);
+                $list=model('User')->where('uid','=',$data['uid'])->find();
+                $list['group_id']=model('auth_group_access')->where('uid','=',$data['uid'])->column('group_id');
                 $this->assign('list',$list);
             }
             $grouplist=model('AuthGroup')->select();
@@ -202,7 +216,7 @@ class User extends Common
                     $rules=implode(',',$data['rules']);
                     $res=model('AuthGroup')->isUpdate(true)->save(['rules'=>$rules],['id'=>$data['id']]);
                     if($res){
-                        cache('ruleslist_'.$data['id'],NULL);//将用户组对应的菜单缓存清除
+                        Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
                         $this->success('修改成功');
                     }else{
                         $this->error('修改失败');

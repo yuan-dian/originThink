@@ -114,15 +114,25 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
  * @author 原点 <467490186@qq.com>
  */
 function alert_error($msg='',$time=3){
-    $str='<script type="text/javascript" src="/layui/layui.js"></script>';
-    $str.='<script>
+    if(request()->isAjax()){
+        $str = [
+            'code' => 0,
+            'msg'  => $msg,
+            'wait' => $time,
+        ];
+        $response = think\Response::create($str, 'json');
+    }else{
+        $str='<script type="text/javascript" src="/layui/layui.js"></script>';
+        $str.='<script>
         layui.use([\'layer\'],function(){
            layer.msg("'.$msg.'",{icon:"5",time:'.($time*1000).'},function() {
               parent.location.reload();
            });
 	    })
     </script>';
-    $response = think\Response::create($str, 'html');
+        $response = think\Response::create($str, 'html');
+    }
+
     throw new think\exception\HttpResponseException($response);
 }
 

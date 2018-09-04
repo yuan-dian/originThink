@@ -28,7 +28,7 @@ class Index extends Common
     private function getMenu(){
         if($this->config['is_cache']){//判断是否开启缓存
             if($this->uid!=1){
-                $key=$this->config['prefix'].'menu_'.$this->group_id;
+                $key=$this->config['prefix'].'menu_'.implode('-',$this->group_id);
             }else{
                 $key=$this->config['prefix'].'menu_'.'super';
             }
@@ -47,16 +47,21 @@ class Index extends Common
      */
     private function getMenuData(){
         if($this->uid!=1){
-            $rules_id=db('AuthGroup')->where(['id'=>$this->group_id])->value('rules');
-            $ruleslist=db('auth_rule')->where([['id','in',$rules_id],['menu','=',1]])->order('sort desc')->select();
+            $rules_id=db('AuthGroup')->where('id','in',$this->group_id)->column('rules');
+            $ids=[];
+            foreach ($rules_id as $g) {
+                $ids = array_merge($ids, explode(',', trim($g, ',')));
+            }
+            $ids = array_unique($ids);
+            $ruleslist=db('auth_rule')->where([['id','in',$ids],['menu','=',1]])->order('sort desc')->select();
             $ruleslist=list_to_tree($ruleslist);
-            $key=$this->config['prefix'].'menu_'.$this->group_id;
+            $key=$this->config['prefix'].'menu_'.implode('-',$this->group_id);
         }else{
             $ruleslist=db('auth_rule')->where(['menu'=>1])->order('sort desc')->select();
             $ruleslist=list_to_tree($ruleslist);
             $key=$this->config['prefix'].'menu_'.'super';
         }
-        cache($key, $ruleslist ,$this->config['expire'],'ruleslist');//将用户对应的菜单写入缓存
+        cache($key, $ruleslist ,$this->config['expire'],$this->config['cache_tag']);//将用户对应的菜单写入缓存
         return $ruleslist;
     }
 
