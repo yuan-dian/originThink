@@ -231,7 +231,7 @@ class Auth
             }
         }
         //读取用户所属用户组
-        $groups = $this->getGroups($uid);
+        $groups = $this->getGroups();
         $ids    = []; //保存用户所属用户组设置的所有权限规则id
         foreach ($groups as $g) {
             $ids = array_merge($ids, explode(',', trim($g['rules'], ',')));
@@ -309,5 +309,89 @@ class Auth
             Cache::tag($this->config['cache_tag'])->set($cache_key,$user_info,$this->config['expire']);
         }
         return $user_info;
+    }
+
+    /**
+     * 获取用户菜单
+     * @return array|mixed
+     * @author 原点 <467490186@qq.com>
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getMenuList()
+    {
+        $super_admin=$this->uid==1?true:false;
+        //获取缓存开启状态
+        $is_cache=$this->config['is_cache'];
+        $cache_key='';
+        //判断是否开启缓存
+        if($is_cache){
+            //设置缓存name
+            if(!$super_admin){
+                $cache_key= $this->config['prefix'].'menuList_'.implode('-',$this->group_id);
+            }else{
+                $cache_key= $this->config['prefix'].'menuList_super';
+            }
+            //获取缓存数据
+            $menuList=Cache::get($cache_key);
+            if ($menuList) {
+                return $menuList;
+            }
+        }
+        if(!$super_admin){ //不是超级管理员，根据用户组获取对应的菜单
+            $groups = $this->getGroups();
+            $ids    = []; //保存用户所属用户组设置的所有权限规则id
+            foreach ($groups as $g) {
+                $ids = array_merge($ids, explode(',', trim($g['rules'], ',')));
+            }
+            $ids = array_unique($ids);
+            if (empty($ids)) {
+                if($is_cache){
+                    //设置缓存数据
+                    Cache::tag('auth')->set($cache_key,[],60);
+                }
+                return [];
+            }
+            $map=[
+                ['id','in',$ids],
+                ['menu','=',1],
+                ['status','=',1],
+            ];
+            //读取用户组所有权限规则
+            $rules = Db::name($this->config['auth_rule'])->where($map)->order('sort desc')->select();
+            //循环规则，判断结果。
+            $menuList = []; //
+            foreach ($rules as $rule) {
+                if (!empty($rule['condition'])) {
+                    //根据condition进行验证
+                    $user    = $this->getUserInfo($this->uid); //获取用户信息,一维数组
+                    $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
+                    $condition='';
+                    @(eval('$condition=(' . $command . ');'));
+                    if ($condition) {
+                        $menuList[] = $rule;
+                    }
+                } else {
+                    //只要存在就记录
+                    $menuList[] = $rule['name'];
+                }
+            }
+            $menuList=list_to_tree(array_unique($menuList));
+        }else{
+            //超级管理员
+            $map= [
+                ['menu','=',1],
+                ['status','=',1]
+            ];
+            $menuList=db('auth_rule')->where($map)->order('sort desc')->select();
+            $menuList=list_to_tree($menuList);
+        }
+        if($is_cache){
+            //设置缓存数据
+            Cache::tag($this->config['cache_tag'])->set($cache_key,$menuList,$this->config['expire']);
+        }
+        return $menuList;
+
     }
 }

@@ -52,7 +52,7 @@
 
 			<div id="navBar" class="navBar layui-side-scroll">
 				<ul class="layui-nav layui-nav-tree">
-					{volist name='ruleslist' id='vo'}
+					{volist name='menuList' id='vo'}
 						<li class="layui-nav-item">
 							<a href="javascript:;"><i class="{$vo.icon}" data-icon="{$vo.icon}"></i><cite>{$vo.title}</cite></a>
 							{if(isset($vo['child']))}
