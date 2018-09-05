@@ -110,14 +110,21 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
 
 /**
  * @param string $msg 待提示的消息
+ * @param string $url 跳转地址
  * @param int $time   弹出维持时间（单位秒）
  * @author 原点 <467490186@qq.com>
  */
-function alert_error($msg='',$time=3){
+function alert_error($msg='',$url=null,$time=3){
+    if (is_null($url)) {
+        $url='parent.location.reload();';
+    }else{
+        $url='parent.location.href=\''.$url.'\'';
+    }
     if(request()->isAjax()){
         $str = [
             'code' => 0,
             'msg'  => $msg,
+            'url'  => $url,
             'wait' => $time,
         ];
         $response = think\Response::create($str, 'json');
@@ -126,7 +133,7 @@ function alert_error($msg='',$time=3){
         $str.='<script>
         layui.use([\'layer\'],function(){
            layer.msg("'.$msg.'",{icon:"5",time:'.($time*1000).'},function() {
-              parent.location.reload();
+             '.$url.'
            });
 	    })
     </script>';

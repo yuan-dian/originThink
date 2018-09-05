@@ -374,10 +374,10 @@ class Auth
                     }
                 } else {
                     //只要存在就记录
-                    $menuList[] = $rule['name'];
+                    $menuList[] = $rule;
                 }
             }
-            $menuList=list_to_tree(array_unique($menuList));
+            $menuList=list_to_tree($menuList);
         }else{
             //超级管理员
             $map= [
