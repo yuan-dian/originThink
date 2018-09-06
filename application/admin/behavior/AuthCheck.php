@@ -12,7 +12,6 @@ class AuthCheck extends Controller
 {
     protected $uid;
     protected $group_id;
-
     
     public function run()
     {
