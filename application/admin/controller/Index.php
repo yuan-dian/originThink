@@ -17,7 +17,7 @@ class Index extends Common
     public function index()
     {
         //获取菜单
-        $menuList=(new \org\Auth())->getMenuList();
+        $menuList=(new \org\Auth($this->uid,$this->group_id))->getMenuList();
         $this->assign('menuList',$menuList);
         return $this->fetch();
     }

@@ -95,7 +95,12 @@ class Auth
      * 类架构函数
      * Auth constructor.
      */
-    public function __construct()
+    /**
+     * Auth constructor.
+     * @param int $uid        用户id
+     * @param array $group_id 用户组
+     */
+    public function __construct($uid=0,$group_id=[])
     {
         //可设置配置项 auth, 此配置项为数组。
         if ($auth = Config::get('auth.')) {
@@ -103,25 +108,19 @@ class Auth
         }
         // 初始化request
         $this->request = Request::instance();
-        //获取当前用户登录信息
-        $user = session('user_auth');
-        $this->uid=$user['uid'];
-        $this->group_id=$user['group_id'];
+        $this->uid=$uid;
+        $this->group_id=$group_id;
     }
 
     /**
      * @param        $name     string|array  需要验证的规则列表,支持逗号分隔的权限规则或索引数组
-     * @param        $uid      int           认证用户的id
      * @param int    $type     认证类型
      * @param string $mode     执行check的模式
      * @param string $relation 如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
      * @return bool  通过验证返回true;失败返回false
      * @author 原点 <467490186@qq.com>
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
      */
-    public function check($name, $uid=0, $type = 1, $mode = 'url', $relation = 'or')
+    public function check($name, $type = 1, $mode = 'url', $relation = 'or')
     {
         //判断权限开关
         if (!$this->config['auth_on']) {
@@ -130,9 +129,8 @@ class Auth
         if(in_array($name,$this->config['exclude_rule'])){
             return true;
         }
-        $uid=$uid?$uid:$this->uid;
         // 获取用户需要验证的所有有效规则列表
-        $authList = $this->getAuthList($uid, $type);
+        $authList = $this->getAuthList($type);
         if (is_string($name)) {
             $name = strtolower($name);
             if (strpos($name, ',') !== false) {
@@ -206,12 +204,11 @@ class Auth
 
     /**
      * 获得权限列表
-     * @param $uid  用户id
      * @param $type 验证类型
      * @return array|mixed
      * @author 原点 <467490186@qq.com>
      */
-    protected function getAuthList($uid, $type)
+    protected function getAuthList($type)
     {
         //获取缓存开启状态
         $is_cache=$this->config['is_cache'];
@@ -227,7 +224,7 @@ class Auth
                 return $_authList;
             }
         }
-        $rules=$this->_auth_rule($uid);
+        $rules=$this->_auth_rule();
         $authList = [];
         foreach ($rules  as $rule){
             $authList[] = strtolower($rule['name']);
@@ -242,14 +239,13 @@ class Auth
 
     /**
      * 获得用户资料
-     * @param $uid 用户id
      * @return array|mixed|null|PDOStatement|string|\think\Model
      * @author 原点 <467490186@qq.com>
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    protected function getUserInfo($uid)
+    protected function getUserInfo()
     {
         //获取缓存开启状态
         $is_cache=$this->config['is_cache'];
@@ -257,7 +253,7 @@ class Auth
         //判断是否开启缓存
         if($is_cache){
             //设置缓存name
-            $cache_key=$this->config['prefix'].'user_info_'.$uid;
+            $cache_key=$this->config['prefix'].'user_info_'.$this->uid;
             //获取缓存
             $user_info=Cache::get($cache_key);
             if ($user_info) {
@@ -267,7 +263,7 @@ class Auth
         $user = Db::name($this->config['auth_user']);
         // 获取用户表主键
         $_pk = is_string($user->getPk()) ? $user->getPk() : 'uid';
-        $user_info = $user->where($_pk, $uid)->find();
+        $user_info = $user->where($_pk, $this->uid)->find();
         if($is_cache){
             //设置缓存
             Cache::tag($this->config['cache_tag'])->set($cache_key,$user_info,$this->config['expire']);
@@ -322,9 +318,8 @@ class Auth
         return $menuList;
     }
 
-    public function _auth_rule($uid='')
+    public function _auth_rule()
     {
-        $uid=$uid?$uid:$this->uid;
         $groups = $this->getGroups();
         $ids    = []; //保存用户所属用户组设置的所有权限规则id
         foreach ($groups as $g) {
@@ -346,7 +341,7 @@ class Auth
         foreach ($rules as $rule) {
             if (!empty($rule['condition'])) {
                 //根据condition进行验证
-                $user    = $this->getUserInfo($uid); //获取用户信息,一维数组
+                $user    = $this->getUserInfo($this->uid); //获取用户信息,一维数组
                 $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
                 $condition='';
                 @(eval('$condition=(' . $command . ');'));

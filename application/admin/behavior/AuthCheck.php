@@ -12,7 +12,7 @@ class AuthCheck extends Controller
 {
     protected $uid;
     protected $group_id;
-    
+
     public function run()
     {
         $this->checkLogin();//验证是否登录
@@ -42,8 +42,8 @@ class AuthCheck extends Controller
      */
     private function check(){
         if($this->uid!=1){
-            $Auth=new \org\Auth();
-            if(!$Auth->check(request()->path(),$this->uid)) { //验证当前访问页面的权限
+            $Auth=new \org\Auth($this->uid,$this->group_id);
+            if(!$Auth->check(request()->path())) { //验证当前访问页面的权限
                 alert_error(config('auth.not_auth_tip'));
             }
         }
