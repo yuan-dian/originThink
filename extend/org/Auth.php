@@ -68,6 +68,10 @@ CREATE TABLE `think_auth_group_access` (
 class Auth
 {
     /**
+     * @var object 对象实例
+     */
+    protected static $instance;
+    /**
      * 当前请求实例
      * @var Request
      */

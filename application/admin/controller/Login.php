@@ -7,35 +7,18 @@
  */
 
 namespace app\admin\controller;
-use think\Controller;
-use think\Loader;
 
+use think\Controller;
+use app\admin\service\UserService;
 class Login extends Controller
 {
     /**
      * 用户登录
-     * @return mixed
+     * @return array|mixed
      * @author 原点 <467490186@qq.com>
-     */
-    public function aa()
-    {
-//        if(get_user_id()){
-//            $this->redirect(url('/admin/index'));
-//        }else{
-        if(!request()->isPost()){
-            return $this->fetch();
-        }else{
-            $data=input();
-            $result=model('User')->login($data);
-            return $result;
-        }
-//        }
-
-    }
-    /**
-     * 用户登录
-     * @return mixed
-     * @author 原点 <467490186@qq.com>
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function login()
     {
@@ -46,7 +29,7 @@ class Login extends Controller
                 return $this->fetch();
             }else{
                 $data=input();
-                $result=model('User')->login($data);
+                $result=UserService::login($data);
                 return $result;
             }
         }
@@ -67,32 +50,14 @@ class Login extends Controller
      * 修改密码
      * @return mixed
      * @author 原点 <467490186@qq.com>
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
      */
     public function editPassword()
     {
         if(request()->isPost()){
             $data=input();
-            $list=model('User')->where(['uid'=>get_user_id()])->find();
-            if($list['password']!=md5(md5($data['oldpassword']).$list['random'])){
-                $this->error('原密码错误');
-            }else{
-                $random=rand(1111,9999);
-                $save=[
-                    'password'=>md5(md5($data['password']).$random),
-                    'random'=>$random,
-                    'updatapassword'=>1,
-                ];
-                $res=model('User')->isUpdate(true)->save($save,['uid'=>get_user_id()]);
-                if($res){
-                    $this->logout();
-                    $this->success('重置成功,请重新登录',url('/admin/login'));
-                }else{
-                    $this->error('修改失败');
-                }
-            }
+            $uid=get_user_id();
+            $res=UserService::editPassword($uid,$data['oldpassword'],$data['password']);
+            return $res;
         }else{
             return $this->fetch();
         }

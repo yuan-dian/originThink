@@ -9,6 +9,7 @@
 namespace app\admin\controller;
 
 
+use app\admin\service\UserService;
 use think\facade\Cache;
 class User extends Common
 {
@@ -83,37 +84,39 @@ class User extends Common
                     $this->error('编辑失败');
                 }
             }else{
-                $validate =validate('User');
-                if(!$validate->scene('add')->check($data)){
-                    $validate->getError()!='令牌数据无效'? $token=$this->request->token():$token='';
-                    $this->error($validate->getError(),null,['token'=>$token]);
-                }
-                $User=model('User');
-                $random=rand(1111,9999);
-                $userdata=[
-                    'user'=>$data['user'],
-                    'name'=>$data['name'],
-                    'status'=>$data['status'],
-                    'password'=>md5(md5($data['password']).$random),
-                    'random'=>$random,
-                ];
-                $res=$User->allowField(true)->isUpdate(false)->save($userdata);
-                if($res){
-                    $group_ids=explode(',',$data['group_id']);
-                    $save=[];
-                    foreach ($group_ids as $v){
-                        $save[]=[
-                            'uid'=>$User->uid,
-                            'group_id'=>$v
-                        ];
-                    }
-                    $res2=model('AuthGroupAccess')->isUpdate(false)->saveAll($save);
-                    if($res2){
-                        $this->success('添加成功',url('/admin/userList'));
-                    }else{
-                        $this->error('添加失败',null,['token'=>$this->request->token()]);
-                    }
-                }
+                $data=UserService::add($data);
+                return $data;
+//                $validate =validate('User');
+//                if(!$validate->scene('add')->check($data)){
+//                    $validate->getError()!='令牌数据无效'? $token=$this->request->token():$token='';
+//                    $this->error($validate->getError(),null,['token'=>$token]);
+//                }
+//                $User=model('User');
+//                $random=rand(1111,9999);
+//                $userdata=[
+//                    'user'=>$data['user'],
+//                    'name'=>$data['name'],
+//                    'status'=>$data['status'],
+//                    'password'=>md5(md5($data['password']).$random),
+//                    'random'=>$random,
+//                ];
+//                $res=$User->allowField(true)->isUpdate(false)->save($userdata);
+//                if($res){
+//                    $group_ids=explode(',',$data['group_id']);
+//                    $save=[];
+//                    foreach ($group_ids as $v){
+//                        $save[]=[
+//                            'uid'=>$User->uid,
+//                            'group_id'=>$v
+//                        ];
+//                    }
+//                    $res2=model('AuthGroupAccess')->isUpdate(false)->saveAll($save);
+//                    if($res2){
+//                        $this->success('添加成功',url('/admin/userList'));
+//                    }else{
+//                        $this->error('添加失败',null,['token'=>$this->request->token()]);
+//                    }
+//                }
 
             }
         }else{
