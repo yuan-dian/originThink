@@ -163,12 +163,73 @@ class UserService
                     'group_id'=>$v
                 ];
             }
-            $res2=AuthGroupAccess::isUpdate(false)->saveAll($save);
+            $AuthGroupAccess=new AuthGroupAccess;
+            $res2=$AuthGroupAccess->saveAll($save,false);
             if($res2){
                 $msg=Result::success('添加成功',url('/admin/userList'));
             }else {
                 $msg=Result::error('添加失败', null, ['token' => Request::token()]);
             }
+        }
+        return $msg;
+    }
+
+    /**
+     * 编辑用户
+     * @param $data
+     * @return array|string
+     */
+    public static function edit($data)
+    {
+        $userdata=[
+            'name'=>$data['name'],
+            'status'=>$data['status'],
+        ];
+        $res=User::update($userdata,['uid'=>$data['uid']]);
+        if($res){
+            AuthGroupAccess::where('uid','=',$data['uid'])->delete();
+            $group_ids=explode(',',$data['group_id']);
+            $save=[];
+            foreach ($group_ids as $v){
+                $save[]=[
+                    'uid'=>$data['uid'],
+                    'group_id'=>$v
+                ];
+            }
+            $AuthGroupAccess=new AuthGroupAccess;
+            $res2=$AuthGroupAccess->saveAll($save,false);
+            if($res2){
+                $msg=Result::success('编辑成功',url('/admin/userlist'));
+            }else{
+                $msg=Result::error('编辑失败');
+            }
+        }else{
+            $msg=Result::error('编辑失败');
+        }
+        return $msg;
+    }
+
+    /**
+     * 删除用户
+     * @param $uid
+     * @return array|string
+     */
+    public static function delete($uid)
+    {
+        if(!$uid){
+            $msg=Result::error('参数错误');
+            return $msg;
+        }
+        if($uid==1){
+            $msg=Result::error('超级管理员无法删除');
+            return $msg;
+        }
+        $res=User::destroy($uid);
+        if($res){
+            AuthGroupAccess::where('uid','=',$uid)->delete();
+            $msg=Result::error('删除成功');
+        }else{
+            $msg=Result::error('删除失败');
         }
         return $msg;
     }
