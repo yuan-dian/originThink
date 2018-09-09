@@ -68,7 +68,6 @@ class Login extends Controller
      */
     public function unlock()
     {
-        $this->request->isPost();
         if(!$this->request->isPost()){
             $this->error('非法请求');
         }
