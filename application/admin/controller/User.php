@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 
 use app\admin\service\UserService;
+use app\admin\service\AuthGroupService;
 use think\facade\Cache;
 class User extends Common
 {
@@ -100,7 +101,7 @@ class User extends Common
      */
     public function delete()
     {
-        $uid=input('uid');
+        $uid=input('uid',0,'intval');
         if($uid){
             if($uid!=1){
                 $res=UserService::delete($uid);
@@ -123,33 +124,22 @@ class User extends Common
      */
     public function groupList()
     {
-        $data=input();
         if(request()->isPost()){
-            switch ($data['type']){
-                case 1://编辑、添加用户
-                    if($data['id']){
-                        $res=model('AuthGroup')->isUpdate(true)->save(['title'=>$data['title']],['id'=>$data['id']]);
-                        if($res){
-                            $this->success('修改成功');
-                        }else{
-                            $this->error('修改失败');
-                        }
-                    }else{
-                        $res=model('AuthGroup')->isUpdate(false)->save(['title'=>$data['title']]);
-                        if($res){
-                            $this->success('添加成功');
-                        }else{
-                            $this->error('添加失败');
-                        }
+            $id=input('id',0,'intval');
+            $type=input('type',0,'intval');
+            $title=input('title','','trim');
+            $status=input('status',0,'intval');
+            $rules=input('rules',[]);
+            switch ($type){
+                case 1://编辑、添加用户组
+                    if($id){//编辑用户组
+                        return AuthGroupService::edit($id,['title'=>$title]);
+                    }else{//添加用户组
+                        return AuthGroupService::add($title);
                     }
                     break;
                 case 2://是否禁用用户组
-                    $res=model('AuthGroup')->isUpdate(true)->save(['status'=>$data['status']],['id'=>$data['id']]);
-                    if($res){
-                        $this->success('修改成功');
-                    }else{
-                        $this->error('修改失败');
-                    }
+                    return AuthGroupService::edit($id,['status'=>$status]);
                     break;
                 case 3://获取权限列表
                     $list=db('auth_rule')->field('id,pid,title as text')->select();
@@ -157,25 +147,24 @@ class User extends Common
                     return $data;
                     break;
                 case 4://修改用户组权限
-                    sort($data['rules']);
-                    $rules=implode(',',$data['rules']);
-                    $res=model('AuthGroup')->isUpdate(true)->save(['rules'=>$rules],['id'=>$data['id']]);
-                    if($res){
+                    if(!$rules)$this->error('参数错误');
+                    sort($rules);
+                    $rules=implode(',',$rules);
+                    $res=AuthGroupService::edit($id,['rules'=>$rules]);
+                    if($res['code']){
                         Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
-                        $this->success('修改成功');
-                    }else{
-                        $this->error('修改失败');
                     }
+                    return $res;
                     break;
             }
-        }
-        else{
+        }else{
             $list=[];
             if(request()->isAjax()){
+                $key=input('key','','trim');
+                $limit=input('key',10,'intval');
                 $map=[];
-                empty($data['key']) || $map[]=$map[]=['title','like','%'.$data['key'].'%'];
-                isset($data['limit'])?$limit=$data['limit'] : $limit=10;
-                $list=model('AuthGroup')->where($map)->paginate($limit,false,['query'=>$data]);
+                empty($key) || $map[]=['title','like','%'.$key.'%'];
+                $list=model('AuthGroup')->where($map)->paginate($limit,false,['query'=>['key'=>$key],'limit'=>$limit]);
                 $data=$list->toarray();
                 return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
             }
