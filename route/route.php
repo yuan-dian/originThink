@@ -43,7 +43,8 @@ Route::group('admin', [
     'menu$'=>'admin/System/menu',                                            //系统菜单
     'editMenu$'=>'admin/System/editMenu',                                    //编辑菜单
     'deleteMenu$'=>'admin/System/deleteMenu',                                //删除菜单
-    'config'=>'admin/System/config',                                         //配置管理
+    'config'=>'admin/System/config',                                         //系统配置
+    'siteConfig'=>'admin/System/siteConfig',                                 //站点配置
 
 //])->before(['\app\admin\behavior\AuthCheck'])->ext('html');                //使用路由行为验证（废弃）
 ])->middleware(app\admin\middleware\Auth::class)->ext('html');               //使用中间件验证

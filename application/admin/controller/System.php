@@ -40,19 +40,6 @@ class System extends Common
                 $this->error('请选择清除的范围');
             }
         }
-//        递归删除所有缓存
-//        $dirs=(array) glob(App::getRuntimePath() . '*');
-//        foreach ($dirs as $key=>$value){
-//            array_map('unlink', glob($value . '/*.*'));
-//            $dirs = (array) glob($value . '/*');
-//            foreach ($dirs as $dir) {
-//                array_map('unlink', glob($dir . '/*'));
-//            }
-//            if($dirs){
-//                array_map('rmdir', $dirs);
-//            }
-//        }
-//        $this->success('缓存清空成功');
     }
 
     /**
@@ -131,7 +118,7 @@ class System extends Common
                 $res=db('auth_rule')->insert($save);
             }
             if($res){
-                Cache::clear('ruleslist');
+                Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
                 $this->success('保存成功',url('/admin/menu'));
             }else{
                 $this->error('保存失败');
@@ -148,57 +135,6 @@ class System extends Common
             $this->assign('menu',$menu);
             return $this->fetch();
         }
-//        $data=input();
-//        isset($data['type']) || $this->error('参数错误');
-//        switch ($data['type']){
-//            case 1:     //打开添加模态框
-//                $this->result([],1);
-//                break;
-//            case 2:     //打开编辑模态框
-//                $list=db('auth_rule')->where('id',$data['id'])->find();
-//                $this->result($list,1);
-//                break;
-//            case 3:     //添加菜单
-//                $add=[
-//                    'name'=>$data['name'],
-//                    'title'=>$data['title'],
-//                    'pid'=>$data['pid'],
-//                    'status'=>$data['status'],
-//                    'menu'=>$data['menu'],
-//                    'icon'=>$data['icon'],
-//                    'sort'=>$data['sort'],
-//                ];
-//                $res=db('auth_rule')->insert($add);
-//                if($res){
-//                    Cache::clear('ruleslist');
-//                    $this->success('添加成功',url('/admin/menu'));
-//                }else{
-//                    $this->error('添加失败');
-//                }
-//                break;
-//            case 4:     //编辑菜单
-//                !empty($data['id']) || $this->error('参数错误');
-//                $save=[
-//                    'name'=>$data['name'],
-//                    'title'=>$data['title'],
-//                    'pid'=>isset($data['pid'])?$data['pid']:0,
-//                    'status'=>$data['status'],
-//                    'menu'=>$data['menu'],
-//                    'icon'=>$data['icon'],
-//                    'sort'=>$data['sort'],
-//                ];
-//                $res=db('auth_rule')->where('id',$data['id'])->update($save);
-//                if($res){
-//                    Cache::clear('ruleslist');
-//                    $this->success('编辑成功',url('/admin/menu'));
-//                }else{
-//                    $this->error('编辑失败');
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//        $this->error('参数错误');
     }
 
     /**
@@ -216,7 +152,7 @@ class System extends Common
         }
         $res=db('auth_rule','',false)->where('id',$data['id'])->delete();
         if($res){
-            Cache::clear('ruleslist');
+            Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
             $this->success('删除成功',url('/admin/menu'));
         }else{
             $this->error('删除失败');
@@ -239,8 +175,6 @@ class System extends Common
         }else{
             $data=input();
             if(!$data) $this->error('参数错误');
-            $save['value']=$data;
-            $save['status']=$data['status'];
             $save=[
                 'value'=>[
                     'debug'=>$data['debug'],
@@ -259,5 +193,36 @@ class System extends Common
             }
         }
 
+    }
+
+    /**
+     * 站点配置
+     * @return mixed
+     */
+    public function siteConfig()
+    {
+        if(!request()->isPost()){
+            $data=db('config')->where('name','site_config')->json(['value'])->find();
+            $this->assign('data',$data);
+            return $this->fetch();
+        }else{
+            $title=input('title','tpswoole','trim');
+            $name=input('name','tpswoole','trim');
+            if(!$title || !$name)$this->error('参数错误');
+            $save=[
+                'value'=>[
+                    'title'=>$title,
+                    'name'=>$name
+                ],
+                'update_time'=>time()
+            ];
+            $res=db('config')->where('name','site_config')->json(['value'])->update($save);
+            if($res){
+                cache('site_config',null);
+                $this->success('修改成功',url('/admin/siteConfig'));
+            }else{
+                $this->error('修改失败');
+            }
+        }
     }
 }

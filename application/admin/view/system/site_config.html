@@ -1,0 +1,57 @@
+{extend name="base/base" /}
+{block name="main"}
+<form action="" id="form" class="layui-form" method="post">
+    <table class="layui-table mag0">
+        <colgroup>
+            <col width="25%">
+            <col width="45%">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>参数说明</th>
+            <th>参数值</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>网站标题</td>
+            <td>
+                <input type="text" class="layui-input" name="title" value="{$data.value.title}">
+             </td>
+        </tr>
+        <tr>
+            <td>网站名称</td>
+            <td>
+                <input type="text" class="layui-input" name="name" value="{$data.value.name}">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding-right: 15%">
+                <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</form>
+{/block}
+{block name="script"}
+<script>
+layui.use(['form','jquery'], function(){
+    var form = layui.form;
+    var $ = layui.jquery;
+    //监听提交
+    form.on('submit(save)', function(data){
+        $.post("{:url('/admin/siteConfig')}",data.field,function (res) {
+            layer.msg(res.msg, {time: 1500}, function () {
+                if (res.code) {
+                    location.reload();
+                }
+            });
+        });
+        return false;
+    });
+});
+</script>
+{/block}

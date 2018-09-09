@@ -22,6 +22,8 @@ class Common extends Controller
         $this->uid=$user['uid'];
         $this->group_id=$user['group_id'];
         $this->config();
+        $site_config=$this->siteConfig();
+        $this->assign('site_config',$site_config);
     }
 
     /**
@@ -40,6 +42,20 @@ class Common extends Controller
             config('app_trace',$list['value']['trace']);
             config('trace.type',$list['value']['trace_type']==0?'Html':'Console');
         }
+    }
+
+    /**
+     * 站点配置信息
+     * @return array|mixed|null|\PDOStatement|string|\think\Model
+     */
+    private function siteConfig(){
+        $site_config=cache('site_config');
+        if($site_config){
+            return $site_config;
+        }
+        $list=db('config')->where('name','=','site_config')->json(['value'])->field('value')->find();
+        cache('site_config',$list);
+        return $list;
     }
 
 }
