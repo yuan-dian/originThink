@@ -62,4 +62,26 @@ class Login extends Controller
             return $this->fetch();
         }
     }
+
+    /**
+     * 解锁
+     */
+    public function unlock()
+    {
+        $this->request->isPost();
+        if(!$this->request->isPost()){
+            $this->error('非法请求');
+        }
+        $uid=get_user_id();
+        if(!$uid){
+            $this->error('登录信息过期',url('/admin/login'));
+        }
+        $password=input('password','','trim');
+        $psd=model('user')->where('uid','=',get_user_id())->value('password');
+        if(password_verify($password,$psd)){
+           $this->success('解锁成功');
+        }else{
+            $this->error('密码错误');
+        }
+    }
 }

@@ -2,7 +2,7 @@
 MySQL Backup
 Source Server Version: 5.7.14
 Source Database: tp5.1
-Date: 2018/9/9 10:57:03
+Date: 2018/9/9 16:19:13
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -107,6 +107,6 @@ CREATE TABLE `think_user` (
 -- ----------------------------
 INSERT INTO `think_auth_group` VALUES ('1','管理员组','1','1,2,3,4,5,6,8,9,10','0','1494407780'), ('2','普通用户组','1','1,2,3,4,10,13,14,18,19','0','1494308736');
 INSERT INTO `think_auth_group_access` VALUES ('1','1'), ('2','2');
-INSERT INTO `think_auth_rule` VALUES ('1','#','首页','0','1','1','','1','fa fa-home','1'), ('2','#','用户管理','0','1','1','','1','fa fa-user','1'), ('3','admin/userList','用户列表','2','1','1','','1',NULL,'1'), ('4','admin/groupList','用户组列表','2','1','1','','1',NULL,'1'), ('5','admin/edit','添加用户','2','1','1','','0','','1'), ('6','#','系统管理','0','1','1','','1','fa fa-cog','1'), ('7','admin/cleanCache','清除缓存','13','1','1','','1','','1'), ('8','admin/menu','菜单管理','13','1','1','','1','','1'), ('9','admin/home','系统信息','1','1','1','','1','','1'), ('10','admin/log','日志管理','13','1','1','','1','','1'), ('11','admin/editMenu','编辑菜单','13','1','1','','0','','1'), ('12','admin/deleteMenu','删除菜单','13','1','1','','0','','1'), ('13','admin/config','系统配置','13','1','1','','1','','1'), ('14','admin/siteConfig','站点配置','13','1','1','','1','','1');
-INSERT INTO `think_config` VALUES ('1','system_config','系统配置','{\"debug\": \"0\", \"trace\": \"0\", \"trace_type\": \"0\"}','0','1523414007','1531729547'), ('2','site_config','站点配置','{\"name\": \"tpswoole\", \"title\": \"tpswoole\"}','1','1523414007','1536461414');
-INSERT INTO `think_user` VALUES ('1','admin','admin',NULL,'$2y$10$HLh4UHoluqLvwsNN6vQxz.tuKMA5xYp6rH2vOpA.74sxiQbjwm2My','82','127.0.0.1','1536458451','1','1','0','1536458451'), ('2','admin1','admin1',NULL,'$2y$10$HLh4UHoluqLvwsNN6vQxz.tuKMA5xYp6rH2vOpA.74sxiQbjwm2My','13','127.0.0.1','1535891091','1','1','0','1535891091');
+INSERT INTO `think_auth_rule` VALUES ('1','#','首页','0','1','1','','1','fa fa-home','1'), ('2','#','用户管理','0','1','1','','1','fa fa-user','1'), ('3','admin/userList','用户列表','2','1','1','','1',NULL,'1'), ('4','admin/groupList','用户组列表','2','1','1','','1',NULL,'1'), ('5','admin/edit','添加用户','2','1','1','','0','','1'), ('6','#','系统管理','0','1','1','','1','fa fa-cog','1'), ('7','admin/cleanCache','清除缓存','6','1','1','','1','','1'), ('8','admin/menu','菜单管理','6','1','1','','1','','1'), ('9','admin/home','系统信息','1','1','1','','1','','1'), ('10','admin/log','日志管理','6','1','1','','1','','1'), ('11','admin/editMenu','编辑菜单','6','1','1','','0','','1'), ('12','admin/deleteMenu','删除菜单','6','1','1','','0','','1'), ('13','admin/config','系统配置','6','1','1','','1','','1'), ('14','admin/siteConfig','站点配置','6','1','1','','1','','1');
+INSERT INTO `think_config` VALUES ('1','system_config','系统配置','{\"debug\": \"0\", \"trace\": \"0\", \"trace_type\": \"0\"}','0','1523414007','1531729547'), ('2','site_config','站点配置','{\"name\": \"tpswoole\", \"title\": \"tpswoole\", \"copyright\": \"copyright @2018 原点\"}','1','1523414007','1536478335');
+INSERT INTO `think_user` VALUES ('1','admin','admin',NULL,'$2y$10$HLh4UHoluqLvwsNN6vQxz.tuKMA5xYp6rH2vOpA.74sxiQbjwm2My','87','127.0.0.1','1536480810','1','1','0','1536480810'), ('2','admin1','admin1',NULL,'$2y$10$HLh4UHoluqLvwsNN6vQxz.tuKMA5xYp6rH2vOpA.74sxiQbjwm2My','13','127.0.0.1','1535891091','1','1','0','1535891091');

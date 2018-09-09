@@ -208,11 +208,13 @@ class System extends Common
         }else{
             $title=input('title','tpswoole','trim');
             $name=input('name','tpswoole','trim');
+            $copyright=input('copyright','copyright @2018 原点','trim');
             if(!$title || !$name)$this->error('参数错误');
             $save=[
                 'value'=>[
                     'title'=>$title,
-                    'name'=>$name
+                    'name'=>$name,
+                    'copyright'=>$copyright
                 ],
                 'update_time'=>time()
             ];
