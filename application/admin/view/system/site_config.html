@@ -1,46 +1,45 @@
 {extend name="base/base" /}
 {block name="main"}
-<form action="" id="form" class="layui-form" method="post">
-    <table class="layui-table mag0">
-        <colgroup>
-            <col width="25%">
-            <col width="45%">
-            <col>
-        </colgroup>
-        <thead>
-        <tr>
-            <th>参数说明</th>
-            <th>参数值</th>
-        </tr>
-        </thead>
-        <tr>
-            <td>网站标题</td>
-            <td>
-                <input type="text" class="layui-input" name="title" value="{$data.value.title}">
-             </td>
-        </tr>
-        <tr>
-            <td>网站名称</td>
-            <td>
-                <input type="text" class="layui-input" name="name" value="{$data.value.name}">
-            </td>
-        </tr>
-        <tr>
-            <td>版权信息</td>
-            <td>
-                <input type="text" class="layui-input" name="copyright" value="{$data.value.copyright}">
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center" style="padding-right: 15%">
-                <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
-            </td>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</form>
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>系统配置</legend>
+</fieldset>
+    <div class="layui-row layui-tab-content">
+        <div class="layui-col-md6">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required  lay-verify="required" placeholder="请输入网站标题" value="{$data.value.title}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" required lay-verify="required" placeholder="请输入网站名称" value="{$data.value.name}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备案号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="icp" required lay-verify="required" placeholder="请输入备案号" value="{$data.value.icp}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">版权信息</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="copyright" required lay-verify="required" placeholder="请输入版权信息" value="{$data.value.copyright}" value="{$data.value.name}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 {/block}
 {block name="script"}
 <script>

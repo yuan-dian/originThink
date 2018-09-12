@@ -1,97 +1,93 @@
 {extend name="base/base" /}
 {block name="css"}{css href="/font-awesome/css/font-awesome.min.css" /}{/block}
 {block name="main"}
+<style>
+    html,body{
+        height: 80%;
+    }
+</style>
 <form class="layui-form">
     <blockquote class="layui-elem-quote quoteBox">
         <form class="layui-form">
             <div class="layui-inline">
-                <div class="layui-input-inline">
-                    <input type="text" class="layui-input searchVal" placeholder="请输入账号或昵称" />
-                </div>
-                <a class="layui-btn search_btn" data-type="reload">搜索</a>
-            </div>
-            <div class="layui-inline">
-                <a class="layui-btn layui-btn-danger layui-btn-normal" onclick="add()">添加</a>
+                <a class="layui-btn layui-btn-danger layui-btn-normal" onclick="add();">添加节点</a>
+                <a class="layui-btn  layui-btn-normal" onclick="openAll();">展开或折叠全部</a>
             </div>
         </form>
     </blockquote>
 </form>
-<table  lay-filter="demo" class="layui-table" >
-    <colgroup>
-        <col width="200">
-        <col width="200">
-        <col>
-        <col>
-        <col>
-        <col>
-        <col width="200">
-    </colgroup>
-    <thead>
-    <tr>
-        <th>名称</th>
-        <th>url</th>
-        <th>图标</th>
-        <th>排序</th>
-        <th>类型</th>
-        <th>状态</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    {volist name='list' id='vo'}
-        <tr>
-            <td onclick="showChild('{$vo.id}')" ><i id="icon-{$vo.id}" data-toggle="1" class="fa fa-plus-circle"></i>  {$vo.title}</th>
-            <td>{$vo.name}</td>
-            <td><i class="{$vo.icon}"></i>  {$vo.icon}</td>
-            <td>{$vo.sort}</td>
-            <td>{$vo.menu?'菜单':'行为'}</td>
-            <td>{$vo.status?'启用':'禁用'}</td>
-            <td> <button class="layui-btn layui-btn-xs" onclick="edit('{$vo.id}')">编辑</button>  <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteMenu('{$vo.id}')">删除</button></td>
-        </tr>
-        {if(isset($vo['child']))}
-            {volist name="vo['child']" id='child'}
-                <tr class="show-{$vo.id}" style="display: none">
-                    <td style="text-indent:2em">|-- {$child.title}</th>
-                    <td>{$child.name}</td>
-                    <td>{$child.icon}</td>
-                    <td>{$child.sort}</td>
-                    <td>{$child.menu?'菜单':'行为'}</td>
-                    <td>{$child.status?'启用':'禁用'}</td>
-                    <td> <button class="layui-btn layui-btn-xs"  onclick="edit('{$child.id}')" >编辑</button> <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteMenu('{$child.id}')">删除</button></td>
-                </tr>
-            {/volist}
-        {/if}
-    {/volist}
-    </tbody>
-</table>
+<script type="text/html" id="type">
+    {{ d.menu == 1 ? '菜单' : '行为' }}
+</script>
+<script type="text/html" id="status">
+    <input type="checkbox" name="menustatus" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="menustatus" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="order">
+    <input name="{{d.id}}" data-id="{{d.id}}" class="list_order layui-input" value=" {{d.sort}}" size="10"/>
+</script>
+<script type="text/html" id="icon">
+    <span class="icon {{d.icon}}"></span>
+</script>
+<script type="text/html" id="action">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+</script>
+<table class="layui-table" id="treeTable" lay-filter="treeTable"></table>
 {/block}
 {block name="script"}
 <script>
-    var $='';
-    var layer='';
-    var table='';
-    layui.use(['form','layer','table'],function(){
-        $ = layui.jquery;
-        layer = parent.layer === undefined ? layui.layer : top.layer;
-        table = layui.table;
-        var form = layui.form;
-    })
-    /**
-     * 收起与展开效果
-     * @param id 分类id
-     */
-    function showChild(id) {
-        var toggle=$('#icon-'+id).data('toggle');
-        if(toggle==1){
-            $('#icon-'+id).attr('class','fa fa-minus-circle');
-            $('#icon-'+id).data('toggle',0)
-        }else{
-            $('#icon-'+id).attr('class','fa fa-plus-circle');
-            $('#icon-'+id).data('toggle',1)
-        }
-        $('.show-'+id).toggle();
-    }
-
+    var ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+    layui.config({
+        base: '/layui/extend/'
+    }).extend({
+        treeGrid:'treeGrid'
+    }).use(['jquery','treeGrid','layer','form'], function(){
+        var $=layui.jquery;
+        treeGrid = layui.treeGrid;
+        layer=layui.layer;
+        form = layui.form;
+        ptable=treeGrid.render({
+            id:tableId,
+            elem: '#'+tableId,
+            idField:'id',
+            url:"{:url('/admin/menu')}",
+            cellMinWidth: 100,
+            treeId:'id',//树形id字段名称
+            treeUpId:'pid',//树形父id字段名称
+            treeShowName:'title',//以树形式显示的字段
+            height:'full-140',
+            isFilter:false,
+            iconOpen:false,//是否显示图标【默认显示】
+            isOpenDefault:false,//节点默认是展开还是折叠【默认展开】
+            cols: [[
+                {field: 'id', title: '编号', fixed: true},
+                {field: 'icon', align: 'center',title: '图标',templet: '#icon'},
+                {field: 'title', title: '权限名称', },
+                {field: 'name', title: '控制器/方法', },
+                {field: 'menu',align: 'center', title: '类型',toolbar: '#type'},
+                // {field: 'status',align: 'center',title: '状态',toolbar: '#status'},
+                {field: 'sort',align: 'center', title: '排序'},
+                {width: 160,align: 'center', title: '操作', toolbar: '#action'}
+            ]],
+            page:false
+        });
+        treeGrid.on('tool('+tableId+')',function (obj) {
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
+                    $.post("{:url('/admin/deleteMenu')}",{id:data.id},function (data) {
+                        layer.msg(data.msg);
+                        if(data.code){
+                            obj.del();
+                        }
+                    });
+                });
+            }
+            if(obj.event === 'edit'){
+                edit(data.id)
+            }
+        });
+    });
     /**
      * 添加菜单
      */
@@ -141,17 +137,10 @@
         })
     }
 
-    /**
-     * 删除菜单
-     * @param id
-     */
-    function deleteMenu(id) {
-        $.post("{:url('/admin/deleteMenu')}",{id:id},function (data) {
-            layer.msg(data.msg);
-            if(data.code){
-                location.reload();
-            }
-        });
+
+    function openAll() {
+        var treedata=treeGrid.getDataTreeList(tableId);
+        treeGrid.treeOpenAll(tableId,!treedata[0][treeGrid.config.cols.isOpen]);
     }
 </script>
 {/block}

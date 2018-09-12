@@ -81,12 +81,10 @@ class System extends Common
      */
     public function menu()
     {
-        $data=input();
-        $map=[];
-        empty($data['title']) || $map['title']=$data['title'];
-        $list=db('auth_rule','',false)->where($map)->order('sort desc')->select();
-        empty($data['title']) && $list=list_to_tree($list);
-        $this->assign('list',$list);
+        if(request()->isPost()){
+            $list=db('auth_rule')->order('sort desc')->select();
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list,'is'=>true,'tip'=>'操作成功'];
+        }
         return $this->fetch();
     }
 
@@ -209,12 +207,14 @@ class System extends Common
             $title=input('title','tpswoole','trim');
             $name=input('name','tpswoole','trim');
             $copyright=input('copyright','copyright @2018 原点','trim');
+            $icp=input('icp','copyright @2018 原点','trim');
             if(!$title || !$name)$this->error('参数错误');
             $save=[
                 'value'=>[
                     'title'=>$title,
                     'name'=>$name,
-                    'copyright'=>$copyright
+                    'copyright'=>$copyright,
+                    'icp'=>$icp
                 ],
                 'update_time'=>time()
             ];
