@@ -1,8 +1,6 @@
 <?php
 namespace app\admin\controller;
 use client\Client;
-use think\facade\Request;
-use think\Template;
 
 class Index extends Common
 {

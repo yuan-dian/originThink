@@ -46,7 +46,6 @@ class System extends Common
      * 登录日志
      * @return mixed
      * @author 原点 <467490186@qq.com>
-     * @throws \think\exception\DbException
      */
     public function loginLog()
     {

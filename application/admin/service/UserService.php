@@ -178,6 +178,8 @@ class UserService
      * 编辑用户
      * @param $data
      * @return array|string
+     * @author 原点 <467490186@qq.com>
+     * @throws \Exception
      */
     public static function edit($data)
     {
@@ -211,8 +213,10 @@ class UserService
 
     /**
      * 删除用户
-     * @param $uid
+     * @param $uid 用户id
      * @return array|string
+     * @author 原点 <467490186@qq.com>
+     * @throws \Exception
      */
     public static function delete($uid)
     {

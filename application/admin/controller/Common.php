@@ -7,8 +7,8 @@
  */
 
 namespace app\admin\controller;
+
 use think\Controller;
-use think\Loader;
 class Common extends Controller
 {
     public $uid;             //用户id

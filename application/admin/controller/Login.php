@@ -48,8 +48,9 @@ class Login extends Controller
     }
     /**
      * 修改密码
-     * @return mixed
+     * @return array|mixed
      * @author 原点 <467490186@qq.com>
+     * @throws \think\Exception\DbException
      */
     public function editPassword()
     {

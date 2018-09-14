@@ -3,7 +3,7 @@
 {block name="main"}
 <style>
     html,body{
-        height: 80%;
+        height: 100%;
     }
 </style>
 <form class="layui-form">
@@ -60,14 +60,14 @@
             iconOpen:false,//是否显示图标【默认显示】
             isOpenDefault:false,//节点默认是展开还是折叠【默认展开】
             cols: [[
-                {field: 'id', title: '编号', fixed: true},
+                {field: 'id', title: '编号'},
                 {field: 'icon', align: 'center',title: '图标',templet: '#icon'},
                 {field: 'title', title: '权限名称', },
                 {field: 'name', title: '控制器/方法', },
                 {field: 'menu',align: 'center', title: '类型',toolbar: '#type'},
                 // {field: 'status',align: 'center',title: '状态',toolbar: '#status'},
                 {field: 'sort',align: 'center', title: '排序'},
-                {width: 160,align: 'center', title: '操作', toolbar: '#action'}
+                {width: 160,align: 'center', title: '操作', templet: '#action'}
             ]],
             page:false
         });

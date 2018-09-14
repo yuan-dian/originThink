@@ -17,6 +17,8 @@ class AuthGroupService
     /**
      * 添加用户组
      * @param $title 用户组名称
+     * @return array|string
+     * @author 原点 <467490186@qq.com>
      */
     public static function add($title)
     {
@@ -35,6 +37,8 @@ class AuthGroupService
      * 编辑用户组
      * @param $id    用户组id
      * @param $data  修改数据
+     * @return array|string
+     * @author 原点 <467490186@qq.com>
      */
     public static function edit($id,$data)
     {
