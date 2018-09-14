@@ -36,13 +36,13 @@
 {/block}
 {block name="script"}
 <script>
-    var ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+    var ptable=null,treeGrid=null,tableId='treeTable',layer=null, $=null,form=null
     layui.config({
         base: '/layui/extend/'
     }).extend({
         treeGrid:'treeGrid'
     }).use(['jquery','treeGrid','layer','form'], function(){
-        var $=layui.jquery;
+        $=layui.jquery;
         treeGrid = layui.treeGrid;
         layer=layui.layer;
         form = layui.form;
@@ -59,6 +59,7 @@
             isFilter:false,
             iconOpen:false,//是否显示图标【默认显示】
             isOpenDefault:false,//节点默认是展开还是折叠【默认展开】
+            onDblClickRow:false,//去除双击事件
             cols: [[
                 {field: 'id', title: '编号'},
                 {field: 'icon', align: 'center',title: '图标',templet: '#icon'},

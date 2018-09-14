@@ -2198,10 +2198,12 @@ layui.config({
         });
         //行双击事件
         bodytr.unbind('dblclick').on('dblclick',function (e) {
-            var index=$(this).attr("data-index");
-            var list=table.getDataList(that.config.id);
-            var o=list[index];
-            that.config.onDblClickRow(index,o);
+            if(that.config.onDblClickRow){
+                var index=$(this).attr("data-index");
+                var list=table.getDataList(that.config.id);
+                var o=list[index];
+                that.config.onDblClickRow(index,o);
+            }
         });
         //拖拽调整宽度
         th.unbind('mousemove').on('mousemove', function(e){
