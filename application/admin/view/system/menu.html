@@ -77,10 +77,15 @@
             if(obj.event === 'del'){
                 layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
                     $.post("{:url('/admin/deleteMenu')}",{id:data.id},function (data) {
-                        layer.msg(data.msg);
+                        var icon=5;
                         if(data.code){
-                            obj.del();
+                            icon=6;
                         }
+                        layer.msg(data.msg,{icon: icon},function () {
+                            if(data.code){
+                                obj.del();//删除对应的行
+                            }
+                        });
                     });
                 });
             }

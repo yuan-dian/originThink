@@ -46,23 +46,6 @@ class Login extends Controller
         session('user_auth_sign', null);
         return ['msg'=>'退出成功','url'=>url('/admin/login')];
     }
-    /**
-     * 修改密码
-     * @return array|mixed
-     * @author 原点 <467490186@qq.com>
-     * @throws \think\Exception\DbException
-     */
-    public function editPassword()
-    {
-        if(request()->isPost()){
-            $data=input();
-            $uid=get_user_id();
-            $res=UserService::editPassword($uid,$data['oldpassword'],$data['password']);
-            return $res;
-        }else{
-            return $this->fetch();
-        }
-    }
 
     /**
      * 解锁

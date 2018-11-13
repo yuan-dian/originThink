@@ -4,19 +4,19 @@
     <div class="layui-form-item">
         <label class="layui-form-label">所属层级</label>
         <div class="layui-input-block">
-            {form:select name="pid" list="$menu" value="$data['pid']" option="['datatype'=>'*','nullmsg'=>'请选择层级！']"}
+            {form:select name="pid" list="$menu" value="$data['pid']" option="['lay-verif'=>'required']"}
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">名称</label>
         <div class="layui-input-block">
-            <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($data.title)?$data.title:''}" datatype="*" nullmsg="请输入名称!">
+            <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($data.title)?$data.title:''}" lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">url</label>
         <div class="layui-input-block">
-            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.name)?$data.name:''}" datatype="*" nullmsg="请输入名称！">
+            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($data.name)?$data.name:''}" lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item">
@@ -46,7 +46,6 @@
     <div class="layui-form-item">
         <div class="layui-input-block">
             <input type="hidden" name="id" value="{:isset($data['id'])?$data['id']:''}">
-            <input type="hidden" name="__token__" id="token" value="{$Request.token}" />
             <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
@@ -54,32 +53,34 @@
 </form>
 {/block}
 {block name="script"}
-{js href="/js/jquery.min.js" /}
-{js href="/js/Validform_v5.3.2_min.js" /}
+
 <script>
-    layui.use('form', function(){
-        var form = layui.form;
-    });
-    $("#form").Validform({
-        ajaxPost:true,
-        tiptype:function (msg,o,cssctl) {
-            if(o.type==3 && msg!='所填信息没有经过验证，请稍后…'){
-                layer.msg(msg, {time: 1500});//验证错误的提示
-            }
-        },
-        callback:function(data){     //ajax提交后的返回调用方法（相当于ajax里面的success那个方法）
-            layer.msg(data.msg, {time: 1500}, function () {   //提示的插件，可以使用alert代替
-                if (data.code) {
-                    setTimeout(function () {
-                        //刷新父页面
-                        parent.location.reload();
-                    }, 500);
-                }else{
-                    $('#token').val(data.data.token);
+    layui.use(['form','jquery','layer'], function(){
+        var form = layui.form,$=layui.jquery,layer=layui.layer;
+        //表单提交
+        form.on("submit(*)",function(data){
+            var obj = $(this);
+            obj.attr("disabled","disabled").addClass("layui-disabled");
+            $.post(data.form.action,data.field,function (data) {
+                var icon=5;
+                if(data.code){
+                    icon=6;
                 }
-            });
-        }
+                layer.msg(data.msg,{icon: icon,time: 1500}, function () {   //提示的插件，可以使用alert代替
+                    if (data.code) {
+                        setTimeout(function () {
+                            //刷新父页面
+                            parent.location.reload();
+                        }, 500);
+                    }else{
+                        obj.removeAttr("disabled").removeClass("layui-disabled");
+                    }
+                });
+            },'json');
+            return false;
+        });
     });
+
 
 </script>
 {/block}

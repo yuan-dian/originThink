@@ -118,6 +118,7 @@ class UserService
         $list=User::get($uid);
         if(!password_verify($oldpsd,$list['password'])){
             $msg=Result::error('原密码错误');
+            return $msg;
         }
         $list->password=password_hash($newpsd, PASSWORD_DEFAULT);
         $list->updatapassword=1;
@@ -147,6 +148,7 @@ class UserService
             //令牌数据无效时重置令牌
             $validate->getError()!='令牌数据无效'? $token=Request::token():$token='';
             $msg=Result::error($validate->getError(), null, ['token' =>$token]);
+            return $msg;
         }
         $user           = new User;
         $user->user     = $data['user'];
@@ -231,7 +233,7 @@ class UserService
         $res=User::destroy($uid);
         if($res){
             AuthGroupAccess::where('uid','=',$uid)->delete();
-            $msg=Result::error('删除成功');
+            $msg=Result::success('删除成功');
         }else{
             $msg=Result::error('删除失败');
         }

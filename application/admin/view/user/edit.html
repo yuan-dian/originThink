@@ -4,27 +4,27 @@
     <div class="layui-form-item">
         <label class="layui-form-label">账号</label>
         <div class="layui-input-block">
-            <input type="text" name="user" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($list.user)?$list.user:''}" {if condition="isset($list['uid'])"}readonly {else /} datatype="*" ajaxurl="{:url('/admin/check')}"{/if}>
+            <input type="text" name="user" placeholder="请输入" autocomplete="off" class="layui-input"  value="{:isset($list.user)?$list.user:''}" {if condition="isset($list['uid'])"}readonly {else /} lay-verify="required|username"{/if}>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">昵称</label>
         <div class="layui-input-block">
-            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($list.name)?$list.name:''}" datatype="*" nullmsg="请输入昵称！">
+            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" value="{:isset($list.name)?$list.name:''}" lay-verify="required">
         </div>
     </div>
     {if condition="!isset($list['uid'])"}
     <div class="layui-form-item">
         <label class="layui-form-label">密码</label>
         <div class="layui-input-block">
-            <input type="text" name="password" placeholder="请输入" autocomplete="off" class="layui-input" value="" datatype="*6-16" nullmsg="请设置密码！" errormsg="密码范围在6~16位之间！">
+            <input type="password" name="password" placeholder="请输入" autocomplete="off" class="layui-input" value="" lay-verify="required|password">
         </div>
     </div>
     {/if}
     <div class="layui-form-item">
         <label class="layui-form-label">所属组</label>
         <div class="layui-input-block">
-            <select name="group_id" xm-select="selectId" id="group_id"  datatype="*" nullmsg="请选择组！" >
+            <select name="group_id" xm-select="selectId" id="group_id" lay-verify="required" >
                 <option value="">请选择</option>
                 {php}
                     //获取用户组信息
@@ -54,8 +54,6 @@
 </form>
 {/block}
 {block name="script"}
-{js href="/js/jquery.min.js" /}
-{js href="/js/Validform_v5.3.2_min.js" /}
 {css href="/form-select/formSelects-v4.css" /}
 <script>
     layui.config({
@@ -64,31 +62,54 @@
         formSelects: 'formSelects-v4'
     });
     layui.use(['form','jquery', 'formSelects'], function(){
-        var formSelects = layui.formSelects;
+        var formSelects = layui.formSelects,form=layui.form,$=layui.jquery;
         formSelects.on('selectId', function(id, vals, val, isAdd, isDisabled){
             $('#group_id').val(layui.formSelects.value(id, 'val'));
         }, true);
-    });
-
-    $("#form").Validform({
-        ajaxPost:true,
-        tiptype:function (msg,o,cssctl) {
-            if(o.type==3 && msg!='所填信息没有经过验证，请稍后…'){
-                layer.msg(msg, {time: 1500});//验证错误的提示
-            }
-        },
-        callback:function(data){     //ajax提交后的返回调用方法（相当于ajax里面的success那个方法）
-            layer.msg(data.msg, {time: 1500}, function () {   //提示的插件，可以使用alert代替
-                if (data.code) {
-                    setTimeout(function () {
-                        //刷新父页面
-                        parent.location.reload();
-                    }, 500);
-                }else{
-                    $('#token').val(data.data.token);
+        //表单验证
+        form.verify({
+            username: function(value, item){ //value：表单的值、item：表单的DOM对象
+                var msg;
+                $.ajax({
+                    async:false,
+                    url:"{:url('/admin/check')}",
+                    data:{username:value},
+                    success:function (data) {
+                        if(data.code) {
+                            msg=data.msg;
+                        }
+                    }
+                });
+                return msg;
+            },
+            password: [
+                /^[\w\W]{6,25}$/
+                ,'密码长度必须6到25位'
+            ]
+        });
+        //表单提交
+        form.on("submit(*)",function(data){
+            var obj = $(this);
+            obj.attr("disabled","disabled").addClass("layui-disabled");
+            $.post(data.form.action,data.field,function (data) {
+                var icon=5;
+                if(data.code){
+                    icon=6;
                 }
-            });
-        }
+                layer.msg(data.msg,{icon: icon,time: 1500}, function () {   //提示的插件，可以使用alert代替
+                    if (data.code) {
+                        setTimeout(function () {
+                            //刷新父页面
+                            parent.location.reload();
+                        }, 500);
+                    }else{
+                        $('#token').val(data.data.token);
+                        obj.removeAttr("disabled").removeClass("layui-disabled");
+                    }
+                });
+            },'json');
+            return false;
+        });
     });
 
 

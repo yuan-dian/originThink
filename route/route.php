@@ -17,7 +17,7 @@
  */
 Route::group('admin', [
     'login$'=>'admin/Login/login',                                           //登录
-    'editPassword'=>'admin/Login/editPassword',                              //重置密码
+    'editPassword'=>'admin/User/editPassword',                              //重置密码
     'logout$'=>'admin/Login/logout',                                         //退出
     'check$'=>'admin/User/check',                                            //验证用户是否存在
     'unlock'=>'admin/Login/unlock',                                        //验证用户是否存在

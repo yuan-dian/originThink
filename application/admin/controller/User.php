@@ -85,12 +85,12 @@ class User extends Common
      */
     public function check()
     {
-        $map['user']=input('param');
-        $count=model('User')->where($map)->count();
-        if($count>0){
-            $msg=['status'=>'n','info'=>'账号已存在'];
+        $map['user']=input('username','','trim');
+        $res=model('User')->where($map)->field('uid')->find();
+        if($res){
+            $msg=['code'=>1,'msg'=>'账号已存在'];
         }else{
-            $msg=['status'=>'y','info'=>'验证通过'];
+            $msg=['status'=>0,'info'=>'验证通过'];
         }
         return $msg;
     }
@@ -169,6 +169,24 @@ class User extends Common
                 return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
             }
             $this->assign('list',$list);
+            return $this->fetch();
+        }
+    }
+
+    /**
+     * 修改密码
+     * @return array|mixed
+     * @author 原点 <467490186@qq.com>
+     * @throws \think\Exception\DbException
+     */
+    public function editPassword()
+    {
+        if(request()->isPost()){
+            $data=input();
+            $uid=$this->uid;
+            $res=UserService::editPassword($uid,$data['oldpassword'],$data['password']);
+            return $res;
+        }else{
             return $this->fetch();
         }
     }

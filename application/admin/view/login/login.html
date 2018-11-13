@@ -55,7 +55,7 @@
         //登录按钮
         form.on("submit(login)",function(data){
             var obj = $(this);
-            var data = $('#login-form').serialize();
+            var data = data.field;
             obj.text("登录中...").attr("disabled","disabled").addClass("layui-disabled");
             $.ajax({
                 url: "{:url('/admin/login')}",

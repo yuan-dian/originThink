@@ -50,15 +50,22 @@
 {/block}
 {block name="script"}
 <script>
-layui.use(['form','jquery'], function(){
-    var form = layui.form;
-    var $ = layui.jquery;
+layui.use(['form','jquery','layer'], function(){
+    var form = layui.form,$ = layui.jquery,layer=layui.layer;
     //监听提交
     form.on('submit(save)', function(data){
-        $.post("{:url('/admin/config')}",data.field,function (res) {
-            layer.msg(res.msg, {time: 1500}, function () {
-                if (res.code) {
+        var obj = $(this);
+        obj.attr("disabled","disabled").addClass("layui-disabled");
+        $.post("{:url('/admin/config')}",data.field,function (data) {
+            var icon=5;
+            if(data.code){
+                icon=6;
+            }
+            layer.msg(data.msg, {icon:icon,time: 1500}, function () {
+                if (data.code) {
                     location.reload();
+                }else{
+                    obj.removeAttr("disabled").removeClass("layui-disabled");
                 }
             });
         });

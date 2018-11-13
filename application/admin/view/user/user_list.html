@@ -70,7 +70,7 @@
             }
         });
 
-        //添加文章
+        //添加用户
         function add(){
             var index = layui.layer.open({
                 title : "添加用户",
@@ -91,7 +91,7 @@
                 layui.layer.full(index);
             })
         }
-        //添加文章
+        //编辑用户
         function edit(uid){
             var index = layui.layer.open({
                 title : "编辑用户",
@@ -118,18 +118,21 @@
 
         //列表操作
         table.on('tool(usersList)', function(obj){
-            var layEvent = obj.event,
-                data = obj.data;
-
+            var layEvent = obj.event, data = obj.data;
             if(layEvent === 'edit'){ //编辑
                 edit(data.uid);
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除操作？',{icon:3, title:'提示信息'},function(index){
                     $.post("{:url('/admin/delete')}",{uid:data.uid},function(data){
-                        layer.msg(data.msg);
+                        var icon=5;
                         if(data.code){
-                            tableIns.reload();
+                            icon=6;
                         }
+                        layer.msg(data.msg, {icon:icon,time: 1500}, function () {
+                            if(data.code){
+                                obj.del();
+                            }
+                        });
                     })
                 });
             }

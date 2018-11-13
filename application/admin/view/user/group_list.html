@@ -196,7 +196,11 @@
                 var  status=data.elem.checked?1:0;
                 id    =   data.elem.value;
                 $.post("{:url('/admin/grouplist')}",{id:id,status:status,type:2},function (data) {
-                    layer.msg(data.msg);
+                    var icon=5;
+                    if(data.code){
+                        icon=6;
+                    }
+                    layer.msg(data.msg,{icon: icon,time: 1500});
                 });
             },500);
         });
@@ -206,12 +210,17 @@
             setTimeout(function(){
                 layer.close(index);
                 var data = $('#groupform').serialize();
-                $.post("{:url('/admin/grouplist')}", data, function (res) {
-                    layer.msg(res.msg);
-                    if (res.code) {
-                        tableIns.reload();
+                $.post("{:url('/admin/grouplist')}", data, function (data) {
+                    var icon=5;
+                    if(data.code){
+                        icon=6;
                     }
-                    layui.layer.closeAll();
+                    layer.msg(data.msg,{icon: icon,time: 1500},function () {
+                        if (data.code) {
+                            tableIns.reload();
+                        }
+                        layui.layer.closeAll();
+                    });
                 })
             },500);
         });
@@ -223,7 +232,11 @@
                 var rules=$("#tree").jstree("get_checked");
                 var id=$('#groupid').val();
                 $.post("{:url('/admin/grouplist')}",{rules:rules,id:id,type:4},function (data) {
-                    layer.msg(data.msg, {time: 1500}, function () {
+                    var icon=5;
+                    if(data.code){
+                        icon=6;
+                    }
+                    layer.msg(data.msg, {icon: icon,time: 1500}, function () {
                         if (data.code) {
                             tableIns.reload();
                             layui.layer.closeAll();
