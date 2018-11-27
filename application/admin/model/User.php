@@ -16,8 +16,19 @@ class User extends Model
     protected $type = [
         'last_login_time'  =>  'timestamp',
     ];
-    public function groupIds()
+
+    /**
+     * 获取用户所属组
+     * @param $value
+     * @param $data
+     * @return string
+     */
+    public function getGroupTitlesAttr($value,$data)
     {
-        return $this->hasMany('AuthGroupAccess','uid');
+        $titles = AuthGroupAccess::where('uid','=',$data['uid'])
+            ->alias('AuthGroupAccess')
+            ->join('auth_group AuthGroup','AuthGroup.id = AuthGroupAccess.group_id')
+            ->column('AuthGroup.title');
+        return implode(',',$titles);
     }
 }

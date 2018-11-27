@@ -29,21 +29,19 @@ class UserService
     {
         $validate =validate('User');
         if(!$validate->check($data)){
-            $msg=Result::error($validate->getError());
+            return Result::error($validate->getError());
+        }
+        $list=User::where(['user'=>$data['user']])->find();
+        if(empty($list)){
+            return reResult::error('账号不存在');
+        }
+        if($list['status']==0){
+            $msg=Result::error('账号禁用');
+        }elseif(!password_verify($data['password'],$list['password'])){
+            $msg=Result::error('密码错误');
         }else{
-            $list=User::where(['user'=>$data['user']])->find();
-            if($list){
-                if($list['status']==0){
-                    $msg=Result::error('账号禁用');
-                }elseif(!password_verify($data['password'],$list['password'])){
-                    $msg=Result::error('密码错误');
-                }else{
-                    self::autoSession($list['uid']);
-                    $msg=Result::success('登录成功',url('/admin/index'));
-                }
-            }else{
-                $msg=Result::error('账号不存在');
-            }
+            self::autoSession($list['uid']);
+            $msg=Result::success('登录成功',url('/admin/index'));
         }
         return $msg;
     }
@@ -223,12 +221,10 @@ class UserService
     public static function delete($uid)
     {
         if(!$uid){
-            $msg=Result::error('参数错误');
-            return $msg;
+            return Result::error('参数错误');
         }
         if($uid==1){
-            $msg=Result::error('超级管理员无法删除');
-            return $msg;
+            return Result::error('超级管理员无法删除');
         }
         $res=User::destroy($uid);
         if($res){

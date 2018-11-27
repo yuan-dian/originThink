@@ -27,20 +27,16 @@ class User extends Common
             $map=[];
             empty($data['key']) || $map[]=['user|name','like','%'.$data['key'].'%'];
             isset($data['limit'])?$limit=$data['limit'] : $limit=10;
-            $list=model('User')->with(['groupIds'])
+            $list=model('User')
+                ->field('uid,user,name,login_count,update_time')
                 ->where($map)
                 ->paginate($limit,false,['query'=>$data]);
-            $data=$list->toarray();
-            $auth_group=model('auth_group')->column('title','id');
-            foreach ($data['data'] as $key=>$val){
-                $title=[];
-                foreach ($val['group_ids'] as $v){
-                    $title[]=$auth_group[$v['group_id']];
-                }
-                unset( $data['data'][$key]['group_ids']);
-                $data['data'][$key]['title']=implode(',',$title);
+            $user_date=[];
+            foreach ($list as $key=>$val){
+                $user_date[$key]=$val->toarray();
+                $user_date[$key]['title']=$val->group_titles;
             }
-            return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
+            return (['code'=>0,'mag'=>'','data'=>$user_date,'count'=>$list->total()]);
         }
         $this->assign('list',$list);
         return $this->fetch();
