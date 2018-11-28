@@ -12,18 +12,18 @@ use think\Validate;
 class User extends Validate
 {
     protected $rule = [
-        'user'  =>  'require|max:25',
-        'password' =>  'require|length:6,25',
-        'code'=>'require|captcha'
+        'user'     => 'require|max:25',
+        'password' => 'require|length:6,25',
+        'code'     => 'require|captcha'
     ];
 
     protected $message = [
-        'user.require'  =>  '用户名不能为空',
-        'user.length'  =>  '用户名长度2-25位',
-        'password.require' =>  '密码不能为空',
-        'password.length' =>  '密码长度6-25位',
-        'code.require'=>'验证码不能为空',
-        'code.captcha'=>'验证码错误'
+        'user.require'     => '用户名不能为空',
+        'user.length'      => '用户名长度2-25位',
+        'password.require' => '密码不能为空',
+        'password.length'  => '密码长度6-25位',
+        'code.require'     => '验证码不能为空',
+        'code.captcha'     => '验证码错误'
     ];
     public function sceneAdd()
     {

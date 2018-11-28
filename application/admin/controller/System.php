@@ -7,6 +7,9 @@
  */
 
 namespace app\admin\controller;
+use app\admin\model\AuthRule;
+use app\admin\model\Config;
+use app\admin\model\LoginLog;
 use think\facade\App;
 use think\facade\Cache;
 class System extends Common
@@ -21,17 +24,16 @@ class System extends Common
         if(!request()->isPost()){
             return $this->fetch();
         }else{
-            $data=input();
-            if(isset($data['path'])){
-
-                $file=App::getRuntimePath();
-                foreach ($data['path'] as $key=>$value){
+            $data = input();
+            if( isset( $data['path'] )){
+                $file = App::getRuntimePath();
+                foreach ( $data['path'] as $key => $value ){
                     array_map('unlink', glob($file.$value . '/*.*'));
                     $dirs = (array) glob($file.$value . '/*');
                     foreach ($dirs as $dir) {
                         array_map('unlink', glob($dir . '/*'));
                     }
-                    if($dirs && $data['delete']){
+                    if ( $dirs && $data['delete'] ){
                         array_map('rmdir', $dirs);
                     }
                 }
@@ -45,28 +47,24 @@ class System extends Common
     /**
      * 登录日志
      * @return mixed
+     * @throws \think\exception\DbException
      * @author 原点 <467490186@qq.com>
      */
     public function loginLog()
     {
-        $list=[];
         if(request()->isAjax()){
-            $data=input();
-            $map=[];
-            if(isset($data['starttime']) && isset($data['endtime'])){
-                if($data['starttime'] && $data['endtime']){
-                    $map[]=['create_time', 'between time', [$data['starttime'], $data['endtime']]];
-                }
-            }
-            empty($data['key']) || $map[]=['user|name','like','%'.$data['key'].'%'];
-            isset($data['limit'])?$limit=$data['limit'] : $limit=10;
-            $list=db('login_log')->where($map)->withAttr('create_time', function($value, $data) {
-                return date('Y-m-d H:i:s',$value);
-            })->fetchSql(false)->paginate($limit,false,['query'=>$data]);
-            $data=$list->toarray();
-            return (['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']]);
+            $data = [
+                'starttime' => $this->request->get('starttime','','trim'),
+                'endtime'   => $this->request->get('endtime','','trim'),
+                'key'       => $this->request->get('key','','trim'),
+                'limit'     => $this->request->get('limit',10,'intval')
+            ];
+            $list = LoginLog::withSearch(['name','create_time'], [
+                'name'			=>	$data['key'],
+                'create_time'	=>	[ $data['starttime'] , $data['endtime'] ],
+            ])->paginate( $data['limit'],false , ['query' => $data] );
+            return (['code'=>0,'mag'=>'','data'=>$list->items(),'count'=>$list->total()]);
         }
-        $this->assign('list',$list);
         return $this->fetch();
     }
 
@@ -81,8 +79,8 @@ class System extends Common
     public function menu()
     {
         if(request()->isPost()){
-            $list=db('auth_rule')->order('sort desc')->select();
-            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list,'is'=>true,'tip'=>'操作成功'];
+            $list = AuthRule::order('sort desc')->select();
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list];
         }
         return $this->fetch();
     }
@@ -94,40 +92,39 @@ class System extends Common
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
-     * @throws \think\exception\PDOException
      */
     public function editMenu()
     {
-        if(request()->isPost()){
-            $data=input();
-            $save=[
-                'name'=>$data['name'],
-                'title'=>$data['title'],
-                'pid'=>$data['pid'],
-                'status'=>$data['status'],
-                'menu'=>$data['menu'],
-                'icon'=>$data['icon'],
-                'sort'=>$data['sort'],
+        if( request()->isPost() ){
+            $data=[
+                'name'  =>  $this->request->post('name','','trim'),
+                'title' =>  $this->request->post('title','','trim'),
+                'pid'   =>  $this->request->post('pid',0,'intval'),
+                'status'=>  $this->request->post('status',0,'intval'),
+                'menu'  =>  $this->request->post('menu','','trim'),
+                'icon'  =>  $this->request->post('icon','','trim'),
+                'sort'  =>  $this->request->post('sort',0,'intval'),
             ];
-            if(isset($data['id']) && $data['id']){
-                $res=db('auth_rule')->where('id',$data['id'])->update($save);
+            $id = $this->request->post('id',0,'intval');
+            if( $id ){
+                $res=AuthRule::where('id','=',$id)->update($data);
             }else{
-                $res=db('auth_rule')->insert($save);
+                $res=AuthRule::create($data);
             }
-            if($res){
+            if( $res ){
                 Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
                 $this->success('保存成功',url('/admin/menu'));
             }else{
                 $this->error('保存失败');
             }
         }else{
-            $id=input('get.id','','intval');
-            if($id){
-                $data=db('auth_rule','',false)->where('id','=',$id)->find();
+            $id = $this->request->param('id',0,'intval');
+            if( $id ){
+                $data = AuthRule::where('id','=',$id)->find();
                 $this->assign('data',$data);
             }
-            $menu=db('auth_rule','',false)->where('pid','=',0)->order('sort desc')->column('id,title');
-            $menu[0]='顶级菜单';
+            $menu = AuthRule::where('pid','=',0)->order('sort desc')->column('id,title');
+            $menu[0] ='顶级菜单';
             ksort($menu);
             $this->assign('menu',$menu);
             return $this->fetch();
@@ -137,18 +134,17 @@ class System extends Common
     /**
      * 删除菜单
      * @author 原点 <467490186@qq.com>
-     * @throws \think\Exception
-     * @throws \think\exception\PDOException
+     * @throws \Exception
      */
     public function deleteMenu()
     {
-        $data=input();
-        isset($data['id']) || $this->error('参数错误');
-        if(db('auth_rule','',false)->where('pid',$data['id'])->count()>0){
+        $id = $this->request->post('id',0,'intval');
+        empty($id) && $this->error('参数错误');
+        if( AuthRule::where('pid' ,'=', $id)->count()>0 ){
             $this->error('该菜单存在子菜单,无法删除!');
         }
-        $res=db('auth_rule','',false)->where('id',$data['id'])->delete();
-        if($res){
+        $res = AuthRule::where('id', '=', $id)->delete();
+        if( $res ){
             Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
             $this->success('删除成功',url('/admin/menu'));
         }else{
@@ -165,23 +161,20 @@ class System extends Common
      */
     public function config()
     {
-        if(!request()->isPost()){
-            $data=db('config')->where('name','system_config')->json(['value'])->find();
+        if( !request()->isPost() ){
+            $data = Config::where('name','system_config')->find();
             $this->assign('data',$data);
             return $this->fetch();
         }else{
-            $data=input();
-            if(!$data) $this->error('参数错误');
-            $save=[
-                'value'=>[
-                    'debug'=>$data['debug'],
-                    'trace'=>$data['trace'],
-                    'trace_type'=>$data['trace_type'],
+            $save = [
+                'value' => [
+                    'debug'      => $this->request->post('debug',0,'intval'),
+                    'trace'      => $this->request->post('trace',0,'intval'),
+                    'trace_type' => $this->request->post('trace_type',0,'intval'),
                 ],
-                'status'=>$data['status'],
-                'update_time'=>time()
+                'status' => $this->request->post('status',0,'intval')
             ];
-            $res=db('config')->where('name','system_config')->json(['value'])->update($save);
+            $res = Config::update($save,['name'=>'system_config']);
             if($res){
                 cache('config',null);
                 $this->success('修改成功',url('/admin/config'));
@@ -194,31 +187,28 @@ class System extends Common
 
     /**
      * 站点配置
-     * @return mixed
+     * @return array|mixed|\PDOStatement|string|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function siteConfig()
     {
         if(!request()->isPost()){
-            $data=db('config')->where('name','site_config')->json(['value'])->find();
+            $data = Config::where('name','site_config')->find();
             $this->assign('data',$data);
             return $this->fetch();
         }else{
-            $title=input('title','tpswoole','trim');
-            $name=input('name','tpswoole','trim');
-            $copyright=input('copyright','copyright @2018 原点','trim');
-            $icp=input('icp','copyright @2018 原点','trim');
-            if(!$title || !$name)$this->error('参数错误');
-            $save=[
-                'value'=>[
-                    'title'=>$title,
-                    'name'=>$name,
-                    'copyright'=>$copyright,
-                    'icp'=>$icp
+            $save = [
+                'value' => [
+                    'title'     => $this->request->post('title','','trim'),
+                    'name'      => $this->request->post('name','','trim'),
+                    'copyright' => $this->request->post('copyright','','trim'),
+                    'icp'       => $this->request->post('icp','','trim')
                 ],
-                'update_time'=>time()
             ];
-            $res=db('config')->where('name','site_config')->json(['value'])->update($save);
-            if($res){
+            $res = Config::update($save,['name' => 'site_config']);
+            if( $res ){
                 cache('site_config',null);
                 $this->success('修改成功',url('/admin/siteConfig'));
             }else{

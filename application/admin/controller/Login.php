@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 use think\Controller;
 use app\admin\service\UserService;
+use app\admin\model\User as UserModel;
 class Login extends Controller
 {
     /**
@@ -22,14 +23,14 @@ class Login extends Controller
      */
     public function login()
     {
-        if(get_user_id()){
+        if ( get_user_id() ){
             $this->redirect(url('/admin/index'));
-        }else{
-            if(!request()->isPost()){
+        } else {
+            if ( !request()->isPost() ){
                 return $this->fetch();
-            }else{
-                $data=input();
-                $result=UserService::login($data);
+            } else {
+                $data   = input();
+                $result = UserService::login($data);
                 return $result;
             }
         }
@@ -52,18 +53,19 @@ class Login extends Controller
      */
     public function unlock()
     {
-        if(!$this->request->isPost()){
+        if ( !$this->request->isPost() ){
             $this->error('非法请求');
         }
-        $uid=get_user_id();
-        if(!$uid){
+        $uid = get_user_id();
+        if ( !$uid ){
             $this->error('登录信息过期',url('/admin/login'));
         }
-        $password=input('password','','trim');
-        $psd=model('user')->where('uid','=',get_user_id())->value('password');
-        if(password_verify($password,$psd)){
+        $password = input('password','','trim');
+
+        $psd = UserModel::where('uid','=',get_user_id())->value('password');
+        if ( password_verify($password,$psd) ) {
            $this->success('解锁成功');
-        }else{
+        } else {
             $this->error('密码错误');
         }
     }
