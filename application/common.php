@@ -19,7 +19,7 @@ if (!function_exists('sign')) {
     function sign($data)
     {
         // 数据类型检测
-        if (! is_array($data)) {
+        if ( ! is_array($data)) {
             $data = (array)$data;
         }
         ksort($data); // 排序
@@ -53,7 +53,7 @@ if (!function_exists('list_to_tree')) {
     function list_to_tree($list, $pk='id', $pid = 'pid', $child = 'child', $root = 0) {
         // 创建Tree
         $tree = array();
-        if(is_array($list)) {
+        if (is_array($list)) {
             // 创建基于主键的数组引用
             $refer = array();
             foreach ($list as $key => $data) {
@@ -92,18 +92,18 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     //判断是否加header
-    if($header){
+    if ($header) {
         curl_setopt($ch, CURLOPT_HTTPHEADER  , $header);
     }
     //判断是否是POST请求
-    if($ispost){
+    if ($ispost) {
         // post数据
         curl_setopt($ch, CURLOPT_POST, 1);
         // post的变量
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     }
     $output = curl_exec($ch);
-    curl_close($ch);
+    curl_close ($ch);
     //打印获得的数据
     return $output;
 }
@@ -116,11 +116,11 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
  */
 function alert_error($msg='',$url=null,$time=3){
     if (is_null($url)) {
-        $url='parent.location.reload();';
-    }else{
-        $url='parent.location.href=\''.$url.'\'';
+        $url = 'parent.location.reload();';
+    } else {
+        $url = 'parent.location.href=\''.$url.'\'';
     }
-    if(request()->isAjax()){
+    if ( request()->isAjax() ) {
         $str = [
             'code' => 0,
             'msg'  => $msg,
@@ -128,18 +128,17 @@ function alert_error($msg='',$url=null,$time=3){
             'wait' => $time,
         ];
         $response = think\Response::create($str, 'json');
-    }else{
-        $str='<script type="text/javascript" src="/layui/layui.js"></script>';
-        $str.='<script>
-        layui.use([\'layer\'],function(){
-           layer.msg("'.$msg.'",{icon:"5",time:'.($time*1000).'},function() {
-             '.$url.'
-           });
-	    })
-    </script>';
+    } else {
+        $str = '<script type="text/javascript" src="/layui/layui.js"></script>';
+        $str .= '<script>
+                    layui.use([\'layer\'],function(){
+                       layer.msg("'.$msg.'",{icon:"5",time:'.($time*1000).'},function() {
+                         '.$url.'
+                       });
+                    })
+                </script>';
         $response = think\Response::create($str, 'html');
     }
-
     throw new think\exception\HttpResponseException($response);
 }
 
