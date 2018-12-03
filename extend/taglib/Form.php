@@ -25,9 +25,9 @@ class Form extends Taglib
 
     // 标签定义
     protected $tags = [
-        'select'    =>['attr'=>'name,list,value,option', 'close' => 0],
-        'radio'    =>['attr'=>'name,list,value,option', 'close' => 0],
-        'checkbox'    =>['attr'=>'name,list,value,option', 'close' => 0]
+        'select'    => ['attr'=>'name,list,value,option', 'close' => 0],
+        'radio'     => ['attr'=>'name,list,value,option', 'close' => 0],
+        'checkbox'  => ['attr'=>'name,list,value,option', 'close' => 0]
     ];
 
     /**
@@ -40,43 +40,43 @@ class Form extends Taglib
      */
     public function tagSelect($tag, $content)
     {
-        $name=isset($tag['name']) ? $tag['name'] : '""';
-        $list=isset($tag['list']) ? $tag['list'] : 'array()';
-        if(isset($tag['value'])){
-            if(strpos($tag['value'],'$') !== false){
+        $name = isset($tag['name']) ? $tag['name'] : '""';
+        $list = isset($tag['list']) ? $tag['list'] : 'array()';
+        if ( isset($tag['value']) ){
+            if (strpos($tag['value'],'$') !== false ) {
                 $value=$tag['value'];
-            }else{
-                $value="'".$tag['value']."'";
+            } else {
+                $value = "'".$tag['value']."'";
             }
-        }else{
-            $value='""';
+        } else {
+            $value = '""';
         }
-        $value='isset('.$value.')?'.$value.':""';
-        $option= isset($tag['option']) ? $tag['option'] : '';
-        $parseStr='<?php 
-        $name=\''.$name.'\'; 
-        $list='.$list.'; 
-        $value='.$value.';
-        $tmp="";';
-        if($option){
-            $parseStr.='
-        $option='.$option.';
-        foreach ($option as $k=>$v){
-          $tmp=$tmp.$k.\'="\'.$v.\'"\';
-        }';
+        $value = 'isset('. $value .')?'. $value .':""';
+        $option = isset( $tag['option'] ) ? $tag['option'] : '';
+        $parseStr = '<?php 
+        $name  = \''. $name .'\'; 
+        $list  = '. $list .'; 
+        $value = '. $value .';
+        $tmp   ="";';
+        if ( $option ) {
+            $parseStr .= '
+                $option = '. $option .' ;
+                foreach ( $option as $k =>$v){
+                  $tmp = $tmp.$k.\'="\'.$v.\'"\';
+                }';
         }
-        $parseStr.='
-        $html=\'<select name="\'.$name.\'" \'.$tmp.\'>\';
-        $options=array();
-        foreach ($list as $key=>$val){
-            $selected=\'\';
-            if($value==$key){
-                $selected=\'selected\';
+        $parseStr .= '
+        $html = \'<select name = "\'.$name.\'" \'.$tmp.\'>\';
+        $options = array();
+        foreach ( $list as $key => $val){
+            $selected = \'\';
+            if ( $value == $key ) {
+                $selected = \'selected\';
             }
-            $options[]= \'<option value="\'.$key.\'" \'.$selected.\'>\'.$val.\'</option>\';
+            $options[] = \'<option value="\'.$key.\'" \'.$selected.\'>\'.$val.\'</option>\';
         }
         $list = implode(\'\', $options);
-        $html=$html.$list.\'</select>\';
+        $html = $html.$list.\'</select>\';
         echo $html;
      ?>';
         return $parseStr;
@@ -92,42 +92,42 @@ class Form extends Taglib
      */
     public function tagRadio($tag, $content)
     {
-        $name=isset($tag['name']) ? $tag['name'] : '""';
-        $list=isset($tag['list']) ? $tag['list'] : 'array()';
-        if(isset($tag['value'])){
-            if(strpos($tag['value'],'$') !== false){
-                $value=$tag['value'];
-            }else{
-                $value="'".$tag['value']."'";
+        $name = isset($tag['name']) ? $tag['name'] : '""';
+        $list = isset($tag['list']) ? $tag['list'] : 'array()';
+        if ( isset($tag['value']) ){
+            if ( strpos($tag['value'],'$') !== false ){
+                $value = $tag['value'];
+            } else {
+                $value = "'".$tag['value']."'";
             }
-        }else{
-            $value='""';
+        } else {
+            $value = '""';
         }
-        $option= isset($tag['option']) ? $tag['option'] : '';
-        $parseStr='<?php 
-        $name=\''.$name.'\'; 
-        $list='.$list.'; 
-        $value='.$value.';
-        $tmp="";';
-        if($option){
-            $parseStr.='
-        $option='.$option.';
-        foreach ($option as $k=>$v){
-          $tmp=$tmp.$k.\'="\'.$v.\'"\';
-        }';
+        $option = isset($tag['option']) ? $tag['option'] : '';
+        $parseStr = '<?php 
+            $name = \''.$name.'\'; 
+            $list = '.$list.'; 
+            $value = '.$value.';
+            $tmp = "";';
+            if ( $option ){
+                $parseStr .='
+                $option='.$option.';
+                foreach ( $option as $k => $v){
+                  $tmp = $tmp.$k.\' = "\'.$v.\'"\';
+            }';
         }
-        $parseStr.='
-        $radio=array();
-        foreach ($list as $key=>$val){
-            $checked=\'\';
-            if($value==$key){
-                $checked=\'checked\';
+        $parseStr .= '
+            $radio = array();
+            foreach ( $list as $key => $val){
+                $checked = \'\';
+                if ($value == $key) {
+                    $checked = \'checked\';
+                }
+                $radio[] = \'<input type="radio" name="\'.$name.\'" value="\'.$key.\'" title="\'.$val.\'" \'.$checked.\' \'.$tmp.\'>\';
             }
-            $radio[]=\'<input type="radio" name="\'.$name.\'" value="\'.$key.\'" title="\'.$val.\'" \'.$checked.\' \'.$tmp.\'>\';
-        }
-        $list = implode(\'\', $radio);
-        echo $list;
-     ?>';
+            $list = implode(\'\', $radio);
+            echo $list;
+         ?>';
         return $parseStr;
     }
 
@@ -141,42 +141,42 @@ class Form extends Taglib
      */
     public function tagCheckbox($tag, $content)
     {
-        $name=isset($tag['name']) ? $tag['name'] : '""';
-        $list=isset($tag['list']) ? $tag['list'] : 'array()';
-        if(isset($tag['value'])){
-            if(strpos($tag['value'],'$') !== false){
-                $value=$tag['value'];
-            }else{
-                $value="'".$tag['value']."'";
+        $name = isset($tag['name']) ? $tag['name'] : '""';
+        $list = isset($tag['list']) ? $tag['list'] : 'array()';
+        if ( isset($tag['value']) ){
+            if (strpos($tag['value'],'$') !== false){
+                $value = $tag['value'];
+             }else {
+                $value = "'". $tag['value'] ."'";
             }
-        }else{
-            $value='""';
+        } else {
+            $value = '""';
         }
-        $option= isset($tag['option']) ? $tag['option'] : '';
-        $parseStr='<?php 
-        $name=\''.$name.'\'; 
-        $list='.$list.'; 
-        $value='.$value.';
-        $tmp="";';
-        if($option){
-            $parseStr.='
-        $option='.$option.';
-        foreach ($option as $k=>$v){
-          $tmp=$tmp.$k.\'="\'.$v.\'"\';
-        }';
-        }
-        $parseStr.='
-        $radio=array();
-        foreach ($list as $key=>$val){
-            $checked=\'\';
-            if($value==$key){
-                $checked=\'checked\';
+        $option = isset($tag['option']) ? $tag['option'] : '';
+        $parseStr = '<?php 
+            $name = \''.$name.'\'; 
+            $list = '.$list.'; 
+            $value = '.$value.';
+            $tmp = "";';
+            if ( $option ){
+                $parseStr .= '
+                $option = '.$option.';
+                foreach ( $option as $k => $v){
+                  $tmp = $tmp.$k.\' = "\'.$v.\'"\';
+                }';
             }
-            $radio[]=\'<input type="checkbox" name="\'.$name.\'" value="\'.$key.\'" title="\'.$val.\'" \'.$checked.\' \'.$tmp.\'>\';
-        }
-        $list = implode(\'\', $radio);
-        echo $list;
-     ?>';
+        $parseStr .= '
+            $radio = array();
+            foreach ( $list as $key => $val){
+                $checked = \'\';
+                if ( $value == $key ){
+                    $checked = \'checked\';
+                }
+                $radio[] = \'<input type="checkbox" name = "\'.$name.\'" value = "\'.$key.\'" title = "\'.$val.\'" \'.$checked.\' \'.$tmp.\'>\';
+            }
+            $list = implode(\'\', $radio);
+            echo $list;
+         ?>';
         return $parseStr;
     }
 }

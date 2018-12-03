@@ -21,9 +21,9 @@ class System extends Common
     public function cleanCache()
     {
 
-        if(!request()->isPost()){
+        if (!request()->isPost()){
             return $this->fetch();
-        }else{
+        } else {
             $data = input();
             if( isset( $data['path'] )){
                 $file = App::getRuntimePath();
@@ -38,7 +38,7 @@ class System extends Common
                     }
                 }
                 $this->success('缓存清空成功');
-            }else{
+            } else{
                 $this->error('请选择清除的范围');
             }
         }
@@ -52,7 +52,7 @@ class System extends Common
      */
     public function loginLog()
     {
-        if(request()->isAjax()){
+        if (request()->isAjax()){
             $data = [
                 'starttime' => $this->request->get('starttime','','trim'),
                 'endtime'   => $this->request->get('endtime','','trim'),
@@ -78,7 +78,7 @@ class System extends Common
      */
     public function menu()
     {
-        if(request()->isPost()){
+        if (request()->isPost()){
             $list = AuthRule::order('sort desc')->select();
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list];
         }
@@ -95,7 +95,7 @@ class System extends Common
      */
     public function editMenu()
     {
-        if( request()->isPost() ){
+        if ( request()->isPost() ){
             $data=[
                 'name'  =>  $this->request->post('name','','trim'),
                 'title' =>  $this->request->post('title','','trim'),
@@ -106,18 +106,18 @@ class System extends Common
                 'sort'  =>  $this->request->post('sort',0,'intval'),
             ];
             $id = $this->request->post('id',0,'intval');
-            if( $id ){
+            if ( $id ) {
                 $res=AuthRule::where('id','=',$id)->update($data);
-            }else{
+            } else {
                 $res=AuthRule::create($data);
             }
-            if( $res ){
+            if ( $res ) {
                 Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
                 $this->success('保存成功',url('/admin/menu'));
-            }else{
+            } else{
                 $this->error('保存失败');
             }
-        }else{
+        } else{
             $id = $this->request->param('id',0,'intval');
             if( $id ){
                 $data = AuthRule::where('id','=',$id)->find();
@@ -140,14 +140,14 @@ class System extends Common
     {
         $id = $this->request->post('id',0,'intval');
         empty($id) && $this->error('参数错误');
-        if( AuthRule::where('pid' ,'=', $id)->count()>0 ){
+        if ( AuthRule::where('pid' ,'=', $id)->count()>0 ){
             $this->error('该菜单存在子菜单,无法删除!');
         }
         $res = AuthRule::where('id', '=', $id)->delete();
-        if( $res ){
+        if ( $res ){
             Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
             $this->success('删除成功',url('/admin/menu'));
-        }else{
+        } else{
             $this->error('删除失败');
         }
     }
@@ -161,11 +161,11 @@ class System extends Common
      */
     public function config()
     {
-        if( !request()->isPost() ){
+        if ( !request()->isPost() ){
             $data = Config::where('name','system_config')->find();
             $this->assign('data',$data);
             return $this->fetch();
-        }else{
+        } else{
             $save = [
                 'value' => [
                     'debug'      => $this->request->post('debug',0,'intval'),
@@ -175,10 +175,10 @@ class System extends Common
                 'status' => $this->request->post('status',0,'intval')
             ];
             $res = Config::update($save,['name'=>'system_config']);
-            if($res){
+            if ($res){
                 cache('config',null);
                 $this->success('修改成功',url('/admin/config'));
-            }else{
+            } else{
                 $this->error('修改失败');
             }
         }
@@ -194,11 +194,11 @@ class System extends Common
      */
     public function siteConfig()
     {
-        if(!request()->isPost()){
+        if (!request()->isPost()){
             $data = Config::where('name','site_config')->find();
             $this->assign('data',$data);
             return $this->fetch();
-        }else{
+        } else{
             $save = [
                 'value' => [
                     'title'     => $this->request->post('title','','trim'),
@@ -208,10 +208,10 @@ class System extends Common
                 ],
             ];
             $res = Config::update($save,['name' => 'site_config']);
-            if( $res ){
+            if ( $res ){
                 cache('site_config',null);
                 $this->success('修改成功',url('/admin/siteConfig'));
-            }else{
+            } else{
                 $this->error('修改失败');
             }
         }

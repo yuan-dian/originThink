@@ -13,7 +13,13 @@ use think\facade\Request;
 
 trait Result
 {
-
+    /**
+     * @param string $msg
+     * @param null $url
+     * @param string $data
+     * @param int $wait
+     * @return array|string
+     */
     public static function success($msg = '', $url = null, $data = '', $wait = 3)
     {
         $msg = [
@@ -25,6 +31,14 @@ trait Result
         ];
         return $msg;
     }
+
+    /**
+     * @param string $msg
+     * @param null $url
+     * @param string $data
+     * @param int $wait
+     * @return array|string
+     */
     public static function error($msg = '', $url = null, $data = '', $wait = 3)
     {
         if ( is_null($url) ) {
