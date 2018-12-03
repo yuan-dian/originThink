@@ -111,9 +111,9 @@ class Auth
             $this->config = array_merge($this->config, $auth);
         }
         // 初始化request
-        $this->request = Request::instance();
-        $this->uid=$uid;
-        $this->group_id=$group_id;
+        $this->request  = Request::instance();
+        $this->uid      = $uid;
+        $this->group_id = $group_id;
     }
 
     /**
@@ -127,15 +127,15 @@ class Auth
     public function check($name, $type = 1, $mode = 'url', $relation = 'or')
     {
         //判断权限开关
-        if (!$this->config['auth_on']) {
+        if ( !$this->config['auth_on'] ) {
             return true;
         }
-        if(in_array($name,$this->config['exclude_rule'])){
+        if ( in_array($name,$this->config['exclude_rule']) ) {
             return true;
         }
         // 获取用户需要验证的所有有效规则列表
         $authList = $this->getAuthList($type);
-        if (is_string($name)) {
+        if ( is_string($name) ) {
             $name = strtolower($name);
             if (strpos($name, ',') !== false) {
                 $name = explode(',', $name);
@@ -185,21 +185,21 @@ class Auth
     public function getGroups()
     {
         //获取缓存开启状态
-        $is_cache=$this->config['is_cache'];
-        $cache_key='';
+        $is_cache  = $this->config['is_cache'];
+        $cache_key = '';
         //判断是否开启缓存
-        if($is_cache){
+        if ($is_cache) {
             //设置缓存name
-            $cache_key=$this->config['prefix'].'groups_'.implode('-',$this->group_id);
+            $cache_key = $this->config['prefix'].'groups_'.implode('-',$this->group_id);
             //获取缓存
-            $group=Cache::get($cache_key);
+            $group = Cache::get($cache_key);
             if ($group) {
                 return $group;
             }
         }
         // 执行查询
         $user_groups = \think\Db::name($this->config['auth_group'])->where('id','in',$this->group_id)->select();
-        if($is_cache){
+        if ($is_cache) {
             //设置缓存
             Cache::tag($this->config['cache_tag'])->set($cache_key,$user_groups,$this->config['expire']);
         }
@@ -215,26 +215,26 @@ class Auth
     protected function getAuthList($type)
     {
         //获取缓存开启状态
-        $is_cache=$this->config['is_cache'];
-        $cache_key='';
+        $is_cache  = $this->config['is_cache'];
+        $cache_key = '';
         //判断是否开启缓存
-        if($is_cache){
+        if ($is_cache) {
             $t = implode(',', (array)$type);
             //设置缓存name
-            $cache_key= $this->config['prefix'].'authList_'.$t.'_'.implode('-',$this->group_id);
+            $cache_key = $this->config['prefix'].'authList_'.$t.'_'.implode('-',$this->group_id);
             //获取缓存数据
-            $_authList=Cache::get($cache_key);
-            if ($_authList) {
+            $_authList = Cache::get($cache_key);
+            if ( $_authList ) {
                 return $_authList;
             }
         }
-        $rules=$this->_auth_rule();
+        $rules = $this->_auth_rule();
         $authList = [];
         foreach ($rules  as $rule){
             $authList[] = strtolower($rule['name']);
         }
-        $authList=array_unique($authList);
-        if($is_cache){
+        $authList = array_unique($authList);
+        if ( $is_cache ) {
             //设置缓存数据
             Cache::tag($this->config['cache_tag'])->set($cache_key,$authList,$this->config['expire']);
         }
@@ -252,14 +252,14 @@ class Auth
     protected function getUserInfo()
     {
         //获取缓存开启状态
-        $is_cache=$this->config['is_cache'];
-        $cache_key='';
+        $is_cache  = $this->config['is_cache'];
+        $cache_key = '';
         //判断是否开启缓存
-        if($is_cache){
+        if ($is_cache) {
             //设置缓存name
-            $cache_key=$this->config['prefix'].'user_info_'.$this->uid;
+            $cache_key = $this->config['prefix'].'user_info_'.$this->uid;
             //获取缓存
-            $user_info=Cache::get($cache_key);
+            $user_info = Cache::get($cache_key);
             if ($user_info) {
                 return $user_info;
             }
@@ -268,7 +268,7 @@ class Auth
         // 获取用户表主键
         $_pk = is_string($user->getPk()) ? $user->getPk() : 'uid';
         $user_info = $user->where($_pk, $this->uid)->find();
-        if($is_cache){
+        if ($is_cache) {
             //设置缓存
             Cache::tag($this->config['cache_tag'])->set($cache_key,$user_info,$this->config['expire']);
         }
@@ -285,37 +285,37 @@ class Auth
      */
     public function getMenuList()
     {
-        $super_admin=$this->uid==1?true:false;
+        $super_admin = $this->uid == 1 ? true : false;
         //获取缓存开启状态
-        $is_cache=$this->config['is_cache'];
-        $cache_key='';
+        $is_cache  = $this->config['is_cache'];
+        $cache_key = '';
         //判断是否开启缓存
-        if($is_cache){
+        if ( $is_cache ){
             //设置缓存name
-            if(!$super_admin){
-                $cache_key= $this->config['prefix'].'menuList_'.implode('-',$this->group_id);
-            }else{
-                $cache_key= $this->config['prefix'].'menuList_super';
+            if ( !$super_admin ) {
+                $cache_key = $this->config['prefix'].'menuList_'.implode('-',$this->group_id);
+            } else {
+                $cache_key = $this->config['prefix'].'menuList_super';
             }
             //获取缓存数据
-            $menuList=Cache::get($cache_key);
+            $menuList = Cache::get($cache_key);
             if ($menuList) {
                 return $menuList;
             }
         }
-        if(!$super_admin){ //不是超级管理员，根据用户组获取对应的菜单
+        if ( !$super_admin) { //不是超级管理员，根据用户组获取对应的菜单
             $menuList=$this->_auth_rule();//获取规则
             $menuList=list_to_tree($menuList);
-        }else{
+        } else {
             //超级管理员
-            $map= [
+            $map = [
                 ['menu','=',1],
                 ['status','=',1]
             ];
-            $menuList=db('auth_rule')->where($map)->order('sort desc')->select();
-            $menuList=list_to_tree($menuList);
+            $menuList = \think\Db::name($this->config['auth_rule'])->where($map)->order('sort desc')->select();
+            $menuList = list_to_tree($menuList);
         }
-        if($is_cache){
+        if ($is_cache) {
             //设置缓存数据
             Cache::tag($this->config['cache_tag'])->set($cache_key,$menuList,$this->config['expire']);
         }
@@ -333,7 +333,7 @@ class Auth
         if (empty($ids)) {
             return [];
         }
-        $map=[
+        $map = [
             ['id','in',$ids],
             ['menu','=',1],
             ['status','=',1],

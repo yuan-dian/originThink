@@ -86,9 +86,9 @@ class User extends Common
     {
         $username = $this->request->get('username','','trim');
         $res = UserModel::where('user','=',$username)->field('uid')->find();
-        if($res){
+        if ($res) {
             $msg = ['code'=>1,'msg'=>'账号已存在'];
-        }else{
+         }else {
             $msg = ['status'=>0,'info'=>'验证通过'];
         }
         return $msg;
@@ -153,8 +153,8 @@ class User extends Common
                     return $res;
                     break;
             }
-        }else{
-            if(request()->isAjax()){
+        } else {
+            if (request()->isAjax()) {
                 $key   = $this->request->get('key','','trim');
                 $limit = $this->request->get('key',10,'intval');
                 $map   = [];
