@@ -27,6 +27,6 @@ class User extends Validate
     ];
     public function sceneAdd()
     {
-        return $this->only(['user','password'])->append('user', 'require|length:2,25|token');
+        return $this->only(['user', 'password'])->append('user', 'require|length:2,25|token');
     }
 }

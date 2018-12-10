@@ -104,7 +104,7 @@ class Auth
      * @param int $uid        用户id
      * @param array $group_id 用户组
      */
-    public function __construct($uid=0,$group_id=[])
+    public function __construct($uid=0, $group_id = [])
     {
         //可设置配置项 auth, 此配置项为数组。
         if ($auth = Config::get('auth.')) {
@@ -127,10 +127,10 @@ class Auth
     public function check($name, $type = 1, $mode = 'url', $relation = 'or')
     {
         //判断权限开关
-        if ( !$this->config['auth_on'] ) {
+        if (!$this->config['auth_on']) {
             return true;
         }
-        if ( in_array($name,$this->config['exclude_rule']) ) {
+        if (in_array($name,$this->config['exclude_rule'])) {
             return true;
         }
         // 获取用户需要验证的所有有效规则列表
@@ -198,10 +198,10 @@ class Auth
             }
         }
         // 执行查询
-        $user_groups = \think\Db::name($this->config['auth_group'])->where('id','in',$this->group_id)->select();
+        $user_groups = \think\Db::name($this->config['auth_group'])->where('id', 'in', $this->group_id)->select();
         if ($is_cache) {
             //设置缓存
-            Cache::tag($this->config['cache_tag'])->set($cache_key,$user_groups,$this->config['expire']);
+            Cache::tag($this->config['cache_tag'])->set($cache_key, $user_groups, $this->config['expire']);
         }
         return $user_groups;
     }
@@ -221,22 +221,22 @@ class Auth
         if ($is_cache) {
             $t = implode(',', (array)$type);
             //设置缓存name
-            $cache_key = $this->config['prefix'].'authList_'.$t.'_'.implode('-',$this->group_id);
+            $cache_key = $this->config['prefix'] . 'authList_' . $t . '_' . implode('-', $this->group_id);
             //获取缓存数据
             $_authList = Cache::get($cache_key);
-            if ( $_authList ) {
+            if ($_authList) {
                 return $_authList;
             }
         }
         $rules = $this->_auth_rule();
         $authList = [];
-        foreach ($rules  as $rule){
+        foreach ($rules  as $rule) {
             $authList[] = strtolower($rule['name']);
         }
         $authList = array_unique($authList);
         if ( $is_cache ) {
             //设置缓存数据
-            Cache::tag($this->config['cache_tag'])->set($cache_key,$authList,$this->config['expire']);
+            Cache::tag($this->config['cache_tag'])->set($cache_key, $authList, $this->config['expire']);
         }
         return $authList;
     }
@@ -257,7 +257,7 @@ class Auth
         //判断是否开启缓存
         if ($is_cache) {
             //设置缓存name
-            $cache_key = $this->config['prefix'].'user_info_'.$this->uid;
+            $cache_key = $this->config['prefix'] . 'user_info_'.$this->uid;
             //获取缓存
             $user_info = Cache::get($cache_key);
             if ($user_info) {
@@ -303,7 +303,7 @@ class Auth
                 return $menuList;
             }
         }
-        if ( !$super_admin) { //不是超级管理员，根据用户组获取对应的菜单
+        if (!$super_admin) { //不是超级管理员，根据用户组获取对应的菜单
             $menuList=$this->_auth_rule();//获取规则
             $menuList=list_to_tree($menuList);
         } else {

@@ -28,20 +28,20 @@ class UserService
     public static function login($data)
     {
         $validate = validate('User');
-        if ( !$validate->check($data) ){
+        if (!$validate->check($data)) {
             return Result::error($validate->getError());
         }
         $list = User::where(['user'=>$data['user']])->find();
-        if ( empty($list) ){
+        if (empty($list)) {
             return reResult::error('账号不存在');
         }
-        if ( $list['status']==0 ){
+        if ($list['status']==0) {
             $msg = Result::error('账号禁用');
-        } elseif (!password_verify($data['password'],$list['password'])){
-            $msg=Result::error('密码错误');
+        } elseif (!password_verify($data['password'], $list['password'])){
+            $msg = Result::error('密码错误');
         } else {
             self::autoSession($list['uid']);
-            $msg=Result::success('登录成功',url('/admin/index'));
+            $msg=Result::success('登录成功', url('/admin/index'));
         }
         return $msg;
     }
@@ -64,7 +64,7 @@ class UserService
         //更新记录
         User::update($data);
         //获取用户组
-        $group_id = model('AuthGroupAccess')->where('uid','=',$uid)->column('group_id');
+        $group_id = model('AuthGroupAccess')->where('uid', '=',$uid)->column('group_id');
         //获取用户信息
         $user = User::get($uid);
         /* 记录登录SESSION */
@@ -94,7 +94,7 @@ class UserService
     private static function log($data){
         //添加数据
         $LoginLog = new LoginLog;
-        $LoginLog->save( [
+        $LoginLog->save([
             'uid'=>$data['uid'],
             'user'=>$data['user'],
             'name'=>$data['name'],
@@ -111,21 +111,21 @@ class UserService
      * @author 原点 <467490186@qq.com>
      * @throws \think\Exception\DbException
      */
-    public static function editPassword($uid,$oldpsd,$newpsd)
+    public static function editPassword($uid, $oldpsd, $newpsd)
     {
         $list = User::get($uid);
-        if ( !password_verify($oldpsd,$list['password']) ){
+        if (!password_verify($oldpsd,$list['password'])) {
             $msg = Result::error('原密码错误');
             return $msg;
         }
         $list->password = password_hash($newpsd, PASSWORD_DEFAULT);
-        $list->updatapassword=1;
-        if ( $list->save() ){
+        $list->updatapassword = 1;
+        if ($list->save()) {
             //清除当前登录信息
             session('user_auth', null);
             session('user_auth_sign', null);
-            $msg = Result::success('重置成功,请重新登录',url('/admin/login'));
-        }else{
+            $msg = Result::success('重置成功,请重新登录', url('/admin/login'));
+        } else {
             $msg = Result::error('修改失败');
         }
         return $msg;
@@ -142,9 +142,9 @@ class UserService
     {
         //验证数据合法性
         $validate = validate('User');
-        if (!$validate->scene('add')->check($data)){
+        if (!$validate->scene('add')->check($data)) {
             //令牌数据无效时重置令牌
-            $validate->getError()!='令牌数据无效'? $token=Request::token():$token='';
+            $validate->getError() != '令牌数据无效' ? $token = Request::token() : $token = '';
             $msg = Result::error($validate->getError(), null, ['token' =>$token]);
             return $msg;
         }
@@ -154,19 +154,19 @@ class UserService
         $user->status   = $data['status'];
         $user->password = password_hash($data['password'], PASSWORD_DEFAULT);
         $res = $user->save();
-        if ( $res ){
-            $group_ids = explode(',',$data['group_id']);
+        if ($res) {
+            $group_ids = explode(',', $data['group_id']);
             $save=[];
-            foreach ($group_ids as $v){
+            foreach ($group_ids as $v) {
                 $save[] = [
                     'uid'=>$user->uid,
                     'group_id'=>$v
                 ];
             }
             $AuthGroupAccess = new AuthGroupAccess;
-            $res2 = $AuthGroupAccess->saveAll($save,false);
+            $res2 = $AuthGroupAccess->saveAll($save, false);
             if ( $res2 ){
-                $msg = Result::success('添加成功',url('/admin/userList'));
+                $msg = Result::success('添加成功', url('/admin/userList'));
             }else {
                 $msg = Result::error('添加失败', null, ['token' => Request::token()]);
             }
@@ -187,21 +187,21 @@ class UserService
             'name'   => $data['name'],
             'status' => $data['status'],
         ];
-        $res = User::update($userdata,['uid'=>$data['uid']]);
+        $res = User::update($userdata, ['uid'=>$data['uid']]);
         if ( $res ) {
-            AuthGroupAccess::where('uid','=',$data['uid'])->delete();
-            $group_ids = explode(',',$data['group_id']);
+            AuthGroupAccess::where('uid', '=', $data['uid'])->delete();
+            $group_ids = explode(',', $data['group_id']);
             $save = [];
-            foreach ($group_ids as $v){
+            foreach ($group_ids as $v) {
                 $save[] = [
                     'uid'      => $data['uid'],
                     'group_id' => $v
                 ];
             }
             $AuthGroupAccess = new AuthGroupAccess;
-            $res2=$AuthGroupAccess->saveAll($save,false);
+            $res2=$AuthGroupAccess->saveAll($save, false);
             if ($res2){
-                $msg = Result::success('编辑成功',url('/admin/userlist'));
+                $msg = Result::success('编辑成功', url('/admin/userlist'));
             } else {
                 $msg = Result::error('编辑失败');
             }
@@ -220,15 +220,15 @@ class UserService
      */
     public static function delete($uid)
     {
-        if ( !$uid ){
+        if (!$uid) {
             return Result::error('参数错误');
         }
-        if( $uid == 1 ){
+        if ($uid == 1) {
             return Result::error('超级管理员无法删除');
         }
         $res = User::destroy($uid);
-        if ( $res ){
-            AuthGroupAccess::where('uid','=',$uid)->delete();
+        if ($res) {
+            AuthGroupAccess::where('uid', '=',$uid)->delete();
             $msg = Result::success('删除成功');
         } else {
             $msg = Result::error('删除失败');

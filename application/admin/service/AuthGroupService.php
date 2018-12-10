@@ -27,7 +27,7 @@ class AuthGroupService
         $group = new AuthGroup;
         $group->title = $title;
         $res = $group->save();
-        if ( $res ){
+        if ($res) {
             $mag = Result::success('添加成功');
         } else {
             $mag = Result::error('添加失败');
@@ -36,19 +36,19 @@ class AuthGroupService
     }
 
     /**
-     * 编辑用户组
-     * @param $id    用户组id
-     * @param $data  修改数据
-     * @return array|string
+     * @param $id   用户组id
+     * @param $data 修改数据
+     * @param bool $authcache 是否删除缓存
      * @author 原点 <467490186@qq.com>
+     * @return array|string
      */
-    public static function edit($id,$data,$authcache=false)
+    public static function edit($id, $data, $authcache = false)
     {
-        if ( !$id || !$data) Result::error('参数错误');
+        if (!$id || !$data) Result::error('参数错误');
         $group = new AuthGroup;
         $res = $group->save($data,['id'=>$id]);
-        if ( $res ){
-            if ( $authcache ){
+        if ($res) {
+            if ($authcache) {
                 Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
             }
             $mag = Result::success('编辑成功');

@@ -24,24 +24,25 @@ class Common extends Controller
         $this->group_id = $user['group_id'];
         $this->config();
         $site_config=$this->siteConfig();
-        $this->assign('site_config',$site_config);
+        $this->assign('site_config', $site_config);
     }
 
     /**
      * 动态配置
      * @author 原点 <467490186@qq.com>
      */
-    private function config(){
+    private function config()
+    {
         if ( cache('config')) {
             $list = cache('config');
         } else {
-            $list = Config::where('name','=','system_config')->field('value,status')->find();
-            cache('config',$list);
+            $list = Config::where('name', '=', 'system_config')->field('value,status')->find();
+            cache('config', $list);
         }
         if( $list['status'] == 1 ){
-            config('app_debug',$list['value']['debug']);
-            config('app_trace',$list['value']['trace']);
-            config('trace.type',$list['value']['trace_type']==0?'Html':'Console');
+            config('app_debug', $list['value']['debug']);
+            config('app_trace', $list['value']['trace']);
+            config('trace.type', $list['value']['trace_type'] == 0 ? 'Html' : 'Console');
         }
     }
 
@@ -52,13 +53,14 @@ class Common extends Controller
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    private function siteConfig(){
+    private function siteConfig()
+    {
         $site_config = cache('site_config');
-        if ( $site_config ){
+        if ($site_config){
             return $site_config;
         }
-        $list = Config::where('name','=','site_config')->field('value')->find();
-        cache('site_config',$list);
+        $list = Config::where('name', '=', 'site_config')->field('value')->find();
+        cache('site_config', $list);
         return $list;
     }
 

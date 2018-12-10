@@ -23,10 +23,10 @@ class Login extends Controller
      */
     public function login()
     {
-        if ( get_user_id() ){
+        if (get_user_id()) {
             $this->redirect(url('/admin/index'));
         } else {
-            if ( !request()->isPost() ){
+            if (!request()->isPost()){
                 return $this->fetch();
             } else {
                 $data   = input();
@@ -45,7 +45,7 @@ class Login extends Controller
     {
         session('user_auth', null);
         session('user_auth_sign', null);
-        return ['msg'=>'退出成功','url'=>url('/admin/login')];
+        return ['msg'=>'退出成功', 'url'=>url('/admin/login')];
     }
 
     /**
@@ -53,17 +53,17 @@ class Login extends Controller
      */
     public function unlock()
     {
-        if ( !$this->request->isPost() ){
+        if (!$this->request->isPost()){
             $this->error('非法请求');
         }
         $uid = get_user_id();
         if ( !$uid ){
-            $this->error('登录信息过期',url('/admin/login'));
+            $this->error('登录信息过期', url('/admin/login'));
         }
         $password = input('password','','trim');
 
-        $psd = UserModel::where('uid','=',get_user_id())->value('password');
-        if ( password_verify($password,$psd) ) {
+        $psd = UserModel::where('uid', '=', get_user_id())->value('password');
+        if ( password_verify($password, $psd) ) {
            $this->success('解锁成功');
         } else {
             $this->error('密码错误');

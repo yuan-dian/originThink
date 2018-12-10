@@ -23,12 +23,12 @@ class User extends Model
      * @param $data
      * @return string
      */
-    public function getGroupTitlesAttr($value,$data)
+    public function getGroupTitlesAttr($value, $data)
     {
-        $titles = AuthGroupAccess::where('uid','=',$data['uid'])
+        $titles = AuthGroupAccess::where('uid', '=', $data['uid'])
             ->alias('AuthGroupAccess')
-            ->join('auth_group AuthGroup','AuthGroup.id = AuthGroupAccess.group_id')
+            ->join('auth_group AuthGroup', 'AuthGroup.id = AuthGroupAccess.group_id')
             ->column('AuthGroup.title');
-        return implode(',',$titles);
+        return implode(',', $titles);
     }
 }

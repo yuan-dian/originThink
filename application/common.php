@@ -19,7 +19,7 @@ if (!function_exists('sign')) {
     function sign($data)
     {
         // 数据类型检测
-        if ( ! is_array($data)) {
+        if (!is_array($data)) {
             $data = (array)$data;
         }
         ksort($data); // 排序
@@ -86,7 +86,7 @@ if (!function_exists('get_user_id')) {
         return session('user_auth.uid');
     }
 }
-function http_curl($url, $data =[],$header=[],$ispost=true){
+function http_curl($url, $data =[], $header=[], $ispost=true){
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -114,7 +114,7 @@ function http_curl($url, $data =[],$header=[],$ispost=true){
  * @param int $time   弹出维持时间（单位秒）
  * @author 原点 <467490186@qq.com>
  */
-function alert_error($msg='',$url=null,$time=3){
+function alert_error($msg='', $url=null, $time=3){
     if (is_null($url)) {
         $url = 'parent.location.reload();';
     } else {

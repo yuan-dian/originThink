@@ -16,7 +16,7 @@ class Index extends Common
     {
         //获取菜单
         $menuList = (new \org\Auth($this->uid,$this->group_id))->getMenuList();
-        $this->assign('menuList',$menuList);
+        $this->assign('menuList', $menuList);
         return $this->fetch();
     }
 
@@ -29,4 +29,5 @@ class Index extends Common
     {
         return $this->fetch();
     }
+
 }

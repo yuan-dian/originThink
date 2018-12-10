@@ -26,20 +26,20 @@ class User extends Common
      */
     public function userList()
     {
-        if ( request()->isAjax() ){
+        if ($this->request->isAjax()) {
             $data = input();
             $map = [];
-            empty($data['key']) || $map[] = ['user|name','like','%'.$data['key'].'%'];
+            empty($data['key']) || $map[] = ['user|name', 'like', '%' . $data['key'] . '%'];
             isset($data['limit']) ? $limit = $data['limit'] : $limit=10;
             $list = UserModel::where($map)
                 ->field('uid,user,name,login_count,update_time')
-                ->paginate( $limit,false, ['query'=>$data]);
+                ->paginate( $limit, false,  ['query'=>$data]);
             $user_date = [];
-            foreach ( $list as $key => $val ) {
+            foreach ($list as $key => $val) {
                 $user_date[$key] = $val->toarray();
                 $user_date[$key]['title']=$val->group_titles;
             }
-            return (['code'=>0,'mag'=>'','data'=>$user_date,'count'=>$list->total()]);
+            return (['code'=>0, 'mag'=>'', 'data'=>$user_date, 'count'=>$list->total()]);
         }
         return $this->fetch();
     }
@@ -55,8 +55,8 @@ class User extends Common
     public function edit()
     {
         $data = input();
-        if ( request()->isPost() ){
-            if ( $data['uid'] ){
+        if ($this->request->isPost()) {
+            if ($data['uid']) {
                 //编辑
                 $res = UserService::edit($data);
                 return $res;
@@ -66,13 +66,13 @@ class User extends Common
                 return $data;
             }
         } else {
-            if ( isset($data['uid']) ){
-                $list = UserModel::where('uid','=',$data['uid'])->find();
-                $list['group_id'] = AuthGroupAccess::where('uid','=',$data['uid'])->column('group_id');
-                $this->assign('list',$list);
+            if (isset($data['uid'])) {
+                $list = UserModel::where('uid', '=', $data['uid'])->find();
+                $list['group_id'] = AuthGroupAccess::where('uid', '=', $data['uid'])->column('group_id');
+                $this->assign('list', $list);
             }
             $grouplist = AuthGroup::select();
-            $this->assign('grouplist',$grouplist);
+            $this->assign('grouplist', $grouplist);
             return $this->fetch();
         }
     }
@@ -100,9 +100,9 @@ class User extends Common
      */
     public function delete()
     {
-        $uid = input('uid',0,'intval');
-        if ($uid){
-            if ( $uid!=1 ){
+        $uid = $this->request->param('uid', 0, 'intval');
+        if ($uid) {
+            if ($uid != 1){
                 $res = UserService::delete($uid);
                 return $res;
             } else {
@@ -123,18 +123,18 @@ class User extends Common
      */
     public function groupList()
     {
-        if ( request()->isPost() ){
-            $id     =  $this->request->post('id',0,'intval');
-            $type   =  $this->request->post('type',0,'intval');
-            $title  =  $this->request->post('title','','trim');
-            $status =  $this->request->post('status',0,'intval');
-            $rules  =  $this->request->post('rules',[]);
+        if ( $this->request->isPost() ){
+            $id     =  $this->request->post('id', 0, 'intval');
+            $type   =  $this->request->post('type', 0, 'intval');
+            $title  =  $this->request->post('title', '', 'trim');
+            $status =  $this->request->post('status', 0, 'intval');
+            $rules  =  $this->request->post('rules', []);
             switch ( $type ){
                 case 1://编辑、添加用户组
-                    if ( $id ){//编辑用户组
+                    if ($id){//编辑用户组
                         return AuthGroupService::edit( $id, ['title'=>$title] );
                     } else {//添加用户组
-                        return AuthGroupService::add( $title );
+                        return AuthGroupService::add($title);
                     }
                     break;
                 case 2://是否禁用用户组
@@ -142,26 +142,26 @@ class User extends Common
                     break;
                 case 3://获取权限列表
                     $list = AuthRule::field('id,pid,title as text')->select();
-                    $data = list_to_tree($list->toArray(),'id','pid','children');
+                    $data = list_to_tree($list->toArray(), 'id', 'pid', 'children');
                     return $data;
                     break;
                 case 4://修改用户组权限
-                    if ( !$rules )$this->error('参数错误');
+                    if (!$rules) $this->error('参数错误');
                     sort($rules);
-                    $rules = implode(',',$rules);
-                    $res   = AuthGroupService::edit($id,['rules'=>$rules],true);
+                    $rules = implode(',', $rules);
+                    $res   = AuthGroupService::edit($id, ['rules'=>$rules], true);
                     return $res;
                     break;
             }
         } else {
-            if (request()->isAjax()) {
-                $key   = $this->request->get('key','','trim');
-                $limit = $this->request->get('key',10,'intval');
+            if ($this->request->isAjax()) {
+                $key   = $this->request->get('key', '', 'trim');
+                $limit = $this->request->get('key', 10, 'intval');
                 $map   = [];
-                empty ( $key ) || $map[] = ['title','like','%'.$key.'%'];
-                $list = AuthGroup::where($map)->paginate($limit,false,['query'=>['key'=>$key],'limit'=>$limit]);
+                empty ( $key ) || $map[] = ['title', 'like', '%' . $key . '%'];
+                $list = AuthGroup::where($map)->paginate($limit, false, ['query' => ['key'=>$key], 'limit' => $limit]);
                 $data = $list->toarray();
-                return ( ['code'=>0,'mag'=>'','data'=>$data['data'],'count'=>$data['total']] );
+                return (['code'=>0, 'mag'=>'', 'data' => $data['data'], 'count' => $data['total']]);
             }
             return $this->fetch();
         }
@@ -175,10 +175,10 @@ class User extends Common
      */
     public function editPassword()
     {
-        if ( request()->isPost() ) {
+        if ( $this->request->isPost() ) {
             $data = input();
             $uid  = $this->uid;
-            $res  = UserService::editPassword( $uid,$data['oldpassword'],$data['password']);
+            $res  = UserService::editPassword($uid, $data['oldpassword'], $data['password']);
             return $res;
         } else {
             return $this->fetch();

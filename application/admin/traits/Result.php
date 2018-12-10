@@ -41,7 +41,7 @@ trait Result
      */
     public static function error($msg = '', $url = null, $data = '', $wait = 3)
     {
-        if ( is_null($url) ) {
+        if (is_null($url)) {
             $url = Request::isAjax() ? '' : 'javascript:history.back(-1);';
         }
         $msg=[
