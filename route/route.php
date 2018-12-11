@@ -45,14 +45,7 @@ Route::group('admin', [
     'deleteMenu$'=>'admin/System/deleteMenu',                                //删除菜单
     'config'=>'admin/System/config',                                         //系统配置
     'siteConfig'=>'admin/System/siteConfig',                                 //站点配置
-])->middleware(app\admin\middleware\Auth::class)->ext('html');               //使用中间件验证
-/**
- * swoole服务
- */
-Route::get('captcha',function (){
-    $captcha = new think\captcha\Captcha();
-    return $captcha->entry();
-});
+])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');          //使用中间件验证
 /**
  * miss路由
  * 没有定义的路由全部使用该路由
