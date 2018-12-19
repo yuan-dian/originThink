@@ -5,7 +5,7 @@
         <form class="layui-form">
             <div class="layui-inline">
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input searchVal" placeholder="请输入账号或昵称" />
+                    <input type="text" class="layui-input searchVal" placeholder="请输入账号或昵称"/>
                 </div>
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
             </div>
@@ -26,14 +26,14 @@
         <div class="layui-form-item">
             <label class="layui-form-label">组名</label>
             <div class="layui-input-block">
-                <input type="text" name="title" id="title"  class="layui-input" value="" datatype="*" nullmsg="请输入组名！">
+                <input type="text" name="title" id="title" class="layui-input" value="" datatype="*" nullmsg="请输入组名！">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <input type="hidden" id="id" name="id" value="">
-                <input type="hidden"  name="type" value="1">
-                <input type="hidden" name="__token__" id="token" value="{$Request.token}" />
+                <input type="hidden" name="type" value="1">
+                <input type="hidden" name="__token__" id="token" value="{$Request.token}"/>
                 <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
@@ -58,28 +58,30 @@
 {js href="/jstree/jstree.js" /}
 <script>
     triggerTree();
-    function triggerTree(){
+
+    function triggerTree() {
         $('#tree').jstree({
-            'core' : {
-                'data' : {
-                    'method':"POST",
-                    'url' : "{:url('/admin/grouplist')}",
-                    'data' : function () {
-                        return { 'type':3 };
+            'core': {
+                'data': {
+                    'method': "POST",
+                    'url': "{:url('/admin/grouplist')}",
+                    'data': function () {
+                        return {'type': 3};
                     },
                 },
             },
-            'checkbox' : {
-                "visible" : true,
-                "keep_selected_style" : false,
-                'three_state' : false
+            'checkbox': {
+                "visible": true,
+                "keep_selected_style": false,
+                'three_state': false
 
             },
-            'plugins' : ['checkbox']
+            'plugins': ['checkbox']
         });
 
     }
-    layui.use(['form','layer','laydate','table','laytpl'],function(){
+
+    layui.use(['form', 'layer', 'laydate', 'table', 'laytpl'], function () {
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery,
@@ -90,31 +92,33 @@
         //新闻列表
         var tableIns = table.render({
             elem: '#usersList',
-            url : "{:url('/admin/groupList')}",
-            cellMinWidth : 95,
-            page : true,
-            limit:10,
-            limits:[5,10,15,20],
-            height : "full-125",
-            id:'usersListTable',
-            cols : [[
-                {field: 'id', title: 'ID', width:60, align:"center"},
-                {field: 'title', title: '组名', width:350},
-                {field: 'rules', title: '规则ID', align:'center'},
-                {field: 'status', title: '是否禁用', align:'center', width: 100, templet:function(d){
-                        if(d.status == 1){
-                            return '<input type="checkbox" name="status"  checked="checked"  lay-filter="status" value="'+d.id+'" lay-skin="switch" lay-text="否|是" '+d.status+' >'
-                        }else{
-                            return '<input type="checkbox" name="status" lay-filter="status" value="'+d.id+'" lay-skin="switch" lay-text="否|是" '+d.status+' >'
+            url: "{:url('/admin/groupList')}",
+            cellMinWidth: 95,
+            page: true,
+            limit: 10,
+            limits: [5, 10, 15, 20],
+            height: "full-125",
+            id: 'usersListTable',
+            cols: [[
+                {field: 'id', title: 'ID', width: 60, align: "center"},
+                {field: 'title', title: '组名', width: 350},
+                {field: 'rules', title: '规则ID', align: 'center'},
+                {
+                    field: 'status', title: '是否禁用', align: 'center', width: 100, templet: function (d) {
+                        if (d.status == 1) {
+                            return '<input type="checkbox" name="status"  checked="checked"  lay-filter="status" value="' + d.id + '" lay-skin="switch" lay-text="否|是" ' + d.status + ' >'
+                        } else {
+                            return '<input type="checkbox" name="status" lay-filter="status" value="' + d.id + '" lay-skin="switch" lay-text="否|是" ' + d.status + ' >'
                         }
-                    }},
-                {title: '操作', width:170, templet:'#usersListBar',fixed:"right",align:"center"}
+                    }
+                },
+                {title: '操作', width: 170, templet: '#usersListBar', fixed: "right", align: "center"}
             ]]
         });
 
         //搜索
-        $(".search_btn").on("click",function(){
-            table.reload("usersListTable",{
+        $(".search_btn").on("click", function () {
+            table.reload("usersListTable", {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
@@ -124,12 +128,12 @@
             })
         });
         //添加用户组
-        $(".addGroup_btn").on("click",function(){
+        $(".addGroup_btn").on("click", function () {
             add();
         });
 
         //添加用户组
-        function add(){
+        function add() {
             $('#title').val('');
             $('#id').val('');
             layui.layer.open({
@@ -137,113 +141,115 @@
                 title: '新增用户组',
                 area: '360px',
                 shade: 0.3,
-                content : $('#groupName').show(),
-                end:function () {
+                content: $('#groupName').show(),
+                end: function () {
                     $('#groupName').hide();
                 }
             })
         }
+
         //编辑用户组
-        function edit(title,id){
-           $('#title').val(title);
-           $('#id').val(id);
-           var index=layui.layer.open({
+        function edit(title, id) {
+            $('#title').val(title);
+            $('#id').val(id);
+            var index = layui.layer.open({
                 type: 1,
                 title: '编辑用户组',
                 area: '360px',
                 shade: 0.3,
-                content : $('#groupName').show(),
-                end:function () {
-                   $('#groupName').hide();
-               }
-           })
+                content: $('#groupName').show(),
+                end: function () {
+                    $('#groupName').hide();
+                }
+            })
         }
+
         //规则树
-        function tree(){
-           var index=layui.layer.open({
+        function tree() {
+            var index = layui.layer.open({
                 type: 1,
                 title: '访问控制',
                 area: '300px',
-                offset:'50px',
-                content : $('#treeRule').show(),
-                end:function () {
+                offset: '50px',
+                content: $('#treeRule').show(),
+                end: function () {
                     $('#treeRule').hide();
                 }
             })
         }
 
         //列表操作
-        table.on('tool(usersList)', function(obj){
+        table.on('tool(usersList)', function (obj) {
             var layEvent = obj.event,
                 data = obj.data;
-            if(layEvent === 'edit'){ //编辑
-                edit(data.title,data.id);
-            } else if(layEvent === 'rule'){ //访问控制
-                var rules=String(data.rules).split(',');
+            if (layEvent === 'edit') { //编辑
+                edit(data.title, data.id);
+            } else if (layEvent === 'rule') { //访问控制
+                var rules = String(data.rules).split(',');
                 var groupid = data.id;
                 $('#tree').jstree("uncheck_all");  //清除所有选中
-                $('#tree').jstree('select_node',[rules],true); //选中指定节点
+                $('#tree').jstree('select_node', [rules], true); //选中指定节点
                 $('#tree').jstree().close_all(); //关闭所有节点
                 $('#groupid').val(groupid);
                 tree();
             }
         });
         //修改用户组状态
-        form.on('switch(status)', function(data){
-            var index = layer.msg('修改中，请稍后',{icon: 16,time:false,shade:0.8});
-            setTimeout(function(){
+        form.on('switch(status)', function (data) {
+            var index = layer.msg('修改中，请稍后', {icon: 16, time: false, shade: 0.8});
+            setTimeout(function () {
                 layer.close(index);
-                var  status=data.elem.checked?1:0;
-                id    =   data.elem.value;
-                $.post("{:url('/admin/grouplist')}",{id:id,status:status,type:2},function (data) {
-                    var icon=5;
-                    if(data.code){
-                        icon=6;
+                var status = data.elem.checked ? 1 : 0;
+                id = data.elem.value;
+                $.post("{:url('/admin/grouplist')}", {id: id, status: status, type: 2}, function (data) {
+                    var icon = 5;
+                    if (data.code) {
+                        icon = 6;
                     }
-                    layer.msg(data.msg,{icon: icon,time: 1500});
+                    layer.msg(data.msg, {icon: icon, time: 1500});
                 });
-            },500);
+            }, 500);
         });
         //新增修改用户组
-        form.on('submit(save)', function(data){
-            var index = layer.msg('修改中，请稍后',{icon: 16,time:false,shade:0.8});
-            setTimeout(function(){
+        form.on('submit(save)', function (data) {
+            var index = layer.msg('修改中，请稍后', {icon: 16, time: false, shade: 0.8});
+            setTimeout(function () {
                 layer.close(index);
                 var data = $('#groupform').serialize();
                 $.post("{:url('/admin/grouplist')}", data, function (data) {
-                    var icon=5;
-                    if(data.code){
-                        icon=6;
+                    var icon = 5;
+                    if (data.code) {
+                        icon = 6;
                     }
-                    layer.msg(data.msg,{icon: icon,time: 1500},function () {
+                    layer.msg(data.msg, {icon: icon, time: 1500}, function () {
                         if (data.code) {
                             tableIns.reload();
                         }
                         layui.layer.closeAll();
                     });
                 })
-            },500);
+            }, 500);
         });
         //保存规则
-        form.on('submit(saveRule)', function(data){
-            var index = layer.msg('修改中，请稍后',{icon: 16,time:false,shade:0.8});
-            setTimeout(function(){
+        form.on('submit(saveRule)', function (data) {
+            var index = layer.msg('修改中，请稍后', {icon: 16, time: false, shade: 0.8});
+            setTimeout(function () {
                 layer.close(index);
-                var rules=$("#tree").jstree("get_checked");
-                var id=$('#groupid').val();
-                $.post("{:url('/admin/grouplist')}",{rules:rules,id:id,type:4},function (data) {
-                    var icon=5;
-                    if(data.code){
-                        icon=6;
+                var rules = $("#tree").jstree("get_checked");
+                var id = $('#groupid').val();
+                $.post("{:url('/admin/grouplist')}", {rules: rules, id: id, type: 4}, function (data) {
+                    var icon = 5;
+                    if (data.code) {
+                        icon = 6;
                     }
-                    layer.msg(data.msg, {icon: icon,time: 1500}, function () {
+                    layer.msg(data.msg, {icon: icon, time: 1500}, function () {
                         if (data.code) {
                             tableIns.reload();
                             layui.layer.closeAll();
                         }
                     });
                 });
-            },500);
+            }, 500);
         });
     })
 </script>

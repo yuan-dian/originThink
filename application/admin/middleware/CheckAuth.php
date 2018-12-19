@@ -22,7 +22,7 @@ class CheckAuth
             alert_error('重置密码后使用', url('/admin/editPassword'));
         }
         if ($user['uid'] != 1) { //判断是否是超级管理员
-            $Auth = new Auth($user['uid'],$user['group_id']);
+            $Auth = new Auth($user['uid'], $user['group_id']);
             if (!$Auth->check($request->path())) { //验证当前访问页面的权限
                 alert_error(config('auth.not_auth_tip'));
             }

@@ -24,8 +24,8 @@ trait Result
     {
         $msg = [
             'code' => 1,
-            'msg'  => $msg,
-            'url'  => $url,
+            'msg' => $msg,
+            'url' => $url,
             'data' => $data,
             'wait' => $wait,
         ];
@@ -44,10 +44,10 @@ trait Result
         if (is_null($url)) {
             $url = Request::isAjax() ? '' : 'javascript:history.back(-1);';
         }
-        $msg=[
+        $msg = [
             'code' => 0,
-            'msg'  => $msg,
-            'url'  => $url,
+            'msg' => $msg,
+            'url' => $url,
             'data' => $data,
             'wait' => $wait,
         ];

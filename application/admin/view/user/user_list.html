@@ -86,9 +86,10 @@
                 }
             })
             layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
             //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
             $(window).on("resize",function(){
-                layui.layer.full(index);
+                layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
         //编辑用户
@@ -112,6 +113,7 @@
                 layui.layer.full(index);
             })
         }
+
         $(".adduser_btn").click(function(){
             add();
         })

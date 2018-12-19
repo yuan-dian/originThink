@@ -1,4 +1,5 @@
 <?php
+
 namespace app\admin\controller;
 
 use auth\Auth;
@@ -16,7 +17,7 @@ class Index extends Common
     public function index()
     {
         //获取菜单
-        $menuList = (new Auth($this->uid,$this->group_id))->getMenuList();
+        $menuList = (new Auth($this->uid, $this->group_id))->getMenuList();
         $this->assign('menuList', $menuList);
         return $this->fetch();
     }

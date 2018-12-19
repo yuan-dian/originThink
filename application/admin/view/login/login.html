@@ -10,24 +10,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/layui/css/layui.css" media="all" />
-    <link rel="stylesheet" href="/css/public.css" media="all" />
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/public.css" media="all"/>
 </head>
 <body class="loginBody">
 <form class="layui-form" id="login-form">
     <div class="login_face"><img src="/images/face.jpg" class="userAvatar"></div>
     <div class="layui-form-item input-item">
         <label for="userName">用户名</label>
-        <input type="text" placeholder="请输入用户名" autocomplete="off" id="userName" name="user" class="layui-input" lay-verify="required">
+        <input type="text" placeholder="请输入用户名" autocomplete="off" id="userName" name="user" class="layui-input"
+               lay-verify="required">
     </div>
     <div class="layui-form-item input-item">
         <label for="password">密码</label>
-        <input type="password" placeholder="请输入密码" autocomplete="off" id="password" name="password" class="layui-input" lay-verify="required">
+        <input type="password" placeholder="请输入密码" autocomplete="off" id="password" name="password" class="layui-input"
+               lay-verify="required">
     </div>
     <div class="layui-form-item input-item" id="imgCode">
         <label for="code">验证码</label>
-        <input type="text" placeholder="请输入验证码" autocomplete="off" id="code" name="code" class="layui-input" lay-verify="required">
-        <img src="{:captcha_src()}" width="116" height="36" id="captcha"  onclick="this.src='{:captcha_src()}?d='+Math.random();">
+        <input type="text" placeholder="请输入验证码" autocomplete="off" id="code" name="code" class="layui-input"
+               lay-verify="required">
+        <img src="{:captcha_src()}" width="116" height="36" id="captcha"
+             onclick="this.src='{:captcha_src()}?d='+Math.random();">
     </div>
     <div class="layui-form-item ">
         <button class="layui-btn layui-block" lay-filter="login" lay-submit>登录</button>
@@ -41,45 +45,45 @@
 <script type="text/javascript" src="/layui/layui.js"></script>
 <script type="text/javascript" src="/js/cache.js"></script>
 <script>
-    layui.use(['form','layer','jquery'],function(){
+    layui.use(['form', 'layer', 'jquery'], function () {
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer
         $ = layui.jquery;
 
-        $(".loginBody .seraph").click(function(){
-            layer.msg("这只是做个样式，至于功能，你见过哪个后台能这样登录的？还是老老实实的找管理员去注册吧",{
-                time:5000
+        $(".loginBody .seraph").click(function () {
+            layer.msg("这只是做个样式，至于功能，你见过哪个后台能这样登录的？还是老老实实的找管理员去注册吧", {
+                time: 5000
             });
         })
 
         //登录按钮
-        form.on("submit(login)",function(data){
+        form.on("submit(login)", function (data) {
             var obj = $(this);
             var data = data.field;
-            obj.text("登录中...").attr("disabled","disabled").addClass("layui-disabled");
+            obj.text("登录中...").attr("disabled", "disabled").addClass("layui-disabled");
             $.ajax({
                 url: "{:url('/admin/login')}",
                 type: 'post',
                 dataType: 'json',
                 data: data,
                 success: function (data) {
-                    var icon=5;
-                    if(data.code){
-                        icon=6;
+                    var icon = 5;
+                    if (data.code) {
+                        icon = 6;
                     }
-                    layer.msg(data.msg, {icon: icon},function () {
-                        if(data.code ){
+                    layer.msg(data.msg, {icon: icon}, function () {
+                        if (data.code) {
                             location.href = data.url;
-                        }else{
+                        } else {
                             obj.text("登录").removeAttr("disabled").removeClass("layui-disabled");
-                            $('#captcha').attr('src','{:captcha_src()}?d='+Math.random());
+                            $('#captcha').attr('src', '{:captcha_src()}?d=' + Math.random());
                             $('#code').val('');
                         }
                     });
 
                 },
                 error: function (e) {
-                    obj.text("登录").attr("disabled","").removeClass("layui-disabled");
+                    obj.text("登录").attr("disabled", "").removeClass("layui-disabled");
                     layer.msg('出错了', {icon: 5});
                 }
             })
@@ -87,18 +91,18 @@
         })
 
         //表单输入效果
-        $(".loginBody .input-item").click(function(e){
+        $(".loginBody .input-item").click(function (e) {
             e.stopPropagation();
             $(this).addClass("layui-input-focus").find(".layui-input").focus();
         })
-        $(".loginBody .layui-form-item .layui-input").focus(function(){
+        $(".loginBody .layui-form-item .layui-input").focus(function () {
             $(this).parent().addClass("layui-input-focus");
         })
-        $(".loginBody .layui-form-item .layui-input").blur(function(){
+        $(".loginBody .layui-form-item .layui-input").blur(function () {
             $(this).parent().removeClass("layui-input-focus");
-            if($(this).val() != ''){
+            if ($(this).val() != '') {
                 $(this).parent().addClass("layui-input-active");
-            }else{
+            } else {
                 $(this).parent().removeClass("layui-input-active");
             }
         })

@@ -7,6 +7,7 @@
  */
 
 namespace app\admin\model;
+
 use think\Model;
 
 class User extends Model
@@ -14,7 +15,7 @@ class User extends Model
     protected $autoWriteTimestamp = true;
     protected $pk = 'uid';
     protected $type = [
-        'last_login_time'  =>  'timestamp',
+        'last_login_time' => 'timestamp',
     ];
 
     /**

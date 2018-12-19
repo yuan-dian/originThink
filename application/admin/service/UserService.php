@@ -13,9 +13,11 @@ use app\admin\model\LoginLog;
 use app\admin\model\AuthGroupAccess;
 use think\facade\Request;
 use app\admin\traits\Result;
+
 class UserService
 {
     use Result;
+
     /**
      * 验证登录
      * @param $data  待验证数据
@@ -31,17 +33,17 @@ class UserService
         if (!$validate->check($data)) {
             return Result::error($validate->getError());
         }
-        $list = User::where(['user'=>$data['user']])->find();
+        $list = User::where(['user' => $data['user']])->find();
         if (empty($list)) {
             return reResult::error('账号不存在');
         }
-        if ($list['status']==0) {
+        if ($list['status'] == 0) {
             $msg = Result::error('账号禁用');
-        } elseif (!password_verify($data['password'], $list['password'])){
+        } elseif (!password_verify($data['password'], $list['password'])) {
             $msg = Result::error('密码错误');
         } else {
             self::autoSession($list['uid']);
-            $msg=Result::success('登录成功', url('/admin/index'));
+            $msg = Result::success('登录成功', url('/admin/index'));
         }
         return $msg;
     }
@@ -56,28 +58,28 @@ class UserService
     {
         /* 更新登录信息 */
         $data = [
-            'uid'             => $uid,
-            'login_count'     => ['inc', 1],
-            'last_login_ip'   => request()->ip(),
+            'uid' => $uid,
+            'login_count' => ['inc', 1],
+            'last_login_ip' => request()->ip(),
             'last_login_time' => time(),
         ];
         //更新记录
         User::update($data);
         //获取用户组
-        $group_id = model('AuthGroupAccess')->where('uid', '=',$uid)->column('group_id');
+        $group_id = model('AuthGroupAccess')->where('uid', '=', $uid)->column('group_id');
         //获取用户信息
         $user = User::get($uid);
         /* 记录登录SESSION */
         $auth = [
-            'uid'               => $user['uid'],
-            'user'              => $user['user'],
-            'name'              => $user['name'],
-            'head'              => $user['head'],
-            'group_id'          => $group_id,
-            'updatapassword'    => $user['updatapassword'],
-            'last_login_time'   => $user['last_login_time'],
-            'login_count'       => $user['login_count'],
-            'last_login_ip'     => $user['last_login_ip'],
+            'uid' => $user['uid'],
+            'user' => $user['user'],
+            'name' => $user['name'],
+            'head' => $user['head'],
+            'group_id' => $group_id,
+            'updatapassword' => $user['updatapassword'],
+            'last_login_time' => $user['last_login_time'],
+            'login_count' => $user['login_count'],
+            'last_login_ip' => $user['last_login_ip'],
         ];
         //设置session
         session('user_auth', $auth);
@@ -91,14 +93,15 @@ class UserService
      * @param $data
      * @author 原点 <467490186@qq.com>
      */
-    private static function log($data){
+    private static function log($data)
+    {
         //添加数据
         $LoginLog = new LoginLog;
         $LoginLog->save([
-            'uid'=>$data['uid'],
-            'user'=>$data['user'],
-            'name'=>$data['name'],
-            'last_login_ip'=>$data['last_login_ip'],
+            'uid' => $data['uid'],
+            'user' => $data['user'],
+            'name' => $data['name'],
+            'last_login_ip' => $data['last_login_ip'],
         ]);
     }
 
@@ -114,7 +117,7 @@ class UserService
     public static function editPassword($uid, $oldpsd, $newpsd)
     {
         $list = User::get($uid);
-        if (!password_verify($oldpsd,$list['password'])) {
+        if (!password_verify($oldpsd, $list['password'])) {
             $msg = Result::error('原密码错误');
             return $msg;
         }
@@ -145,29 +148,29 @@ class UserService
         if (!$validate->scene('add')->check($data)) {
             //令牌数据无效时重置令牌
             $validate->getError() != '令牌数据无效' ? $token = Request::token() : $token = '';
-            $msg = Result::error($validate->getError(), null, ['token' =>$token]);
+            $msg = Result::error($validate->getError(), null, ['token' => $token]);
             return $msg;
         }
-        $user           = new User;
-        $user->user     = $data['user'];
-        $user->name     = $data['name'];
-        $user->status   = $data['status'];
+        $user = new User;
+        $user->user = $data['user'];
+        $user->name = $data['name'];
+        $user->status = $data['status'];
         $user->password = password_hash($data['password'], PASSWORD_DEFAULT);
         $res = $user->save();
         if ($res) {
             $group_ids = explode(',', $data['group_id']);
-            $save=[];
+            $save = [];
             foreach ($group_ids as $v) {
                 $save[] = [
-                    'uid'=>$user->uid,
-                    'group_id'=>$v
+                    'uid' => $user->uid,
+                    'group_id' => $v
                 ];
             }
             $AuthGroupAccess = new AuthGroupAccess;
             $res2 = $AuthGroupAccess->saveAll($save, false);
-            if ( $res2 ){
+            if ($res2) {
                 $msg = Result::success('添加成功', url('/admin/userList'));
-            }else {
+            } else {
                 $msg = Result::error('添加失败', null, ['token' => Request::token()]);
             }
         }
@@ -183,24 +186,24 @@ class UserService
      */
     public static function edit($data)
     {
-        $userdata=[
-            'name'   => $data['name'],
+        $userdata = [
+            'name' => $data['name'],
             'status' => $data['status'],
         ];
-        $res = User::update($userdata, ['uid'=>$data['uid']]);
-        if ( $res ) {
+        $res = User::update($userdata, ['uid' => $data['uid']]);
+        if ($res) {
             AuthGroupAccess::where('uid', '=', $data['uid'])->delete();
             $group_ids = explode(',', $data['group_id']);
             $save = [];
             foreach ($group_ids as $v) {
                 $save[] = [
-                    'uid'      => $data['uid'],
+                    'uid' => $data['uid'],
                     'group_id' => $v
                 ];
             }
             $AuthGroupAccess = new AuthGroupAccess;
-            $res2=$AuthGroupAccess->saveAll($save, false);
-            if ($res2){
+            $res2 = $AuthGroupAccess->saveAll($save, false);
+            if ($res2) {
                 $msg = Result::success('编辑成功', url('/admin/userlist'));
             } else {
                 $msg = Result::error('编辑失败');
@@ -228,7 +231,7 @@ class UserService
         }
         $res = User::destroy($uid);
         if ($res) {
-            AuthGroupAccess::where('uid', '=',$uid)->delete();
+            AuthGroupAccess::where('uid', '=', $uid)->delete();
             $msg = Result::success('删除成功');
         } else {
             $msg = Result::error('删除失败');

@@ -30,16 +30,16 @@ class User extends Common
             $data = input();
             $map = [];
             empty($data['key']) || $map[] = ['user|name', 'like', '%' . $data['key'] . '%'];
-            isset($data['limit']) ? $limit = $data['limit'] : $limit=10;
+            isset($data['limit']) ? $limit = $data['limit'] : $limit = 10;
             $list = UserModel::where($map)
                 ->field('uid,user,name,login_count,update_time')
-                ->paginate( $limit, false,  ['query'=>$data]);
+                ->paginate($limit, false, ['query' => $data]);
             $user_date = [];
             foreach ($list as $key => $val) {
                 $user_date[$key] = $val->toarray();
-                $user_date[$key]['title']=$val->group_titles;
+                $user_date[$key]['title'] = $val->group_titles;
             }
-            return (['code'=>0, 'mag'=>'', 'data'=>$user_date, 'count'=>$list->total()]);
+            return (['code' => 0, 'mag' => '', 'data' => $user_date, 'count' => $list->total()]);
         }
         return $this->fetch();
     }
@@ -76,6 +76,7 @@ class User extends Common
             return $this->fetch();
         }
     }
+
     /**
      * 验证用户名是否存在
      * @return array
@@ -84,12 +85,12 @@ class User extends Common
      */
     public function check()
     {
-        $username = $this->request->get('username','','trim');
-        $res = UserModel::where('user','=',$username)->field('uid')->find();
+        $username = $this->request->get('username', '', 'trim');
+        $res = UserModel::where('user', '=', $username)->field('uid')->find();
         if ($res) {
-            $msg = ['code'=>1,'msg'=>'账号已存在'];
-         }else {
-            $msg = ['status'=>0,'info'=>'验证通过'];
+            $msg = ['code' => 1, 'msg' => '账号已存在'];
+        } else {
+            $msg = ['status' => 0, 'info' => '验证通过'];
         }
         return $msg;
     }
@@ -102,7 +103,7 @@ class User extends Common
     {
         $uid = $this->request->param('uid', 0, 'intval');
         if ($uid) {
-            if ($uid != 1){
+            if ($uid != 1) {
                 $res = UserService::delete($uid);
                 return $res;
             } else {
@@ -123,22 +124,22 @@ class User extends Common
      */
     public function groupList()
     {
-        if ( $this->request->isPost() ){
-            $id     =  $this->request->post('id', 0, 'intval');
-            $type   =  $this->request->post('type', 0, 'intval');
-            $title  =  $this->request->post('title', '', 'trim');
-            $status =  $this->request->post('status', 0, 'intval');
-            $rules  =  $this->request->post('rules', []);
-            switch ( $type ){
+        if ($this->request->isPost()) {
+            $id = $this->request->post('id', 0, 'intval');
+            $type = $this->request->post('type', 0, 'intval');
+            $title = $this->request->post('title', '', 'trim');
+            $status = $this->request->post('status', 0, 'intval');
+            $rules = $this->request->post('rules', []);
+            switch ($type) {
                 case 1://编辑、添加用户组
-                    if ($id){//编辑用户组
-                        return AuthGroupService::edit( $id, ['title'=>$title] );
+                    if ($id) {//编辑用户组
+                        return AuthGroupService::edit($id, ['title' => $title]);
                     } else {//添加用户组
                         return AuthGroupService::add($title);
                     }
                     break;
                 case 2://是否禁用用户组
-                    return AuthGroupService::edit( $id, ['status'=>$status]);
+                    return AuthGroupService::edit($id, ['status' => $status]);
                     break;
                 case 3://获取权限列表
                     $list = AuthRule::field('id,pid,title as text')->select();
@@ -149,19 +150,19 @@ class User extends Common
                     if (!$rules) $this->error('参数错误');
                     sort($rules);
                     $rules = implode(',', $rules);
-                    $res   = AuthGroupService::edit($id, ['rules'=>$rules], true);
+                    $res = AuthGroupService::edit($id, ['rules' => $rules], true);
                     return $res;
                     break;
             }
         } else {
             if ($this->request->isAjax()) {
-                $key   = $this->request->get('key', '', 'trim');
+                $key = $this->request->get('key', '', 'trim');
                 $limit = $this->request->get('key', 10, 'intval');
-                $map   = [];
-                empty ( $key ) || $map[] = ['title', 'like', '%' . $key . '%'];
-                $list = AuthGroup::where($map)->paginate($limit, false, ['query' => ['key'=>$key], 'limit' => $limit]);
+                $map = [];
+                empty ($key) || $map[] = ['title', 'like', '%' . $key . '%'];
+                $list = AuthGroup::where($map)->paginate($limit, false, ['query' => ['key' => $key], 'limit' => $limit]);
                 $data = $list->toarray();
-                return (['code'=>0, 'mag'=>'', 'data' => $data['data'], 'count' => $data['total']]);
+                return (['code' => 0, 'mag' => '', 'data' => $data['data'], 'count' => $data['total']]);
             }
             return $this->fetch();
         }
@@ -175,10 +176,10 @@ class User extends Common
      */
     public function editPassword()
     {
-        if ( $this->request->isPost() ) {
+        if ($this->request->isPost()) {
             $data = input();
-            $uid  = $this->uid;
-            $res  = UserService::editPassword($uid, $data['oldpassword'], $data['password']);
+            $uid = $this->uid;
+            $res = UserService::editPassword($uid, $data['oldpassword'], $data['password']);
             return $res;
         } else {
             return $this->fetch();

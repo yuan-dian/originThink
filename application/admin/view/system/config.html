@@ -22,19 +22,22 @@
         <tr>
             <td>应用调试模式</td>
             <td>
-                {form:radio name="debug" list="['0'=>'关闭','1'=>'开启']" value="isset($data['value']['debug'])?$data['value']['debug']:0"}
+                {form:radio name="debug" list="['0'=>'关闭','1'=>'开启']"
+                value="isset($data['value']['debug'])?$data['value']['debug']:0"}
             </td>
         </tr>
         <tr>
             <td>应用Trace</td>
             <td>
-                {form:radio name="trace" list="['0'=>'关闭','1'=>'开启']" value="isset($data['value']['trace'])?$data['value']['trace']:0"}
+                {form:radio name="trace" list="['0'=>'关闭','1'=>'开启']"
+                value="isset($data['value']['trace'])?$data['value']['trace']:0"}
             </td>
         </tr>
         <tr>
             <td>应用Trace类型</td>
             <td>
-                {form:radio name="trace_type" list="['0'=>'Html','1'=>'Console']" value="isset($data['value']['trace_type'])?$data['value']['trace_type']:0"}
+                {form:radio name="trace_type" list="['0'=>'Html','1'=>'Console']"
+                value="isset($data['value']['trace_type'])?$data['value']['trace_type']:0"}
             </td>
         </tr>
         <tr>
@@ -50,27 +53,27 @@
 {/block}
 {block name="script"}
 <script>
-layui.use(['form','jquery','layer'], function(){
-    var form = layui.form,$ = layui.jquery,layer=layui.layer;
-    //监听提交
-    form.on('submit(save)', function(data){
-        var obj = $(this);
-        obj.attr("disabled","disabled").addClass("layui-disabled");
-        $.post("{:url('/admin/config')}",data.field,function (data) {
-            var icon=5;
-            if(data.code){
-                icon=6;
-            }
-            layer.msg(data.msg, {icon:icon,time: 1500}, function () {
+    layui.use(['form', 'jquery', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery, layer = layui.layer;
+        //监听提交
+        form.on('submit(save)', function (data) {
+            var obj = $(this);
+            obj.attr("disabled", "disabled").addClass("layui-disabled");
+            $.post("{:url('/admin/config')}", data.field, function (data) {
+                var icon = 5;
                 if (data.code) {
-                    location.reload();
-                }else{
-                    obj.removeAttr("disabled").removeClass("layui-disabled");
+                    icon = 6;
                 }
+                layer.msg(data.msg, {icon: icon, time: 1500}, function () {
+                    if (data.code) {
+                        location.reload();
+                    } else {
+                        obj.removeAttr("disabled").removeClass("layui-disabled");
+                    }
+                });
             });
+            return false;
         });
-        return false;
     });
-});
 </script>
 {/block}

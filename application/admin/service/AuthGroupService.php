@@ -46,7 +46,7 @@ class AuthGroupService
     {
         if (!$id || !$data) Result::error('参数错误');
         $group = new AuthGroup;
-        $res = $group->save($data,['id'=>$id]);
+        $res = $group->save($data, ['id' => $id]);
         if ($res) {
             if ($authcache) {
                 Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存

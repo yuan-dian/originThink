@@ -25,9 +25,9 @@ class Form extends Taglib
 
     // 标签定义
     protected $tags = [
-        'select'    => ['attr'=>'name,list,value,option', 'close' => 0],
-        'radio'     => ['attr'=>'name,list,value,option', 'close' => 0],
-        'checkbox'  => ['attr'=>'name,list,value,option', 'close' => 0]
+        'select' => ['attr' => 'name,list,value,option', 'close' => 0],
+        'radio' => ['attr' => 'name,list,value,option', 'close' => 0],
+        'checkbox' => ['attr' => 'name,list,value,option', 'close' => 0]
     ];
 
     /**
@@ -42,25 +42,25 @@ class Form extends Taglib
     {
         $name = isset($tag['name']) ? $tag['name'] : '""';
         $list = isset($tag['list']) ? $tag['list'] : 'array()';
-        if ( isset($tag['value']) ){
-            if (strpos($tag['value'],'$') !== false ) {
-                $value=$tag['value'];
+        if (isset($tag['value'])) {
+            if (strpos($tag['value'], '$') !== false) {
+                $value = $tag['value'];
             } else {
-                $value = "'".$tag['value']."'";
+                $value = "'" . $tag['value'] . "'";
             }
         } else {
             $value = '""';
         }
-        $value = 'isset('. $value .')?'. $value .':""';
-        $option = isset( $tag['option'] ) ? $tag['option'] : '';
+        $value = 'isset(' . $value . ')?' . $value . ':""';
+        $option = isset($tag['option']) ? $tag['option'] : '';
         $parseStr = '<?php 
-        $name  = \''. $name .'\'; 
-        $list  = '. $list .'; 
-        $value = '. $value .';
+        $name  = \'' . $name . '\'; 
+        $list  = ' . $list . '; 
+        $value = ' . $value . ';
         $tmp   ="";';
-        if ( $option ) {
+        if ($option) {
             $parseStr .= '
-                $option = '. $option .' ;
+                $option = ' . $option . ' ;
                 foreach ( $option as $k =>$v){
                   $tmp = $tmp.$k.\'="\'.$v.\'"\';
                 }';
@@ -94,24 +94,24 @@ class Form extends Taglib
     {
         $name = isset($tag['name']) ? $tag['name'] : '""';
         $list = isset($tag['list']) ? $tag['list'] : 'array()';
-        if ( isset($tag['value']) ){
-            if ( strpos($tag['value'],'$') !== false ){
+        if (isset($tag['value'])) {
+            if (strpos($tag['value'], '$') !== false) {
                 $value = $tag['value'];
             } else {
-                $value = "'".$tag['value']."'";
+                $value = "'" . $tag['value'] . "'";
             }
         } else {
             $value = '""';
         }
         $option = isset($tag['option']) ? $tag['option'] : '';
         $parseStr = '<?php 
-            $name = \''.$name.'\'; 
-            $list = '.$list.'; 
-            $value = '.$value.';
+            $name = \'' . $name . '\'; 
+            $list = ' . $list . '; 
+            $value = ' . $value . ';
             $tmp = "";';
-            if ( $option ){
-                $parseStr .='
-                $option='.$option.';
+        if ($option) {
+            $parseStr .= '
+                $option=' . $option . ';
                 foreach ( $option as $k => $v){
                   $tmp = $tmp.$k.\' = "\'.$v.\'"\';
             }';
@@ -143,28 +143,28 @@ class Form extends Taglib
     {
         $name = isset($tag['name']) ? $tag['name'] : '""';
         $list = isset($tag['list']) ? $tag['list'] : 'array()';
-        if ( isset($tag['value']) ){
-            if (strpos($tag['value'],'$') !== false){
+        if (isset($tag['value'])) {
+            if (strpos($tag['value'], '$') !== false) {
                 $value = $tag['value'];
-             }else {
-                $value = "'". $tag['value'] ."'";
+            } else {
+                $value = "'" . $tag['value'] . "'";
             }
         } else {
             $value = '""';
         }
         $option = isset($tag['option']) ? $tag['option'] : '';
         $parseStr = '<?php 
-            $name = \''.$name.'\'; 
-            $list = '.$list.'; 
-            $value = '.$value.';
+            $name = \'' . $name . '\'; 
+            $list = ' . $list . '; 
+            $value = ' . $value . ';
             $tmp = "";';
-            if ( $option ){
-                $parseStr .= '
-                $option = '.$option.';
+        if ($option) {
+            $parseStr .= '
+                $option = ' . $option . ';
                 foreach ( $option as $k => $v){
                   $tmp = $tmp.$k.\' = "\'.$v.\'"\';
                 }';
-            }
+        }
         $parseStr .= '
             $radio = array();
             foreach ( $list as $key => $val){

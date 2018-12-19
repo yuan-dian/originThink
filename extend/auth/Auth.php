@@ -5,11 +5,14 @@
  * Date: 2018/9/3
  * Time: 9:36
  */
+
 namespace auth;
+
 use think\Db;
 use think\facade\Config;
 use think\facade\Request;
 use think\facade\Cache;
+
 /**
  * 权限认证类
  * 功能特性：
@@ -65,6 +68,7 @@ CREATE TABLE `think_auth_group_access` (
     KEY `group_id` (`group_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
  */
+
 class Auth
 {
     /**
@@ -81,18 +85,18 @@ class Auth
 
     //默认配置
     protected $config = [
-        'auth_on'           => 1,                      // 权限开关
-        'auth_type'         => 1,                      // 认证方式，1为实时认证；2为登录认证。
-        'auth_group'        => 'auth_group',           // 用户组数据表名
+        'auth_on' => 1,                      // 权限开关
+        'auth_type' => 1,                      // 认证方式，1为实时认证；2为登录认证。
+        'auth_group' => 'auth_group',           // 用户组数据表名
         'auth_group_access' => 'auth_group_access',    // 用户-用户组关系表
-        'auth_rule'         => 'auth_rule',            // 权限规则表
-        'auth_user'         => 'uese',                 // 用户信息表
-        'not_auth_tip'      => '无权限操作!',          //无权限的提示信息
-        'is_cache'          => true,                   //是否将规则缓存
-        'expire'            => 3600,                   //缓存时间
-        'prefix'            => 'user_auth',            //缓存前缀
-        'cache_tag'         => 'auth',                 //缓存key
-        'exclude_rule'      => [ ]                     //不验证权限的url
+        'auth_rule' => 'auth_rule',            // 权限规则表
+        'auth_user' => 'uese',                 // 用户信息表
+        'not_auth_tip' => '无权限操作!',          //无权限的提示信息
+        'is_cache' => true,                   //是否将规则缓存
+        'expire' => 3600,                   //缓存时间
+        'prefix' => 'user_auth',            //缓存前缀
+        'cache_tag' => 'auth',                 //缓存key
+        'exclude_rule' => []                     //不验证权限的url
     ];
 
     /**
@@ -101,25 +105,25 @@ class Auth
      */
     /**
      * Auth constructor.
-     * @param int $uid        用户id
+     * @param int $uid 用户id
      * @param array $group_id 用户组
      */
-    public function __construct($uid=0, $group_id = [])
+    public function __construct($uid = 0, $group_id = [])
     {
         //可设置配置项 auth, 此配置项为数组。
         if ($auth = Config::get('auth.')) {
             $this->config = array_merge($this->config, $auth);
         }
         // 初始化request
-        $this->request  = Request::instance();
-        $this->uid      = $uid;
+        $this->request = Request::instance();
+        $this->uid = $uid;
         $this->group_id = $group_id;
     }
 
     /**
      * @param        $name     string|array  需要验证的规则列表,支持逗号分隔的权限规则或索引数组
-     * @param int    $type     认证类型
-     * @param string $mode     执行check的模式
+     * @param int $type 认证类型
+     * @param string $mode 执行check的模式
      * @param string $relation 如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
      * @return bool  通过验证返回true;失败返回false
      * @author 原点 <467490186@qq.com>
@@ -130,12 +134,12 @@ class Auth
         if (!$this->config['auth_on']) {
             return true;
         }
-        if (in_array($name,$this->config['exclude_rule'])) {
+        if (in_array($name, $this->config['exclude_rule'])) {
             return true;
         }
         // 获取用户需要验证的所有有效规则列表
         $authList = $this->getAuthList($type);
-        if ( is_string($name) ) {
+        if (is_string($name)) {
             $name = strtolower($name);
             if (strpos($name, ',') !== false) {
                 $name = explode(',', $name);
@@ -152,7 +156,7 @@ class Auth
             if ('url' == $mode && $query != $auth) {
                 parse_str($query, $param); //解析规则中的param
                 $intersect = array_intersect_assoc($REQUEST, $param);
-                $auth      = preg_replace('/\?.*$/U', '', $auth);
+                $auth = preg_replace('/\?.*$/U', '', $auth);
                 if (in_array($auth, $name) && $intersect == $param) {
                     //如果节点相符且url参数满足
                     $list[] = $auth;
@@ -185,12 +189,12 @@ class Auth
     public function getGroups()
     {
         //获取缓存开启状态
-        $is_cache  = $this->config['is_cache'];
+        $is_cache = $this->config['is_cache'];
         $cache_key = '';
         //判断是否开启缓存
         if ($is_cache) {
             //设置缓存name
-            $cache_key = $this->config['prefix'].'groups_'.implode('-',$this->group_id);
+            $cache_key = $this->config['prefix'] . 'groups_' . implode('-', $this->group_id);
             //获取缓存
             $group = Cache::get($cache_key);
             if ($group) {
@@ -215,7 +219,7 @@ class Auth
     protected function getAuthList($type)
     {
         //获取缓存开启状态
-        $is_cache  = $this->config['is_cache'];
+        $is_cache = $this->config['is_cache'];
         $cache_key = '';
         //判断是否开启缓存
         if ($is_cache) {
@@ -230,11 +234,11 @@ class Auth
         }
         $rules = $this->_auth_rule();
         $authList = [];
-        foreach ($rules  as $rule) {
+        foreach ($rules as $rule) {
             $authList[] = strtolower($rule['name']);
         }
         $authList = array_unique($authList);
-        if ( $is_cache ) {
+        if ($is_cache) {
             //设置缓存数据
             Cache::tag($this->config['cache_tag'])->set($cache_key, $authList, $this->config['expire']);
         }
@@ -252,12 +256,12 @@ class Auth
     protected function getUserInfo()
     {
         //获取缓存开启状态
-        $is_cache  = $this->config['is_cache'];
+        $is_cache = $this->config['is_cache'];
         $cache_key = '';
         //判断是否开启缓存
         if ($is_cache) {
             //设置缓存name
-            $cache_key = $this->config['prefix'] . 'user_info_'.$this->uid;
+            $cache_key = $this->config['prefix'] . 'user_info_' . $this->uid;
             //获取缓存
             $user_info = Cache::get($cache_key);
             if ($user_info) {
@@ -270,7 +274,7 @@ class Auth
         $user_info = $user->where($_pk, $this->uid)->find();
         if ($is_cache) {
             //设置缓存
-            Cache::tag($this->config['cache_tag'])->set($cache_key,$user_info,$this->config['expire']);
+            Cache::tag($this->config['cache_tag'])->set($cache_key, $user_info, $this->config['expire']);
         }
         return $user_info;
     }
@@ -287,15 +291,15 @@ class Auth
     {
         $super_admin = $this->uid == 1 ? true : false;
         //获取缓存开启状态
-        $is_cache  = $this->config['is_cache'];
+        $is_cache = $this->config['is_cache'];
         $cache_key = '';
         //判断是否开启缓存
-        if ( $is_cache ){
+        if ($is_cache) {
             //设置缓存name
-            if ( !$super_admin ) {
-                $cache_key = $this->config['prefix'].'menuList_'.implode('-',$this->group_id);
+            if (!$super_admin) {
+                $cache_key = $this->config['prefix'] . 'menuList_' . implode('-', $this->group_id);
             } else {
-                $cache_key = $this->config['prefix'].'menuList_super';
+                $cache_key = $this->config['prefix'] . 'menuList_super';
             }
             //获取缓存数据
             $menuList = Cache::get($cache_key);
@@ -304,20 +308,20 @@ class Auth
             }
         }
         if (!$super_admin) { //不是超级管理员，根据用户组获取对应的菜单
-            $menuList=$this->_auth_rule();//获取规则
-            $menuList=list_to_tree($menuList);
+            $menuList = $this->_auth_rule();//获取规则
+            $menuList = list_to_tree($menuList);
         } else {
             //超级管理员
             $map = [
-                ['menu','=',1],
-                ['status','=',1]
+                ['menu', '=', 1],
+                ['status', '=', 1]
             ];
             $menuList = \think\Db::name($this->config['auth_rule'])->where($map)->order('sort desc')->select();
             $menuList = list_to_tree($menuList);
         }
         if ($is_cache) {
             //设置缓存数据
-            Cache::tag($this->config['cache_tag'])->set($cache_key,$menuList,$this->config['expire']);
+            Cache::tag($this->config['cache_tag'])->set($cache_key, $menuList, $this->config['expire']);
         }
         return $menuList;
     }
@@ -325,7 +329,7 @@ class Auth
     public function _auth_rule()
     {
         $groups = $this->getGroups();
-        $ids    = []; //保存用户所属用户组设置的所有权限规则id
+        $ids = []; //保存用户所属用户组设置的所有权限规则id
         foreach ($groups as $g) {
             $ids = array_merge($ids, explode(',', trim($g['rules'], ',')));
         }
@@ -334,9 +338,9 @@ class Auth
             return [];
         }
         $map = [
-            ['id','in',$ids],
-            ['menu','=',1],
-            ['status','=',1],
+            ['id', 'in', $ids],
+            ['menu', '=', 1],
+            ['status', '=', 1],
         ];
         //读取用户组所有权限规则
         $rules = Db::name($this->config['auth_rule'])->where($map)->order('sort desc')->select();
@@ -345,9 +349,9 @@ class Auth
         foreach ($rules as $rule) {
             if (!empty($rule['condition'])) {
                 //根据condition进行验证
-                $user    = $this->getUserInfo($this->uid); //获取用户信息,一维数组
+                $user = $this->getUserInfo($this->uid); //获取用户信息,一维数组
                 $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
-                $condition='';
+                $condition = '';
                 @(eval('$condition=(' . $command . ');'));
                 if ($condition) {
                     $menuList[] = $rule;
