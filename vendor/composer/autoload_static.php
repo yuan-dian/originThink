@@ -7,15 +7,12 @@ namespace Composer\Autoload;
 class ComposerStaticInit1b7bcec630c8eb3e5f597fc2a4655813
 {
     public static $files = array (
-        'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
-        'ea51e7f80936725691663347d5b38bd9' => __DIR__ . '/..' . '/topthink/think-swoole/src/command.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
-            'think\\swoole\\' => 13,
             'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
         ),
@@ -23,27 +20,9 @@ class ComposerStaticInit1b7bcec630c8eb3e5f597fc2a4655813
         array (
             'app\\' => 4,
         ),
-        'X' => 
-        array (
-            'XCron\\' => 6,
-        ),
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Util\\' => 22,
-            'Symfony\\Polyfill\\Php56\\' => 23,
-            'SuperClosure\\' => 13,
-        ),
-        'P' => 
-        array (
-            'PhpParser\\' => 10,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'think\\swoole\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-swoole/src',
-        ),
         'think\\composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-installer/src',
@@ -55,26 +34,6 @@ class ComposerStaticInit1b7bcec630c8eb3e5f597fc2a4655813
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application',
-        ),
-        'XCron\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/xavier/xcron-expression/src/Cron',
-        ),
-        'Symfony\\Polyfill\\Util\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-util',
-        ),
-        'Symfony\\Polyfill\\Php56\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php56',
-        ),
-        'SuperClosure\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src',
-        ),
-        'PhpParser\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
     );
 
