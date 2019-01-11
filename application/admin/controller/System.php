@@ -65,7 +65,7 @@ class System extends Common
                 'name' => $data['key'],
                 'create_time' => [$data['starttime'], $data['endtime']],
             ])->paginate($data['limit'], false, ['query' => $data]);
-            return (['code' => 0, 'mag' => '', 'data' => $list->items(), 'count' => $list->total()]);
+            $this->json($list->items(),0,'',['count' => $list->total()]);
         }
         return $this->fetch();
     }
@@ -82,7 +82,7 @@ class System extends Common
     {
         if ($this->request->isPost()) {
             $list = AuthRule::order('sort desc')->select();
-            return $result = ['code' => 0, 'msg' => '获取成功!', 'data' => $list];
+            $this->json($list,0,'获取成功');
         }
         return $this->fetch();
     }

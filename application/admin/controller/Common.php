@@ -10,6 +10,8 @@ namespace app\admin\controller;
 
 use app\admin\model\Config;
 use think\Controller;
+use think\exception\HttpResponseException;
+use think\Response;
 
 class Common extends Controller
 {
@@ -64,6 +66,30 @@ class Common extends Controller
         $list = Config::where('name', '=', 'site_config')->field('value')->find();
         cache('site_config', $list);
         return $list;
+    }
+
+    /**
+     * json 数据输出
+     * @param $data          data数据
+     * @param int $code      code
+     * @param string $msg    提示信息
+     * @param array $param   额外参数
+     * @param $httpCode      http状态码
+     * @param array $header  header头
+     * @param array $options json额外参数
+     */
+    public  function json($data, $code = 1, $msg = '', $param = [], $httpCode = 200, $header = [], $options = [])
+    {
+        $json = [
+            'code' => $code,
+            'msg' => $msg,
+            'data' => $data,
+        ];
+        if ($param) {
+            $json = array_merge($json, $param);
+        }
+        $response = Response::create($json, 'json', $httpCode, $header, $options);
+        throw new HttpResponseException($response);
     }
 
 }
