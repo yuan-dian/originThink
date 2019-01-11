@@ -32,4 +32,16 @@ class User extends Model
             ->column('AuthGroup.title');
         return implode(',', $titles);
     }
+
+    /**
+     * 搜索器
+     * @param $query
+     * @param $value
+     */
+    public function searchNameAttr($query, $value)
+    {
+        if ($value) {
+            $query->where('user|name', 'like', '%' . $value . '%');
+        }
+    }
 }

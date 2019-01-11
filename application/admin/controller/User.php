@@ -27,16 +27,16 @@ class User extends Common
     public function userList()
     {
         if ($this->request->isAjax()) {
-            $data = input();
-            $map = [];
-            empty($data['key']) || $map[] = ['user|name', 'like', '%' . $data['key'] . '%'];
-            isset($data['limit']) ? $limit = $data['limit'] : $limit = 10;
-            $list = UserModel::where($map)
-                ->field('uid,user,name,login_count,update_time')
-                ->paginate($limit, false, ['query' => $data]);
+            $data = [
+                'key' => $this->request->get('key', '', 'trim'),
+                'limit' => $this->request->get('limit', 10, 'intval'),
+            ];
+            $list = UserModel::withSearch(['name'], ['name' => $data['key']])
+                ->hidden(['password'])
+                ->paginate($data['limit'], false, ['query' => $data]);
             $user_date = [];
             foreach ($list as $key => $val) {
-                $user_date[$key] = $val->toarray();
+                $user_date[$key] = $val;
                 $user_date[$key]['title'] = $val->group_titles;
             }
             return (['code' => 0, 'mag' => '', 'data' => $user_date, 'count' => $list->total()]);
