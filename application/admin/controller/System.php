@@ -197,7 +197,7 @@ class System extends Common
      */
     public function siteConfig()
     {
-        if (!$this->request()->isPost()) {
+        if (!$this->request->isPost()) {
             $data = Config::where('name', 'site_config')->find();
             $this->assign('data', $data);
             return $this->fetch();

@@ -27,6 +27,8 @@ class CheckAuth
                 alert_error(config('auth.not_auth_tip'));
             }
         }
+        $request->login_uid = $user['uid'];
+        $request->login_group_id = $user['group_id'];
         return $next($request);
     }
 }

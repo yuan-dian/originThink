@@ -54,8 +54,8 @@ class User extends Common
      */
     public function edit()
     {
-        $data = input();
         if ($this->request->isPost()) {
+            $data = $this->request->post();
             if ($data['uid']) {
                 //编辑
                 $res = UserService::edit($data);
@@ -66,9 +66,10 @@ class User extends Common
                 return $data;
             }
         } else {
-            if (isset($data['uid'])) {
-                $list = UserModel::where('uid', '=', $data['uid'])->find();
-                $list['group_id'] = AuthGroupAccess::where('uid', '=', $data['uid'])->column('group_id');
+            $uid = $this->request->get('uid',0,'intval');
+            if ($uid) {
+                $list = UserModel::where('uid', '=', $uid)->find();
+                $list['group_id'] = AuthGroupAccess::where('uid', '=', $uid)->column('group_id');
                 $this->assign('list', $list);
             }
             $grouplist = AuthGroup::select();

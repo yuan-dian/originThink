@@ -30,13 +30,8 @@
         <div class="layui-input-block">
             <select name="group_id" xm-select="selectId" id="group_id" lay-verify="required">
                 <option value="">请选择</option>
-                {php}
-                //获取用户组信息
-                $group_ids=isset($list['group_id'])?$list['group_id']:[];
-                {/php}
                 {volist name='grouplist' id='vo'}
-                <option value="{$vo.id}" {if (in_array($vo.id,$group_ids))}selected="selected" {
-                /if}>{$vo.title}</option>
+                    <option value="{$vo.id}" {if (in_array($vo.id,$list['group_id']))}selected="selected" {/if}>{$vo.title}</option>
                 {/volist}
             </select>
         </div>
