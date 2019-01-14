@@ -23,8 +23,8 @@ class Common extends Controller
      */
     protected function initialize()
     {
-        $this->uid = $this->request->param('login_uid');
-        $this->group_id =$this->request->param('login_group_id');
+        $this->uid = $this->request->LoginUid;
+        $this->group_id = $this->request->LoginGroupId;
         $this->config();
         $site_config = $this->siteConfig();
         $this->assign('site_config', $site_config);
