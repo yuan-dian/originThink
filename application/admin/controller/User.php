@@ -72,7 +72,7 @@ class User extends Common
                 $list['group_id'] = AuthGroupAccess::where('uid', '=', $uid)->column('group_id');
                 $this->assign('list', $list);
             }
-            $grouplist = AuthGroup::select();
+            $grouplist = AuthGroup::column('id,title');
             $this->assign('grouplist', $grouplist);
             return $this->fetch();
         }

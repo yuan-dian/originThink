@@ -25,15 +25,11 @@
         </div>
     </div>
     {/if}
+
     <div class="layui-form-item">
         <label class="layui-form-label">所属组</label>
         <div class="layui-input-block">
-            <select name="group_id" xm-select="selectId" id="group_id" lay-verify="required">
-                <option value="">请选择</option>
-                {volist name='grouplist' id='vo'}
-                    <option value="{$vo.id}" {if (in_array($vo.id,$list['group_id']))}selected="selected" {/if}>{$vo.title}</option>
-                {/volist}
-            </select>
+            {form:select name="group_id" list="$grouplist" value = "$list['group_id']"  default="[''=>'请选择']"  option="['xm-select'=>'selectId','id'=>'group_id','lay-verify'=>'required']"}
         </div>
     </div>
     <div class="layui-form-item">

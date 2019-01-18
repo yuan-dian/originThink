@@ -40,44 +40,52 @@ class Form extends Taglib
      */
     public function tagSelect($tag, $content)
     {
-        $name = isset($tag['name']) ? $tag['name'] : '""';
-        $list = isset($tag['list']) ? $tag['list'] : 'array()';
-        if (isset($tag['value'])) {
-            if (strpos($tag['value'], '$') !== false) {
-                $value = $tag['value'];
-            } else {
-                $value = "'" . $tag['value'] . "'";
+        $tag_name = isset($tag['name']) ? $tag['name'] : '""';
+        $tag_list = isset($tag['list']) ? $tag['list'] : 'array()';
+        $tag_value = isset($tag['value']) ? $tag['value'] : '';
+        $tag_default = isset($tag['default']) ? $tag['default'] : 'array()';
+        if ($tag_value) {
+            if (strpos($tag_value, '$') === false) {
+                $tag_value = "'" . $tag_value . "'";
             }
-        } else {
-            $value = '""';
         }
-        $value = 'isset(' . $value . ')?' . $value . ':""';
-        $option = isset($tag['option']) ? $tag['option'] : '';
-        $parseStr = '<?php 
-        $name  = \'' . $name . '\'; 
-        $list  = ' . $list . '; 
-        $value = ' . $value . ';
-        $tmp   ="";';
-        if ($option) {
+        $tag_value = 'isset(' . $tag_value . ')?' . $tag_value . ':""';
+        $tag_option = isset($tag['option']) ? $tag['option'] : '';
+        $parseStr = '
+        <?php 
+            $tag_name  = \'' . $tag_name . '\'; 
+            $tag_list  = ' . $tag_list . '; 
+            $tag_value = ' . $tag_value . ';
+            $tag_default = ' . $tag_default . ';
+            $tmp   ="";';
+        if ($tag_option) {
             $parseStr .= '
-                $option = ' . $option . ' ;
-                foreach ( $option as $k =>$v){
-                  $tmp = $tmp.$k.\'="\'.$v.\'"\';
-                }';
+            $tag_option = ' . $tag_option . ' ;
+            foreach ( $tag_option as $k =>$v){
+              $tmp = $tmp.$k.\'="\'.$v.\'"\';
+            }';
         }
         $parseStr .= '
-        $html = \'<select name = "\'.$name.\'" \'.$tmp.\'>\';
-        $options = array();
-        foreach ( $list as $key => $val){
-            $selected = \'\';
-            if ( $value == $key ) {
-                $selected = \'selected\';
+            $html = \'<select name = "\'.$tag_name.\'" \'.$tmp.\'>\';
+            $options = array();
+            if ($tag_default) {
+                foreach ( $tag_default as $k => $v){
+                    $options[] = \'<option value="\'.$k.\'">\'.$v.\'</option>\';
+                }
             }
-            $options[] = \'<option value="\'.$key.\'" \'.$selected.\'>\'.$val.\'</option>\';
-        }
-        $list = implode(\'\', $options);
-        $html = $html.$list.\'</select>\';
-        echo $html;
+            foreach ( $tag_list as $key => $val){
+                $selected = \'\';
+                if(is_array($tag_value)){
+                    if(in_array($key,$tag_value)) $selected = \'selected\';
+                } else {
+                    if ( $tag_value == $key )  $selected = \'selected\';
+                }
+              
+                $options[] = \'<option value="\'.$key.\'" \'.$selected.\'>\'.$val.\'</option>\';
+            }
+            $list = implode(\'\', $options);
+            $html = $html.$list.\'</select>\';
+            echo $html;
      ?>';
         return $parseStr;
     }
