@@ -35,10 +35,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">是否禁用</label>
         <div class="layui-input-block">
-            <input type="radio" name="status" value="0" title="是" {eq name=":isset($list['status'])?$list['status']:''"
-                   value="0" }checked{/eq}>
-            <input type="radio" name="status" value="1" title="否" {eq name=":isset($list['status'])?$list['status']:'1'"
-                   value="1" }checked{/eq}>
+            {form:radio name="status" list="['0'=>'是','1'=>'否']" value="$list['status']"}
+
         </div>
     </div>
     <div class="layui-form-item">
