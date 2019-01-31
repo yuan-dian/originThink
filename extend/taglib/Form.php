@@ -41,16 +41,17 @@ class Form extends Taglib
     public function tagSelect($tag, $content)
     {
         $tag_select_name = isset($tag['name']) ? $tag['name'] : '""';
-        $tag_select_list = isset($tag['list']) ? $tag['list'] : 'array()';
+        $tag_select_list = isset($tag['list']) ? $tag['list'] : array();
         $tag_select_value = isset($tag['value']) ? $tag['value'] : '';
-        $tag_select_default = isset($tag['default']) ? $tag['default'] : 'array()';
+        $tag_select_default = isset($tag['default']) ? $tag['default'] : array();
         $tag_select_option = isset($tag['option']) ? $tag['option'] : '';
         if ($tag_select_value) {
             if (strpos($tag_select_value, '$') === false) {
                 $tag_select_value = "'" . $tag_select_value . "'";
+            }else{
+                $tag_select_value = 'isset( $tag_select_value )? $tag_select_value :""';
             }
         }
-        $tag_select_value = 'isset(' . $tag_select_value . ')?' . $tag_select_value . ':""';
         $parseStr = '
         <?php 
             $tag_select_name  = \'' . $tag_select_name . '\'; 
@@ -101,22 +102,25 @@ class Form extends Taglib
      */
     public function tagRadio($tag, $content)
     {
-        $tag_radio_name = isset($tag['name']) ? $tag['name'] : '""';
-        $tag_radio_list = isset($tag['list']) ? $tag['list'] : 'array()';
+        $tag_radio_name = isset($tag['name']) ? $tag['name'] : '';
+        $tag_radio_list = isset($tag['list']) ? $tag['list'] : array();
         $tag_radio_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_radio_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_radio_value) {
             if (strpos($tag_radio_value, '$') === false) {
                 $tag_radio_value = "'" . $tag_radio_value . "'";
+            }else{
+                $tag_radio_value = 'isset($tag_radio_value)? $tag_radio_value :""';
             }
         }
         $tag_radio_option = isset($tag['option']) ? $tag['option'] : '';
+
         $parseStr = '
             <?php 
                 $tag_radio_name = \'' . $tag_radio_name . '\'; 
                 $tag_radio_list = ' . $tag_radio_list . '; 
-                $tag_radio_value = ' . $tag_radio_value . ';
-                $tag_radio_default = ' . $tag_radio_default . ';
+                $tag_radio_value = ' . ($tag_radio_value? $tag_radio_value : "''"). '; 
+                $tag_radio_default = ' . $tag_radio_default . '; 
                 $tmp = "";';
         if ($tag_radio_option) {
             $parseStr .= '
@@ -157,20 +161,22 @@ class Form extends Taglib
     public function tagCheckbox($tag, $content)
     {
         $tag_checkbox_name = isset($tag['name']) ? $tag['name'] : '""';
-        $tag_checkbox_list = isset($tag['list']) ? $tag['list'] : 'array()';
+        $tag_checkbox_list = isset($tag['list']) ? $tag['list'] : array();
         $tag_checkbox_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_checkbox_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_checkbox_value) {
             if (strpos($tag_checkbox_value, '$') === false) {
                 $tag_checkbox_value = "'" . $tag_checkbox_value . "'";
+            } else {
+                $tag_checkbox_value = 'isset($tag_checkbox_value )?$tag_checkbox_value :""';
             }
         }
         $tag_checkbox_option = isset($tag['option']) ? $tag['option'] : '';
         $parseStr = '<?php 
             $tag_checkbox_name = \'' . $tag_checkbox_name . '\'; 
             $tag_checkbox_list = ' . $tag_checkbox_list . '; 
-            $tag_checkbox_value = ' . $tag_checkbox_value . ';
-            $tag_checkbox_default = ' . $tag_checkbox_default . ';
+            $tag_checkbox_value = ' . ($tag_checkbox_value ? $tag_checkbox_value : "''" ). '; 
+            $tag_checkbox_default = ' . $tag_checkbox_default . '; 
             $tmp = "";';
         if ($tag_checkbox_option) {
             $parseStr .= '
@@ -181,14 +187,14 @@ class Form extends Taglib
         }
         $parseStr .= '
             $checkbox = array();
-            if ($tag_default) {
+            if ($tag_checkbox_default) {
                 foreach ( $tag_checkbox_default as $k => $v){
                     $checkbox[] = \'<input type="checkbox" name="\'.$tag_checkbox_name.\'" value="\'.$k.\'" title="\'.$v.\'" \'.$tmp.\'>\';
                 }
             }
             foreach ( $tag_checkbox_list as $key => $val){
                 $checked = \'\';
-                if ( $value == $key ){
+                if ( $tag_checkbox_value == $key ){
                     $checked = \'checked\';
                 }
                  if(is_array($tag_checkbox_value)){
