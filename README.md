@@ -24,3 +24,8 @@
  + ThinkPHP
  + layui
  + layuicms
+ 
+ 捐献
+===============
+![](http://blog.zhuangjun.top/images/wx_reward.png) 
+![](http://blog.zhuangjun.top/images/ali_reward.png) 
