@@ -39,7 +39,7 @@ class User extends Common
                 $user_date[$key] = $val;
                 $user_date[$key]['title'] = $val->group_titles;
             }
-            $this->json($user_date,0,'',['count' => $list->total()]);
+            $this->json($user_date, 0, '', ['count' => $list->total()]);
         }
         return $this->fetch();
     }
@@ -66,7 +66,7 @@ class User extends Common
                 return $data;
             }
         } else {
-            $uid = $this->request->get('uid',0,'intval');
+            $uid = $this->request->get('uid', 0, 'intval');
             if ($uid) {
                 $list = UserModel::where('uid', '=', $uid)->find();
                 $list['group_id'] = AuthGroupAccess::where('uid', '=', $uid)->column('group_id');
@@ -125,46 +125,81 @@ class User extends Common
      */
     public function groupList()
     {
+        if ($this->request->isAjax()) {
+            $key = $this->request->get('key', '', 'trim');
+            $limit = $this->request->get('key', 10, 'intval');
+            $map = [];
+            empty ($key) || $map[] = ['title', 'like', '%' . $key . '%'];
+            $list = AuthGroup::where($map)->paginate($limit, false, ['query' => ['key' => $key], 'limit' => $limit]);
+            $this->json($list->items(), 0, '', ['count' => $list->total()]);
+        }
+        return $this->fetch();
+    }
+
+    /**
+     * 添加编辑用户组
+     * @return array|string
+     */
+    public function editGroup()
+    {
         if ($this->request->isPost()) {
             $id = $this->request->post('id', 0, 'intval');
-            $type = $this->request->post('type', 0, 'intval');
             $title = $this->request->post('title', '', 'trim');
-            $status = $this->request->post('status', 0, 'intval');
-            $rules = $this->request->post('rules', []);
-            switch ($type) {
-                case 1://编辑、添加用户组
-                    if ($id) {//编辑用户组
-                        return AuthGroupService::edit($id, ['title' => $title]);
-                    } else {//添加用户组
-                        return AuthGroupService::add($title);
-                    }
-                    break;
-                case 2://是否禁用用户组
-                    return AuthGroupService::edit($id, ['status' => $status]);
-                    break;
-                case 3://获取权限列表
-                    $list = AuthRule::field('id,pid,title as text')->select();
-                    $data = list_to_tree($list->toArray(), 'id', 'pid', 'children');
-                    return $data;
-                    break;
-                case 4://修改用户组权限
-                    if (!$rules) $this->error('参数错误');
-                    sort($rules);
-                    $rules = implode(',', $rules);
-                    $res = AuthGroupService::edit($id, ['rules' => $rules], true);
-                    return $res;
-                    break;
+            if ($id) {//编辑用户组
+                return AuthGroupService::edit($id, ['title' => $title]);
+            } else {//添加用户组
+                return AuthGroupService::add($title);
             }
         } else {
-            if ($this->request->isAjax()) {
-                $key = $this->request->get('key', '', 'trim');
-                $limit = $this->request->get('key', 10, 'intval');
-                $map = [];
-                empty ($key) || $map[] = ['title', 'like', '%' . $key . '%'];
-                $list = AuthGroup::where($map)->paginate($limit, false, ['query' => ['key' => $key], 'limit' => $limit]);
-                $this->json($list->items(),0,'',['count' => $list->total()]);
-            }
-            return $this->fetch();
+            $this->error('非法请求');
+        }
+    }
+
+    /**
+     * 禁用用户组
+     * @return array|string
+     */
+    public function disableGroup()
+    {
+        if ($this->request->isPost()) {
+            $id = $this->request->post('id', 0, 'intval');
+            $status = $this->request->post('status', 0, 'intval');
+            return AuthGroupService::edit($id, ['status' => $status]);
+        } else {
+            $this->error('非法请求');
+        }
+    }
+
+    /**
+     * 获取权限列表
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function ruleList()
+    {
+        $list = AuthRule::field('id,pid,title as text')->select();
+        $data = list_to_tree($list->toArray(), 'id', 'pid', 'children');
+        return $data;
+    }
+
+    /**
+     * 修改用户组权限
+     * @return array|string
+     */
+    public function editRule()
+    {
+        if ($this->request->isPost()) {
+            $id = $this->request->post('id', 0, 'intval');
+            $rules = $this->request->post('rules', []);
+            if (!$rules) $this->error('参数错误');
+            sort($rules);
+            $rules = implode(',', $rules);
+            $res = AuthGroupService::edit($id, ['rules' => $rules], true);
+            return $res;
+        } else {
+            $this->error('非法请求');
         }
     }
 
@@ -178,8 +213,8 @@ class User extends Common
     {
         if ($this->request->isPost()) {
             $data = input();
-            $uid = $this->uid;
-            $res = UserService::editPassword($uid, $data['oldpassword'], $data['password']);
+            $user = session('user_auth');
+            $res = UserService::editPassword($user['uid'], $data['oldpassword'], $data['password']);
             return $res;
         } else {
             return $this->fetch();

@@ -38,13 +38,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">类型</label>
         <div class="layui-input-block">
-            {form:radio name="menu" list="['1'=>'菜单','0'=>'行为']" value="isset($data['menu'])?$data['menu']:1"}
+            {form:radio name="menu" list="['1'=>'菜单','0'=>'行为']" value="$data['menu']"}
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">是否禁用</label>
         <div class="layui-input-block">
-            {form:radio name="status" list="['1'=>'启用','0'=>'禁用']" value="isset($data['status'])?$data['status']:1"}
+            {form:radio name="status" list="['1'=>'启用','0'=>'禁用']" value="$data['status']"}
         </div>
     </div>
     <div class="layui-form-item">

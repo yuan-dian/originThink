@@ -41,9 +41,9 @@ class Form extends Taglib
     public function tagSelect($tag, $content)
     {
         $tag_select_name = isset($tag['name']) ? $tag['name'] : '""';
-        $tag_select_list = isset($tag['list']) ? $tag['list'] : array();
+        $tag_select_list = isset($tag['list']) ? $tag['list'] : 'array()';
         $tag_select_value = isset($tag['value']) ? $tag['value'] : '';
-        $tag_select_default = isset($tag['default']) ? $tag['default'] : array();
+        $tag_select_default = isset($tag['default']) ? $tag['default'] : 'array()';
         $tag_select_option = isset($tag['option']) ? $tag['option'] : '';
         if ($tag_select_value) {
             if (strpos($tag_select_value, '$') === false) {
@@ -51,6 +51,8 @@ class Form extends Taglib
             } else {
                 $tag_select_value = 'isset(' . $tag_select_value . ' ) ? ' . $tag_select_value . ' : ""';
             }
+        } else {
+            $tag_select_value = '""';
         }
         $parseStr = '
         <?php 
@@ -103,7 +105,7 @@ class Form extends Taglib
     public function tagRadio($tag, $content)
     {
         $tag_radio_name = isset($tag['name']) ? $tag['name'] : '';
-        $tag_radio_list = isset($tag['list']) ? $tag['list'] : array();
+        $tag_radio_list = isset($tag['list']) ? $tag['list'] : 'array()';
         $tag_radio_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_radio_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_radio_value) {
@@ -112,6 +114,8 @@ class Form extends Taglib
             } else {
                 $tag_radio_value = 'isset(' . $tag_radio_value . ') ? ' . $tag_radio_value . ': ""';
             }
+        } else {
+            $tag_radio_value = '""';
         }
         $tag_radio_option = isset($tag['option']) ? $tag['option'] : '';
 
@@ -119,7 +123,7 @@ class Form extends Taglib
             <?php 
                 $tag_radio_name = \'' . $tag_radio_name . '\'; 
                 $tag_radio_list = ' . $tag_radio_list . '; 
-                $tag_radio_value = ' . $tag_radio_value  . '; 
+                $tag_radio_value = ' . $tag_radio_value . '; 
                 $tag_radio_default = ' . $tag_radio_default . '; 
                 $tmp = "";';
         if ($tag_radio_option) {
@@ -160,9 +164,10 @@ class Form extends Taglib
      */
     public function tagCheckbox($tag, $content)
     {
-        $tag_checkbox_name = isset($tag['name']) ? $tag['name'] : '""';
-        $tag_checkbox_list = isset($tag['list']) ? $tag['list'] : array();
+        $tag_checkbox_name = isset($tag['name']) ? $tag['name'] : '';
+        $tag_checkbox_list = isset($tag['list']) ? $tag['list'] : 'array()';
         $tag_checkbox_value = isset($tag['value']) ? $tag['value'] : '';
+//        dump($tag_checkbox_value);exit;
         $tag_checkbox_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_checkbox_value) {
             if (strpos($tag_checkbox_value, '$') === false) {
@@ -170,12 +175,14 @@ class Form extends Taglib
             } else {
                 $tag_checkbox_value = 'isset(' . $tag_checkbox_value . ') ?' . $tag_checkbox_value . ': ""';
             }
+        } else {
+            $tag_checkbox_value = "''";
         }
         $tag_checkbox_option = isset($tag['option']) ? $tag['option'] : '';
         $parseStr = '<?php 
             $tag_checkbox_name = \'' . $tag_checkbox_name . '\'; 
             $tag_checkbox_list = ' . $tag_checkbox_list . '; 
-            $tag_checkbox_value = ' .  $tag_checkbox_value  . '; 
+            $tag_checkbox_value = ' . $tag_checkbox_value . '; 
             $tag_checkbox_default = ' . $tag_checkbox_default . '; 
             $tmp = "";';
         if ($tag_checkbox_option) {

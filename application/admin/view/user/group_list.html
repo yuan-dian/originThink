@@ -32,7 +32,6 @@
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <input type="hidden" id="id" name="id" value="">
-                <input type="hidden" name="type" value="1">
                 <input type="hidden" name="__token__" id="token" value="{$Request.token}"/>
                 <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -63,11 +62,8 @@
         $('#tree').jstree({
             'core': {
                 'data': {
-                    'method': "POST",
-                    'url': "{:url('/admin/grouplist')}",
-                    'data': function () {
-                        return {'type': 3};
-                    },
+                    'method': "GET",
+                    'url': "{:url('/admin/ruleList')}",
                 },
             },
             'checkbox': {
@@ -216,7 +212,7 @@
             setTimeout(function () {
                 layer.close(index);
                 var data = $('#groupform').serialize();
-                $.post("{:url('/admin/grouplist')}", data, function (data) {
+                $.post("{:url('/admin/editGroup')}", data, function (data) {
                     var icon = 5;
                     if (data.code) {
                         icon = 6;
@@ -237,7 +233,7 @@
                 layer.close(index);
                 var rules = $("#tree").jstree("get_checked");
                 var id = $('#groupid').val();
-                $.post("{:url('/admin/grouplist')}", {rules: rules, id: id, type: 4}, function (data) {
+                $.post("{:url('/admin/editRule')}", {rules: rules, id: id}, function (data) {
                     var icon = 5;
                     if (data.code) {
                         icon = 6;

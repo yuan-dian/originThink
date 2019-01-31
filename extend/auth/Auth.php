@@ -308,7 +308,7 @@ class Auth
             }
         }
         if (!$super_admin) { //不是超级管理员，根据用户组获取对应的菜单
-            $menuList = $this->_auth_rule();//获取规则
+            $menuList = $this->_auth_rule(true);//获取规则
             $menuList = list_to_tree($menuList);
         } else {
             //超级管理员
@@ -326,7 +326,7 @@ class Auth
         return $menuList;
     }
 
-    public function _auth_rule()
+    public function _auth_rule($menu = false)
     {
         $groups = $this->getGroups();
         $ids = []; //保存用户所属用户组设置的所有权限规则id
@@ -337,13 +337,15 @@ class Auth
         if (empty($ids)) {
             return [];
         }
-        $map = [
-            ['id', 'in', $ids],
-            ['menu', '=', 1],
-            ['status', '=', 1],
-        ];
         //读取用户组所有权限规则
-        $rules = Db::name($this->config['auth_rule'])->where($map)->order('sort desc')->select();
+        $query = Db::name($this->config['auth_rule']);
+        $query->where('id', 'in', $ids);
+        $query->where('status', '=', 1);
+        if ($menu) {
+            $query->where('menu', '=', 1);
+        }
+        $query->order('sort desc');
+        $rules = $query->select();
         //循环规则，判断结果。
         $menuList = []; //
         foreach ($rules as $rule) {

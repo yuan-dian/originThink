@@ -36,6 +36,10 @@ Route::group('admin', [
     'edit$'=>'admin/User/edit',                                              //添加/编辑用户
     'delete$'=>'admin/User/delete',                                          //删除用户
     'groupList$'=>'admin/User/groupList',                                    //用户组列表
+    'editGroup$'=>'admin/User/editGroup',                                    //添加编辑用户组
+    'disableGroup$'=>'admin/User/disableGroup',                              //禁用用户组
+    'ruleList$'=>'admin/User/ruleList',                                      //用户组规则列表
+    'editRule$'=>'admin/User/editRule',                                      //修改用户组规则
 
     //系统管理
     'cleanCache$'=>'admin/System/cleanCache',                                //清除缓存
