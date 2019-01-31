@@ -48,8 +48,8 @@ class Form extends Taglib
         if ($tag_select_value) {
             if (strpos($tag_select_value, '$') === false) {
                 $tag_select_value = "'" . $tag_select_value . "'";
-            }else{
-                $tag_select_value = 'isset( $tag_select_value )? $tag_select_value :""';
+            } else {
+                $tag_select_value = 'isset(' . $tag_select_value . ' ) ? ' . $tag_select_value . ' : ""';
             }
         }
         $parseStr = '
@@ -109,8 +109,8 @@ class Form extends Taglib
         if ($tag_radio_value) {
             if (strpos($tag_radio_value, '$') === false) {
                 $tag_radio_value = "'" . $tag_radio_value . "'";
-            }else{
-                $tag_radio_value = 'isset($tag_radio_value)? $tag_radio_value :""';
+            } else {
+                $tag_radio_value = 'isset(' . $tag_radio_value . ') ? ' . $tag_radio_value . ': ""';
             }
         }
         $tag_radio_option = isset($tag['option']) ? $tag['option'] : '';
@@ -119,7 +119,7 @@ class Form extends Taglib
             <?php 
                 $tag_radio_name = \'' . $tag_radio_name . '\'; 
                 $tag_radio_list = ' . $tag_radio_list . '; 
-                $tag_radio_value = ' . ($tag_radio_value? $tag_radio_value : "''"). '; 
+                $tag_radio_value = ' . $tag_radio_value  . '; 
                 $tag_radio_default = ' . $tag_radio_default . '; 
                 $tmp = "";';
         if ($tag_radio_option) {
@@ -168,14 +168,14 @@ class Form extends Taglib
             if (strpos($tag_checkbox_value, '$') === false) {
                 $tag_checkbox_value = "'" . $tag_checkbox_value . "'";
             } else {
-                $tag_checkbox_value = 'isset($tag_checkbox_value )?$tag_checkbox_value :""';
+                $tag_checkbox_value = 'isset(' . $tag_checkbox_value . ') ?' . $tag_checkbox_value . ': ""';
             }
         }
         $tag_checkbox_option = isset($tag['option']) ? $tag['option'] : '';
         $parseStr = '<?php 
             $tag_checkbox_name = \'' . $tag_checkbox_name . '\'; 
             $tag_checkbox_list = ' . $tag_checkbox_list . '; 
-            $tag_checkbox_value = ' . ($tag_checkbox_value ? $tag_checkbox_value : "''" ). '; 
+            $tag_checkbox_value = ' .  $tag_checkbox_value  . '; 
             $tag_checkbox_default = ' . $tag_checkbox_default . '; 
             $tmp = "";';
         if ($tag_checkbox_option) {

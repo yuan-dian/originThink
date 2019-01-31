@@ -16,28 +16,28 @@
         <tr>
             <td>配置状态</td>
             <td>
-                {form:radio name="status" list="['0'=>'禁用','1'=>'开启']" value="isset($data['status'])?$data['status']:0"}
+                {form:radio name="status" list="['0'=>'禁用','1'=>'开启']" value="$data['status']"}
             </td>
         </tr>
         <tr>
             <td>应用调试模式</td>
             <td>
                 {form:radio name="debug" list="['0'=>'关闭','1'=>'开启']"
-                value="isset($data['value']['debug'])?$data['value']['debug']:0"}
+                value="$data['value']['debug']"}
             </td>
         </tr>
         <tr>
             <td>应用Trace</td>
             <td>
                 {form:radio name="trace" list="['0'=>'关闭','1'=>'开启']"
-                value="isset($data['value']['trace'])?$data['value']['trace']:0"}
+                value="$data['value']['trace']"}
             </td>
         </tr>
         <tr>
             <td>应用Trace类型</td>
             <td>
                 {form:radio name="trace_type" list="['0'=>'Html','1'=>'Console']"
-                value="isset($data['value']['trace_type'])?$data['value']['trace_type']:0"}
+                value="$data['value']['trace_type']"}
             </td>
         </tr>
         <tr>
