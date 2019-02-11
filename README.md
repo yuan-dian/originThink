@@ -1,7 +1,7 @@
 安装步骤：
 ===============
- + Composer update 或 手动下载核心包放入跟目录
- + 执行SQL文件（sql.sql）
+ + 第一步：跟目录执行 Composer install 或 Composer update
+ + 第二步：执行SQL文件（根目录sql.sql文件）
  
 默认账号密码
 ===============
