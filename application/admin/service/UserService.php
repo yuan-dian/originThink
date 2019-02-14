@@ -35,7 +35,7 @@ class UserService
         }
         $list = User::where(['user' => $data['user']])->find();
         if (empty($list)) {
-            return reResult::error('账号不存在');
+            return Result::error('账号不存在');
         }
         if ($list['status'] == 0) {
             $msg = Result::error('账号禁用');
