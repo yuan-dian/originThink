@@ -74,7 +74,7 @@ iframe{ position:absolute; height:100%; width:100%; border:none;}
 .user-photo a.img img{ display: block; border: none; width: 100%; height: 100%; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; border: 4px solid #44576b; box-sizing:border-box;}
 .user-photo p{ display: block; width: 100%; height: 25px; color: #ffffff; text-align: center; font-size: 12px; white-space: nowrap;line-height: 25px; overflow: hidden;}
 /*左侧导航重定义*/
-.layui-nav-item.layui-nav-itemed{ background-color:#2B2E37 !important;}
+/*.layui-nav-item.layui-nav-itemed{ background-color:#2B2E37}*/
 .layui-nav-itemed:before{ width:5px; height:100%; background-color:#009688; position:absolute; content:''; left:0; top:0;}
 .layui-nav-itemed .layui-nav-child a{ padding-left:40px;}
 /*左侧搜索框*/
