@@ -202,7 +202,12 @@
                     if (data.code) {
                         icon = 6;
                     }
-                    layer.msg(data.msg, {icon: icon, time: 1500});
+                    layer.msg(data.msg, {icon: icon, time: 1500}, function () {
+                        if (data.code) {
+                            tableIns.reload();
+                        }
+                        layui.layer.closeAll();
+                    });
                 });
             }, 500);
         });
