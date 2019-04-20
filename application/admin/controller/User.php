@@ -39,7 +39,7 @@ class User extends Common
                 $user_date[$key] = $val;
                 $user_date[$key]['title'] = $val->group_titles;
             }
-            $this->json($user_date, 0, '', ['count' => $list->total()]);
+            return show($user_date, 0, '', ['count' => $list->total()]);
         }
         return $this->fetch();
     }
@@ -131,7 +131,7 @@ class User extends Common
             $map = [];
             empty ($key) || $map[] = ['title', 'like', '%' . $key . '%'];
             $list = AuthGroup::where($map)->paginate($limit, false, ['query' => ['key' => $key], 'limit' => $limit]);
-            $this->json($list->items(), 0, '', ['count' => $list->total()]);
+            return show($list->items(), 0, '', ['count' => $list->total()]);
         }
         return $this->fetch();
     }

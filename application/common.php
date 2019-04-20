@@ -8,13 +8,16 @@
 // +----------------------------------------------------------------------
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-//think\facade\Config::setYaconf('thinkphp');
 // 应用公共文件
+
 /**
  * 数据签名认证
- * @param  array  $data 被认证的数据
+ * @param array $data 被认证的数据
  * @return string       签名
  */
+
+use think\exception\HttpResponseException;
+
 if (!function_exists('sign')) {
     function sign($data)
     {
@@ -42,15 +45,16 @@ if (!function_exists('p')) {
 
 /**
  * 将返回的数据集转换成树
- * @param  array   $list  数据集
- * @param  string  $pk    主键
- * @param  string  $pid   父节点名称
- * @param  string  $child 子节点名称
- * @param  integer $root  根节点ID
+ * @param array $list 数据集
+ * @param string $pk 主键
+ * @param string $pid 父节点名称
+ * @param string $child 子节点名称
+ * @param integer $root 根节点ID
  * @return array          转换后的树
  */
 if (!function_exists('list_to_tree')) {
-    function list_to_tree($list, $pk='id', $pid = 'pid', $child = 'child', $root = 0) {
+    function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = 'child', $root = 0)
+    {
         // 创建Tree
         $tree = array();
         if (is_array($list)) {
@@ -61,10 +65,10 @@ if (!function_exists('list_to_tree')) {
             }
             foreach ($list as $key => $data) {
                 // 判断是否存在parent
-                $parentId =  $data[$pid];
+                $parentId = $data[$pid];
                 if ($root == $parentId) {
                     $tree[] =& $list[$key];
-                }else{
+                } else {
                     if (isset($refer[$parentId])) {
                         $parent =& $refer[$parentId];
                         $parent[$child][] =& $list[$key];
@@ -82,18 +86,20 @@ if (!function_exists('list_to_tree')) {
  * @author 原点 <467490186@qq.com>
  */
 if (!function_exists('get_user_id')) {
-    function get_user_id(){
+    function get_user_id()
+    {
         return session('user_auth.uid');
     }
 }
-function http_curl($url, $data =[], $header=[], $ispost=true){
+function http_curl($url, $data = [], $header = [], $ispost = true)
+{
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     //判断是否加header
     if ($header) {
-        curl_setopt($ch, CURLOPT_HTTPHEADER  , $header);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
     }
     //判断是否是POST请求
     if ($ispost) {
@@ -103,7 +109,7 @@ function http_curl($url, $data =[], $header=[], $ispost=true){
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     }
     $output = curl_exec($ch);
-    curl_close ($ch);
+    curl_close($ch);
     //打印获得的数据
     return $output;
 }
@@ -111,20 +117,21 @@ function http_curl($url, $data =[], $header=[], $ispost=true){
 /**
  * @param string $msg 待提示的消息
  * @param string $url 跳转地址
- * @param int $time   弹出维持时间（单位秒）
+ * @param int $time 弹出维持时间（单位秒）
  * @author 原点 <467490186@qq.com>
  */
-function alert_error($msg='', $url=null, $time=3){
+function alert_error($msg = '', $url = null, $time = 3)
+{
     if (is_null($url)) {
         $url = 'parent.location.reload();';
     } else {
-        $url = 'parent.location.href=\''.$url.'\'';
+        $url = 'parent.location.href=\'' . $url . '\'';
     }
-    if ( request()->isAjax() ) {
+    if (request()->isAjax()) {
         $str = [
             'code' => 0,
-            'msg'  => $msg,
-            'url'  => $url,
+            'msg' => $msg,
+            'url' => $url,
             'wait' => $time,
         ];
         $response = think\Response::create($str, 'json');
@@ -132,32 +139,35 @@ function alert_error($msg='', $url=null, $time=3){
         $str = '<script type="text/javascript" src="/layui/layui.js"></script>';
         $str .= '<script>
                     layui.use([\'layer\'],function(){
-                       layer.msg("'.$msg.'",{icon:"5",time:'.($time*1000).'},function() {
-                         '.$url.'
+                       layer.msg("' . $msg . '",{icon:"5",time:' . ($time * 1000) . '},function() {
+                         ' . $url . '
                        });
                     })
                 </script>';
         $response = think\Response::create($str, 'html');
     }
-    throw new think\exception\HttpResponseException($response);
+    throw new HttpResponseException($response);
 }
 
 /**
- * 通用化API接口数据输出
- * @param int $status 业务状态码
- * @param string $message 信息提示
- * @param [] $data  数据
- * @param int $httpCode http状态码
- * @return array
+ * json 数据输出
+ * @param $data          data数据
+ * @param int $code      code
+ * @param string $msg    提示信息
+ * @param array $param   额外参数
+ * @param $httpCode      http状态码
  */
-function show($status, $message, $data=[], $httpCode=200) {
-
-    $data = [
-        'status' => $status,
-        'message' => $message,
+function show($data, $code = 1, $msg = '', $param = [], $httpCode = 200)
+{
+    $json = [
+        'code' => $code,
+        'msg' => $msg,
         'data' => $data,
     ];
-
-    return json($data, $httpCode);
+    if ($param) {
+        $json = array_merge($json, $param);
+    }
+    $response = json($json, $httpCode);
+    throw new HttpResponseException($response);
 }
 
