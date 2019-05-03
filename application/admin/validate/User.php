@@ -14,8 +14,7 @@ class User extends Validate
 {
     protected $rule = [
         'user' => 'require|max:25',
-        'password' => 'require|length:6,25',
-        'code' => 'require|captcha'
+        'password' => 'require|length:6,25'
     ];
 
     protected $message = [
@@ -30,5 +29,10 @@ class User extends Validate
     public function sceneAdd()
     {
         return $this->only(['user', 'password'])->append('user', 'require|length:2,25|token');
+    }
+
+    public function sceneCaptcha()
+    {
+        return $this->append('code', 'require|captcha');
     }
 }

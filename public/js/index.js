@@ -141,6 +141,19 @@ function addTab(_this){
 	tab.tabAdd(_this);
 }
 
+//捐赠弹窗
+function donation(){
+    layer.tab({
+        area : ['340px', '385px'],
+        tab : [{
+            title : "微信",
+            content : "<div style='padding:5px;overflow:hidden;background:#d2d0d0;'><img src='/images/wechat.png'></div>"
+        },{
+            title : "支付宝",
+            content : "<div style='padding:5px;overflow:hidden;background:#d2d0d0;'><img src='/images/alipay.png'></div>"
+        }]
+    })
+}
 
 //图片管理弹窗
 function showImg(){

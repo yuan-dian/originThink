@@ -1,7 +1,7 @@
 /*
 MySQL Backup
 Source Server Version: 5.7.14
-Source Database: tp5.1
+Source Database: originthink
 Date: 2018/9/9 16:19:13
 */
 
@@ -60,7 +60,7 @@ CREATE TABLE `think_config` (
   `id` int(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(255) NOT NULL COMMENT '配置字段名',
   `title` varchar(255) NOT NULL COMMENT '配置标题名称',
-  `value` json NOT NULL COMMENT '配置参数',
+  `value` varchar(255) NOT NULL COMMENT '配置参数',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
   `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',

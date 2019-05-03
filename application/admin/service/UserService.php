@@ -30,6 +30,9 @@ class UserService
     public static function login($data)
     {
         $validate = validate('User');
+        if(config('captcha.is_open')){
+            $validate->scene('captcha');
+        }
         if (!$validate->check($data)) {
             return Result::error($validate->getError());
         }

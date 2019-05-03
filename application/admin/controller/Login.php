@@ -28,6 +28,8 @@ class Login extends Controller
             $this->redirect(url('/admin/index'));
         } else {
             if (!request()->isPost()) {
+                $is_open_captcha = config('captcha.is_open');
+                $this->assign('is_open_captcha', $is_open_captcha);
                 return $this->fetch();
             } else {
                 $data = input();

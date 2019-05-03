@@ -1,38 +1,89 @@
 {extend name="base/base" /}
 {block name="main"}
-<table class="layui-table mag0">
-    <colgroup>
-        <col width="25%">
-        <col width="45%">
-        <col>
-    </colgroup>
-    <thead>
-    <tr>
-        <th>参数说明</th>
-        <th>参数值</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>ThinkPHP版本</td>
-        <td>{$Think.VERSION}</td>
-    </tr>
-    <tr>
-        <td>服务器操作系统</td>
-        <td>{$Think.const.PHP_OS}</td>
-    </tr>
-    <tr>
-        <td>运行环境</td>
-        <td>{$Request.server.SERVER_SOFTWARE}</td>
-    </tr>
-    <tr>
-        <td>数据库版本</td>
-        <td>{:db()->query('select version() as version')[0]['version']}</td>
-    </tr>
-    <tr>
-        <td>最大上传限制</td>
-        <td>{:ini_get('upload_max_filesize')}</td>
-    </tr>
-    </tbody>
-</table>
+
+<div class="layui-row layui-col-space10 panel_box">
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg2">
+        <a  onclick="donation()">
+            <div class="panel_icon layui-bg-green">
+                <i class="layui-anim seraph icon-good"></i>
+            </div>
+            <div class="panel_word">
+                <span>捐赠作者</span>
+                <cite>捐赠是最作者最大的支持</cite>
+            </div>
+        </a>
+    </div>
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg2">
+        <a href="https://github.com/yuan-dian/originThink" data-url="" target="_blank">
+            <div class="panel_icon layui-bg-black">
+                <i class="layui-anim seraph icon-github"></i>
+            </div>
+            <div class="panel_word">
+                <span>Github</span>
+                <cite>模版下载链接</cite>
+            </div>
+        </a>
+    </div>
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg2">
+        <a href="https://gitee.com/yuandianzj/originThink"  target="_blank">
+            <div class="panel_icon layui-bg-red">
+                <i class="layui-anim seraph icon-oschina"></i>
+            </div>
+            <div class="panel_word">
+                <span>码云</span>
+                <cite>模版下载链接</cite>
+            </div>
+        </a>
+    </div>
+</div>
+<blockquote class="layui-elem-quote main_btn">
+    <p>本系统使用ThinkPHP5.1实现，前端使用layui　技术交流QQ群：1004068839</p>
+    <p class="layui-red">郑重提示：本模版作为学习交流免费使用【不管以何种形式获取的源码，请勿进行出售或者上传到任何素材网站，否则将追究相应的责任】</p>
+    <p>系统功能包括：用户管理、 配置管理、 菜单管理、 缓存管理、 权限管理、（API接口校验类）</p>
+    <p class="layui-blue">PS：源码包不包括ThinkPHP核心包，请使用composer install || composer update安装使用或者手动下载核心包</p>
+</blockquote>
+<div class="layui-row layui-col-space10">
+    <div class="layui-col-lg6 layui-col-md12">
+        <blockquote class="layui-elem-quote title">系统基本参数</blockquote>
+        <table class="layui-table magt0">
+            <colgroup>
+                <col width="150">
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td>当前版本</td>
+                <td class="version">1.3.0</td>
+            </tr>
+            <tr>
+                <td>开发作者</td>
+                <td class="author">原点</td>
+            </tr>
+            <tr>
+                <td>服务器环境</td>
+                <td class="server">{$Think.const.PHP_OS}</td>
+            </tr>
+            <tr>
+                <td>运行环境</td>
+                <td class="">{$Request.server.SERVER_SOFTWARE}</td>
+            </tr>
+            <tr>
+                <td>ThinkPHP版本</td>
+                <td class="server">{$Think.VERSION}</td>
+            </tr>
+            <tr>
+                <td>数据库版本</td>
+                <td class="dataBase">{:db()->query('select version() as version')[0]['version']}</td>
+            </tr>
+            <tr>
+                <td>最大上传限制</td>
+                <td class="maxUpload">{:ini_get('upload_max_filesize')}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/js/index.js"></script>
 {/block}
