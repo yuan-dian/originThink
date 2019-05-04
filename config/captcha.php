@@ -22,5 +22,5 @@ return [
     // 验证成功后是否重置
     'reset'    => true,
     // 验证码是否开启
-    'is_open' => true
+    'is_open' => false
 ];
