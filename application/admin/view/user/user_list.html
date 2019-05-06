@@ -35,7 +35,7 @@
         //用户列表
         var tableIns = table.render({
             elem: '#usersList',
-            url : '/admin/userList.html',
+            url : "{:url('/admin/userList')}",
             cellMinWidth : 95,
             page : true,
             limit:10,
@@ -108,9 +108,10 @@
                 }
             })
             layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
             //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
             $(window).on("resize",function(){
-                layui.layer.full(index);
+                layui.layer.full(window.sessionStorage.getItem("index"));
             })
         }
 
