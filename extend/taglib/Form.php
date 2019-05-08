@@ -65,7 +65,7 @@ class Form extends Taglib
             $parseStr .= '
             $tag_select_option = ' . $tag_select_option . ' ;
             foreach ( $tag_select_option as $k =>$v){
-              $tmp = $tmp.$k.\'="\'.$v.\'"\';
+              $tmp .= " ".$k.\'="\'.$v.\'"\';
             }';
         }
         $parseStr .= '
@@ -130,7 +130,7 @@ class Form extends Taglib
             $parseStr .= '
                 $tag_radio_option=' . $tag_radio_option . ';
                 foreach ( $tag_radio_option as $k => $v){
-                  $tmp = $tmp.$k.\' = "\'.$v.\'"\';
+                  $tmp .= " ".$k.\' = "\'.$v.\'"\';
             }';
         }
         $parseStr .= '
@@ -189,7 +189,7 @@ class Form extends Taglib
             $parseStr .= '
                 $tag_checkbox_option = ' . $tag_checkbox_option . ';
                 foreach ( $tag_checkbox_option as $k => $v){
-                  $tmp = $tmp.$k.\' = "\'.$v.\'"\';
+                  $tmp .= " ".$k.\' = "\'.$v.\'"\';
                 }';
         }
         $parseStr .= '
