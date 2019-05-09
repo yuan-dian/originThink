@@ -16,11 +16,12 @@
  * 免权限验证路由
  */
 Route::group('admin', [
-    'login$'=>'admin/Login/login',                                           //登录
-    'editPassword'=>'admin/User/editPassword',                              //重置密码
-    'logout$'=>'admin/Login/logout',                                         //退出
-    'check$'=>'admin/User/check',                                            //验证用户是否存在
+    'login$'=>'admin/Login/login',                                         //登录
+    'editPassword'=>'admin/User/editPassword',                             //重置密码
+    'logout$'=>'admin/Login/logout',                                       //退出
+    'check$'=>'admin/User/check',                                          //验证用户是否存在
     'unlock'=>'admin/Login/unlock',                                        //验证用户是否存在
+    'verify'=>'admin/Login/verify',                                        //获取验证码
 ])->ext('html');
 /**
  * 需要权限验证路由

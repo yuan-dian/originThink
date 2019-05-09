@@ -31,8 +31,8 @@
         <label for="code">验证码</label>
         <input type="text" placeholder="请输入验证码" autocomplete="off" id="code" name="code" class="layui-input"
                lay-verify="required">
-        <img src="{:captcha_src()}" width="116" height="36" id="captcha"
-             onclick="this.src='{:captcha_src()}?d='+Math.random();">
+        <img src="{:url('/admin/verify')}" width="116" height="36" id="captcha"
+             onclick="this.src='{:url(\'/admin/verify\')}';">
     </div>
     {/if}
 
@@ -69,7 +69,7 @@
                         } else {
                             obj.text("登录").removeAttr("disabled").removeClass("layui-disabled");
                             {if  $is_open_captcha}
-                                $('#captcha').attr('src', '{:captcha_src()}?d=' + Math.random());
+                                $('#captcha').attr('src', '{:url(\'/admin/verify\')}');
                             {/if}
                             $('#code').val('');
                         }
@@ -78,7 +78,7 @@
                 },
                 error: function (e) {
                     obj.text("登录").removeAttr("disabled").removeClass("layui-disabled");
-                    layer.msg('登录错误，请检查数据库配置', {icon: 5});
+                    layer.msg('登录错误，请检查配置是否正确', {icon: 5});
                 }
             })
             return false;

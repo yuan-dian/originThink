@@ -11,16 +11,18 @@ namespace app\admin\controller;
 use think\Controller;
 use app\admin\service\UserService;
 use app\admin\model\User as UserModel;
+use think\captcha\Captcha;
+use think\facade\Config;
 
 class Login extends Controller
 {
     /**
      * 用户登录
      * @return array|mixed
-     * @author 原点 <467490186@qq.com>
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
+     * @author 原点 <467490186@qq.com>
      */
     public function login()
     {
@@ -72,5 +74,16 @@ class Login extends Controller
         } else {
             $this->error('密码错误');
         }
+    }
+
+    /**
+     * 获取验证码
+     * @return mixed
+     */
+    public function verify()
+    {
+        $config = Config::get('captcha.');
+        $captcha = new Captcha($config);
+        return $captcha->entry();
     }
 }
