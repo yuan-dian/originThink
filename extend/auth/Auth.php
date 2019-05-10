@@ -202,7 +202,7 @@ class Auth
             }
         }
         // 执行查询
-        $user_groups = \think\Db::name($this->config['auth_group'])->where('id', 'in', $this->group_id)->select();
+        $user_groups = \think\Db::name($this->config['auth_group'])->where('id', 'in', $this->group_id)->where('status','=',1)->select();
         if ($is_cache) {
             //设置缓存
             Cache::tag($this->config['cache_tag'])->set($cache_key, $user_groups, $this->config['expire']);
