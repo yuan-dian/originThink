@@ -187,19 +187,8 @@ function show($data, $code = 1, $msg = '', $param = [], $httpCode = 200)
     );
  * @param string $filename 文件名
  */
-function export_excel($data, $header = [], $filename = 'output.xlsx')
+function download_excel($data, $header = [], $filename = 'output.xlsx')
 {
-    header('Content-disposition: attachment; filename="'.tools\office\XLSXWriter::sanitize_filename($filename).'"');
-    header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    header('Content-Transfer-Encoding: binary');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    $writer = new tools\office\XLSXWriter();
-    if ($header) {
-        $writer->writeSheetHeader('Sheet1', $header);
-    }
-    $writer->writeSheet($data);
-    $writer->writeToStdOut();
-    exit;
+    return tools\Tools::download_excel($data, $header, $filename );
 }
 
