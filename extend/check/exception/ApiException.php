@@ -1,8 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: baidu
- * Date: 17/8/6
+ * Created by originThink
+ * Author: 原点 467490186@qq.com
+ * Date: 18/8/6
  * Time: 上午2:57
  */
 namespace check\exception;

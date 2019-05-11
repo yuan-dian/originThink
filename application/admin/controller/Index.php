@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Created by originThink
+ * Author: 原点 467490186@qq.com
+ * Date: 2018/1/16
+ * Time: 15:24
+ */
 namespace app\admin\controller;
 
 use auth\Auth;
