@@ -111,6 +111,7 @@ iframe{ position:absolute; height:100%; width:100%; border:none;}
 /*换肤*/
 .skins_box{ padding:10px 34px 0; }
 .skinBtn{ text-align:center; }
+.layui-nav-tree .layui-nav-item a:hover{background-color:#1aa094}
 /*橙色*/
 .orange .layui-layout-admin .layui-header{ background-color:orange !important; }
 .orange .layui-bg-black{ background-color:#e47214 !important; }
