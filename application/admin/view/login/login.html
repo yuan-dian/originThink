@@ -59,11 +59,13 @@
                 dataType: 'json',
                 data: data,
                 success: function (data) {
+                    var time = 3000;
                     var icon = 5;
                     if (data.code) {
                         icon = 6;
+                        time = 1000;
                     }
-                    layer.msg(data.msg, {icon: icon}, function () {
+                    layer.msg(data.msg, {icon: icon,time: time}, function () {
                         if (data.code) {
                             location.href = data.url;
                         } else {
