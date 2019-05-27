@@ -14,6 +14,7 @@
                     <input type="text" class="layui-input endtime" placeholder="结束时间"/>
                 </div>
                 <a class="layui-btn search_btn" data-type="reload">搜索</a>
+                <a class="layui-btn down_btn" data-type="reload">下载</a>
             </div>
         </form>
     </blockquote>
@@ -30,8 +31,6 @@
     //执行一个laydate实例
     layui.use('laydate', function () {
         var laydate = layui.laydate;
-
-
     });
     layui.use(['form', 'layer', 'laydate', 'table', 'laytpl'], function () {
         var form = layui.form,
@@ -77,10 +76,17 @@
                 },
                 where: {
                     key: $(".searchVal").val(),  //搜索的关键字
-                    starttime: $(".starttime").val(),  //搜索的关键字
-                    endtime: $(".endtime").val()  //搜索的关键字
+                    starttime: $(".starttime").val(),  //开始时间
+                    endtime: $(".endtime").val()  //结束时间
                 }
             })
+        });
+        //下载Excel
+        $(".down_btn").on("click", function () {
+            var  key = $(".searchVal").val();  //搜索的关键字
+            var  starttime = $(".starttime").val();  //开始时间
+            var  endtime = $(".endtime").val();  //结束时间
+            location.href= "{:url('/admin/downlog')}" + '?key=' + key + '&starttime=' + starttime + '&endtime=' + endtime;
         });
 
     })

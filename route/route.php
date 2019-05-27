@@ -45,6 +45,7 @@ Route::group('admin', [
     //系统管理
     'cleanCache$'=>'admin/System/cleanCache',                                //清除缓存
     'log$'=>'admin/System/loginLog',                                         //登录日志
+    'downlog$'=>'admin/System/downLoginLog',                                 //下载登录日志
     'menu$'=>'admin/System/menu',                                            //系统菜单
     'editMenu$'=>'admin/System/editMenu',                                    //编辑菜单
     'deleteMenu$'=>'admin/System/deleteMenu',                                //删除菜单

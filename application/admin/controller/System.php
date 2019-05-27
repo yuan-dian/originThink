@@ -71,6 +71,30 @@ class System extends Common
     }
 
     /**
+     * 下载登录日志（Excel）
+     */
+    public function downLoginLog()
+    {
+        $data = [
+            'starttime' => $this->request->get('starttime', '', 'trim'),
+            'endtime' => $this->request->get('endtime', '', 'trim'),
+            'key' => $this->request->get('key', '', 'trim'),
+        ];
+        $list = LoginLog::withSearch(['name', 'create_time'], [
+            'name' => $data['key'],
+            'create_time' => [$data['starttime'], $data['endtime']],
+        ])->hidden(['id'])->select();
+        $header = [
+            'UID'=>'integer',
+            '账号'=>'string',
+            '昵称'=>'string',
+            '最后登录IP'=>'string',
+            '登陆时间'=>'string'
+        ];
+        return download_excel($list->toArray(), $header , 'login_log.xlsx');
+    }
+
+    /**
      *系统菜单
      * @return mixed
      * @author 原点 <467490186@qq.com>
