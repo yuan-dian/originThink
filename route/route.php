@@ -34,6 +34,7 @@ Route::group('admin', [
 
     //用户管理
     'userList$'=>'admin/User/userList',                                      //用户列表
+    'userInfo$'=>'admin/User/userInfo',                                      //用户信息
     'edit$'=>'admin/User/edit',                                              //添加/编辑用户
     'delete$'=>'admin/User/delete',                                          //删除用户
     'groupList$'=>'admin/User/groupList',                                    //用户组列表
@@ -51,6 +52,8 @@ Route::group('admin', [
     'deleteMenu$'=>'admin/System/deleteMenu',                                //删除菜单
     'config'=>'admin/System/config',                                         //系统配置
     'siteConfig'=>'admin/System/siteConfig',                                 //站点配置
+    //上传管理
+    'upload'=>'admin/Upload/index',                                    //上传图片
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');          //使用中间件验证
 /**
  * miss路由

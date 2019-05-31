@@ -8,6 +8,7 @@
 namespace app\admin\controller;
 
 use auth\Auth;
+use app\admin\model\User;
 
 class Index extends Common
 {
@@ -24,6 +25,9 @@ class Index extends Common
         //获取菜单
         $menuList = (new Auth($this->uid, $this->group_id))->getMenuList();
         $this->assign('menuList', $menuList);
+        $info = User::get($this->uid)->hidden(['password']);
+        $info['head'] ? : $info['head'] = '/images/face.jpg';
+        $this->assign('info', $info);
         return $this->fetch();
     }
 

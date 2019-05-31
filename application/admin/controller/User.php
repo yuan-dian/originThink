@@ -45,6 +45,36 @@ class User extends Common
     }
 
     /**
+     * 获取用户信息
+     * @return mixed|void
+     */
+    public function userInfo()
+    {
+        if (!$this->request->isAjax()) {
+            $info = UserModel::get($this->uid)->hidden(['password']);
+            $info['group_titles'] = $info->group_titles;
+            $info['head'] ? : $info['head'] = '/images/face.jpg';
+            $this->assign('info', $info);
+            return $this->fetch();
+        } else {
+            $data = [
+                'name' => $this->request->post('name'),
+                'head' => $this->request->post('head'),
+            ];
+            $res = UserModel::update($data, ['uid' => $this->uid]);
+            if ($res) {
+                $code = 1;
+                $msg = '保存成功';
+            }else{
+                $code = 0;
+                $msg = '保存失败';
+            }
+            return show([], $code, $msg);
+        }
+
+    }
+
+    /**
      * 添加、编辑用户
      * @return mixed
      * @author 原点 <467490186@qq.com>
