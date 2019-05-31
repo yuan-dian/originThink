@@ -68,7 +68,7 @@ class User extends Common
         } else {
             $uid = $this->request->get('uid', 0, 'intval');
             if ($uid) {
-                $list = UserModel::where('uid', '=', $uid)->find();
+                $list = UserModel::where('uid', '=', $uid)->hidden(['password'])->find();
                 $list['group_id'] = AuthGroupAccess::where('uid', '=', $uid)->column('group_id');
                 $this->assign('list', $list);
             }

@@ -193,6 +193,9 @@ class UserService
             'name' => $data['name'],
             'status' => $data['status'],
         ];
+        if ($data['password']) {
+            $userdata['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
         $res = User::update($userdata, ['uid' => $data['uid']]);
         if ($res) {
             AuthGroupAccess::where('uid', '=', $data['uid'])->delete();

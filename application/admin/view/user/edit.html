@@ -16,15 +16,21 @@
                    value="{:isset($list.name)?$list.name:''}" lay-verify="required">
         </div>
     </div>
-    {if condition="!isset($list['uid'])"}
     <div class="layui-form-item">
         <label class="layui-form-label">密码</label>
-        <div class="layui-input-block">
-            <input type="password" name="password" placeholder="请输入" autocomplete="off" class="layui-input" value=""
-                   lay-verify="required|password">
-        </div>
+        {if condition="!isset($list['uid'])"}
+            <div class="layui-input-block">
+                <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" value=""
+                       lay-verify="required|password">
+            </div>
+        {else /}
+            <div class="layui-input-block">
+                <input type="password" name="password" placeholder="重置密码，不填不修改" autocomplete="off" class="layui-input" value=""
+                       lay-verify="password">
+            </div>
+        {/if}
+
     </div>
-    {/if}
 
     <div class="layui-form-item">
         <label class="layui-form-label">所属组</label>
@@ -78,10 +84,13 @@
                 });
                 return msg;
             },
-            password: [
-                /^[\w\W]{6,25}$/
-                , '密码长度必须6到25位'
-            ]
+            password:function(value, item){
+                if(value){
+                    if(!(/^[\w\W]{6,25}$/.test(value))){
+                        return '用户名不能全为数字';
+                    }
+                }
+            }
         });
         //表单提交
         form.on("submit(*)", function (data) {
