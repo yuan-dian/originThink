@@ -83,9 +83,6 @@ form input.layui-input[disabled]{ background:#f2f2f2; color:#595963!important; }
 .imgCode{ position:relative;}
 #imgCode img{ position:absolute; top:1px; right:1px; cursor:pointer;}
 .layui-icon{ font-size:16px !important;}
-::selection { background: #ff5722; color: #fff; }
-.layui-red{ color:#f00 !important; font-weight:bold;}
-.layui-blue{ color:#01AAED !important;}
 /*响应式*/
 @media screen and (max-width:450px) {
     #userFaceBtn{ height: 30px;line-height: 30px; padding: 0 10px; font-size: 12px;}

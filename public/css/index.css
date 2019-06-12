@@ -158,3 +158,6 @@ iframe{ position:absolute; height:100%; width:100%; border:none;}
 .mobileTopLevelMenus{ float:left;}
 .hideMenu{ margin-top: 10px;}
 .mag0{ margin:0 !important; }
+::selection { background: #ff5722; color: #fff; }
+.layui-red{ color:#f00 !important; font-weight:bold;}
+.layui-blue{ color:#01AAED !important;}
