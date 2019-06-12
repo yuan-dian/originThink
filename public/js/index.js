@@ -21,6 +21,8 @@ layui.use(['bodyTab','form','element','layer','jquery'],function(){
 			return false;
 		}
 		$(".layui-layout-admin").toggleClass("showMenu");
+		$(".hideMenu").toggleClass("layui-icon-shrink-right");
+		$(".hideMenu").toggleClass("layui-icon-spread-left");
 		//渲染顶部窗口
 		tab.tabMove();
 	})
