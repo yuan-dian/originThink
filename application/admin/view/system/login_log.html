@@ -28,17 +28,8 @@
 {/block}
 {block name="script"}
 <script>
-    //执行一个laydate实例
-    layui.use('laydate', function () {
-        var laydate = layui.laydate;
-    });
-    layui.use(['form', 'layer', 'laydate', 'table', 'laytpl'], function () {
-        var form = layui.form,
-            layer = parent.layer === undefined ? layui.layer : top.layer,
-            $ = layui.jquery,
-            laydate = layui.laydate,
-            laytpl = layui.laytpl,
-            table = layui.table;
+    layui.use(['form', 'laydate', 'table'], function () {
+        var form = layui.form, $ = layui.jquery, laydate = layui.laydate, table = layui.table;
         //执行一个laydate实例
         laydate.render({
             elem: '.starttime', //指定元素

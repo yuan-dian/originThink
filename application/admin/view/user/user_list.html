@@ -24,13 +24,10 @@
 {/block}
 {block name="script"}
 <script>
-    layui.use(['form','layer','laydate','table','laytpl'],function(){
+    layui.use(['form','layer','table'],function(){
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer,
-            $ = layui.jquery,
-            laydate = layui.laydate,
-            laytpl = layui.laytpl,
-            table = layui.table;
+            $ = layui.jquery, table = layui.table;
 
         //用户列表
         var tableIns = table.render({
