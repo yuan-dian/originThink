@@ -1,4 +1,5 @@
-var $,tab,dataStr,layer;
+var $,tab,dataStr,layer,
+    cacheStr = window.sessionStorage.getItem("cache");
 layui.config({
 	base : "/js/"
 }).extend({

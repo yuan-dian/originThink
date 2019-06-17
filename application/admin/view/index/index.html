@@ -115,6 +115,20 @@
             $(".navBar").height($(window).height() - 210);
         })
 
+        //判断是否处于锁屏状态【如果关闭以后则未关闭浏览器之前不再显示】
+        var notice = '';
+        {if ($notice_config.value.status == 1) and (empty($notice_config.value.notice) === false)}
+        notice = '{$notice_config.value.notice|raw}';
+        {/if}
+
+        if(window.sessionStorage.getItem("lockcms") != "true" && window.sessionStorage.getItem("showNotice") != "true"){
+            showNotice(notice);
+        }
+
+        $(".showNotice").on("click",function(){
+            showNotice(notice);
+        })
+
         //锁屏
         function lockPage() {
             layer.open({

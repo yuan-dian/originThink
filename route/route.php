@@ -52,6 +52,7 @@ Route::group('admin', [
     'deleteMenu$'=>'admin/System/deleteMenu',                                //删除菜单
     'config'=>'admin/System/config',                                         //系统配置
     'siteConfig'=>'admin/System/siteConfig',                                 //站点配置
+    'noticeConfig'=>'admin/System/noticeConfig',                             //公告配置
     //上传管理
     'upload'=>'admin/Upload/index',                                    //上传图片
 ])->middleware(app\admin\middleware\CheckAuth::class)->ext('html');          //使用中间件验证
