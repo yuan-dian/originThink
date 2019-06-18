@@ -243,4 +243,39 @@ class System extends Common
             }
         }
     }
+
+    /**
+     * 公告配置
+     * @return array|mixed|\PDOStatement|string|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function noticeConfig()
+    {
+        if (!$this->request->isPost()) {
+            $data = Config::where('name', 'notice_config')->find();
+            $this->assign('data', $data);
+            return $this->fetch();
+        } else {
+            $query = Config::where('name', 'notice_config')->find();
+            if(!$query){
+                $query = new Config();
+                $query->name = 'notice_config';
+                $query->title = '公告配置';
+                $query->status = 1;
+            }
+            $query->value = [
+                'notice' => $this->request->post('notice',''),
+                'status' => $this->request->post('status', 0, 'intval')
+            ];
+            $res = $query->save();
+            if ($res) {
+                cache('notice_config', null);
+                $this->success('修改成功', url('/admin/noticeConfig'));
+            } else {
+                $this->error('修改失败');
+            }
+        }
+    }
 }

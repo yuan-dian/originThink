@@ -65,5 +65,4 @@ class Common extends Controller
         cache('site_config', $list);
         return $list;
     }
-
 }
