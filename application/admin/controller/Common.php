@@ -27,9 +27,6 @@ class Common extends Controller
         $this->config();
         $site_config = $this->siteConfig();
         $this->assign('site_config', $site_config);
-        $notice_config = $this->noticeConfig();
-        $this->assign('notice_config', $notice_config);
-
     }
 
     /**
@@ -66,24 +63,6 @@ class Common extends Controller
         }
         $list = Config::where('name', '=', 'site_config')->field('value')->find();
         cache('site_config', $list);
-        return $list;
-    }
-
-    /**
-     * 公告配置信息
-     * @return array|mixed|\PDOStatement|string|\think\Model|null
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    private function noticeConfig()
-    {
-        $notice_config = cache('notice_config');
-        if ($notice_config) {
-            return $notice_config;
-        }
-        $list = Config::where('name', '=', 'notice_config')->field('value')->find();
-        cache('notice_config', $list);
         return $list;
     }
 }

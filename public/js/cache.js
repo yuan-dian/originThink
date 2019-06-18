@@ -9,7 +9,7 @@ function showNotice(notice = ''){
         '<p class="layui-red">郑重提示：本模版作为学习交流免费使用【不管以何种形式获取的源码，请勿进行出售或者上传到任何素材网站，否则将追究相应的责任】</p>' +
         '</div>';
     }else{
-        notice = notice.replace(/<p>/g,'<p class="layui-red">');
+        notice = notice.replace(/<p/g,'<p class="layui-red"');
         notice = '<div style="padding:15px 20px; text-align:justify; line-height: 22px; text-indent:2em;border-bottom:1px solid #e2e2e2;">' +
         notice + '</div>';
     }

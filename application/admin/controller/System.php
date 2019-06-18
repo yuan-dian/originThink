@@ -258,14 +258,18 @@ class System extends Common
             $this->assign('data', $data);
             return $this->fetch();
         } else {
-            $save = [
-                'value' => [
-                    'notice' => $this->request->post('notice',''),
-                    'status' => $this->request->post('status', 0, 'intval')
-                ],
-                'status' => 1
+            $query = Config::where('name', 'notice_config')->find();
+            if(!$query){
+                $query = new Config();
+                $query->name = 'notice_config';
+                $query->title = '公告配置';
+                $query->status = 1;
+            }
+            $query->value = [
+                'notice' => $this->request->post('notice',''),
+                'status' => $this->request->post('status', 0, 'intval')
             ];
-            $res = Config::update($save, ['name' => 'notice_config']);
+            $res = $query->save();
             if ($res) {
                 cache('notice_config', null);
                 $this->success('修改成功', url('/admin/noticeConfig'));
