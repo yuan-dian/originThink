@@ -61,8 +61,8 @@
 QQ交流群：1004068839
  
  ## 捐献
-![](http://blog.zhuangjun.top/images/wx_reward.png) 
-![](http://blog.zhuangjun.top/images/ali_reward.png) 
+ ![](./public/images/wechat.png) 
+ ![](./public/images/alipay.png)
 
  ## 捐献墙
  （感谢捐赠，您的捐赠是对项目最大的肯定，同时也是我前行的动力）
