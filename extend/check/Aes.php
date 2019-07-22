@@ -46,7 +46,6 @@ class Aes
     /**
      * 解密
      * @param String input 解密的字符串
-     * @param String key   解密的key
      * @return String
      */
     public function decrypt($sStr)
