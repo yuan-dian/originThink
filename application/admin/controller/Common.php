@@ -10,7 +10,6 @@ namespace app\admin\controller;
 
 use app\admin\model\Config;
 use think\Controller;
-use think\exception\HttpResponseException;
 
 class Common extends Controller
 {

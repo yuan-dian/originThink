@@ -45,19 +45,25 @@ class UserService
         } elseif (!password_verify($data['password'], $list['password'])) {
             $msg = Result::error('密码错误');
         } else {
-            self::autoSession($list['uid']);
-            $msg = Result::success('登录成功', url('/admin/index'));
+            $group_id = model('AuthGroupAccess')->where('uid', '=', $list['uid'])->column('group_id');
+            //获取用户组
+            if(!$group_id && $list['uid'] != 1){
+                $msg = Result::error('未设置用户组，请联系管理员');
+            }else {
+                self::autoSession($list['uid'], $group_id);
+                $msg = Result::success('登录成功', url('/admin/index'));
+            }
         }
         return $msg;
     }
 
     /**
      * 记录session
-     * @param $uid 用户id
+     * @param $uid int 用户id
+     * @param $group_id array 用户组
      * @author 原点 <467490186@qq.com>
-     * @throws \think\Exception\DbException
      */
-    private static function autoSession($uid)
+    private static function autoSession($uid, $group_id)
     {
         /* 更新登录信息 */
         $data = [
@@ -68,8 +74,6 @@ class UserService
         ];
         //更新记录
         User::update($data);
-        //获取用户组
-        $group_id = model('AuthGroupAccess')->where('uid', '=', $uid)->column('group_id');
         //获取用户信息
         $user = User::get($uid);
         /* 记录登录SESSION */
