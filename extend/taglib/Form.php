@@ -163,7 +163,6 @@ class Form extends Taglib
         $tag_checkbox_name = isset($tag['name']) ? $tag['name'] : '';
         $tag_checkbox_list = isset($tag['list']) ? $tag['list'] : 'array()';
         $tag_checkbox_value = isset($tag['value']) ? $tag['value'] : '';
-//        dump($tag_checkbox_value);exit;
         $tag_checkbox_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_checkbox_value) {
             if (strpos($tag_checkbox_value, '$') === false) {
@@ -197,10 +196,7 @@ class Form extends Taglib
             }
             foreach ( $tag_checkbox_list as $key => $val){
                 $checked = \'\';
-                if ( $tag_checkbox_value == $key ){
-                    $checked = \'checked\';
-                }
-                 if(is_array($tag_checkbox_value)){
+                if(is_array($tag_checkbox_value)){
                     if(in_array($key,$tag_checkbox_value)) $checked = \'checked\';
                 } else {
                     if ( $tag_checkbox_value == $key )  $checked = \'checked\';
