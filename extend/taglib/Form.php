@@ -44,7 +44,7 @@ class Form extends Taglib
         $tag_select_default = isset($tag['default']) ? $tag['default'] : 'array()';
         $tag_select_option = isset($tag['option']) ? $tag['option'] : '';
         if ($tag_select_value) {
-            if (strpos($tag_select_value, '$') === 0) {
+            if (strpos($tag_select_value, '$') === false) {
                 $tag_select_value = "'" . $tag_select_value . "'";
             } elseif (strpos($tag_select_value, ':') === 0) {
                 $tag_select_value = trim($tag_select_value, ':');
@@ -109,7 +109,7 @@ class Form extends Taglib
         $tag_radio_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_radio_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_radio_value) {
-            if (strpos($tag_radio_value, '$') === 0) {
+            if (strpos($tag_radio_value, '$') === false) {
                 $tag_radio_value = "'" . $tag_radio_value . "'";
             }elseif (strpos($tag_radio_value, ':') === 0) {
                 $tag_radio_value = trim($tag_radio_value, ':');
@@ -171,7 +171,7 @@ class Form extends Taglib
         $tag_checkbox_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_checkbox_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_checkbox_value) {
-            if (strpos($tag_checkbox_value, '$') === 0) {
+            if (strpos($tag_checkbox_value, '$') === false) {
                 $tag_checkbox_value = "'" . $tag_checkbox_value . "'";
             }elseif (strpos($tag_checkbox_value, ':') === 0) {
                 $tag_checkbox_value = trim($tag_checkbox_value, ':');
