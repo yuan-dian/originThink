@@ -31,7 +31,7 @@ class Form extends Taglib
      * select 选择框
      * 格式：
      * {form:select name="think" list="['1'=>'a','2'=>'b']" value="$value" option="['class'=>'aa']"}
-     * value 如果是表达式：可以加：示例：{form:select name="group_id" list="$grouplist" value = "isset($list['group_id']) ? $list['group_id'] :1" }
+     * value 如果是表达式：可以在表达式前面加冒号（:）;示例：{form:select name="group_id" list="$grouplist" value = ":isset($list['group_id']) ? $list['group_id'] :1" }
      * @param $tag
      * @param $content
      * @return string
@@ -44,9 +44,9 @@ class Form extends Taglib
         $tag_select_default = isset($tag['default']) ? $tag['default'] : 'array()';
         $tag_select_option = isset($tag['option']) ? $tag['option'] : '';
         if ($tag_select_value) {
-            if (strpos($tag_select_value, '$') === false) {
+            if (strpos($tag_select_value, '$') === 0) {
                 $tag_select_value = "'" . $tag_select_value . "'";
-            } elseif (strpos($tag_select_value, ':') == true) {
+            } elseif (strpos($tag_select_value, ':') === 0) {
                 $tag_select_value = trim($tag_select_value, ':');
             } else {
                 $tag_select_value = 'isset(' . $tag_select_value . ' ) ? ' . $tag_select_value . ' : ""';
@@ -109,9 +109,9 @@ class Form extends Taglib
         $tag_radio_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_radio_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_radio_value) {
-            if (strpos($tag_radio_value, '$') === false) {
+            if (strpos($tag_radio_value, '$') === 0) {
                 $tag_radio_value = "'" . $tag_radio_value . "'";
-            }elseif (strpos($tag_radio_value, ':') == true) {
+            }elseif (strpos($tag_radio_value, ':') === 0) {
                 $tag_radio_value = trim($tag_radio_value, ':');
             } else {
                 $tag_radio_value = 'isset(' . $tag_radio_value . ') ? ' . $tag_radio_value . ': ""';
@@ -171,9 +171,9 @@ class Form extends Taglib
         $tag_checkbox_value = isset($tag['value']) ? $tag['value'] : '';
         $tag_checkbox_default = isset($tag['default']) ? $tag['default'] : 'array()';
         if ($tag_checkbox_value) {
-            if (strpos($tag_checkbox_value, '$') === false) {
+            if (strpos($tag_checkbox_value, '$') === 0) {
                 $tag_checkbox_value = "'" . $tag_checkbox_value . "'";
-            }elseif (strpos($tag_checkbox_value, ':') == true) {
+            }elseif (strpos($tag_checkbox_value, ':') === 0) {
                 $tag_checkbox_value = trim($tag_checkbox_value, ':');
             } else {
                 $tag_checkbox_value = 'isset(' . $tag_checkbox_value . ') ?' . $tag_checkbox_value . ': ""';
