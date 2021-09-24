@@ -1,0 +1,90 @@
+{extend name="base/base" /}
+{block name="main"}
+<form id="form" method="post" class="layui-form layui-form-pane" action="{:url('/admin/editMenu')}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属层级</label>
+        <div class="layui-input-block">
+            {form:select name="pid" list="$menu" value="$data['pid']" option="['lay-verif'=>'required']"}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" placeholder="请输入" autocomplete="off" class="layui-input"
+                   value="{:isset($data.title)?$data.title:''}" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">url</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" placeholder="不带参数，直接填写路由，带参数规则示例: 路由/参数/参数值....(admin/menu/id/1)注：带参数时路由配置需增加参数" autocomplete="off" class="layui-input"
+                   value="{:isset($data.name)?$data.name:''}" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-block">
+            <input type="text" name="icon" placeholder="请输入" autocomplete="off" class="layui-input"
+                   value="{:isset($data.icon)?$data.icon:''}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="sort" placeholder="请输入" autocomplete="off" class="layui-input"
+                   value="{:isset($data.sort)?$data.sort:'1'}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-block">
+            {form:radio name="menu" list="['1'=>'菜单','0'=>'行为']" value="$data['menu']"}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否禁用</label>
+        <div class="layui-input-block">
+            {form:radio name="status" list="['1'=>'启用','0'=>'禁用']" value="$data['status']"}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="id" value="{:isset($data['id'])?$data['id']:''}">
+            <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+
+<script>
+    layui.use(['form', 'jquery', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery, layer = layui.layer;
+        //表单提交
+        form.on("submit(*)", function (data) {
+            var obj = $(this);
+            obj.attr("disabled", "disabled").addClass("layui-disabled");
+            $.post(data.form.action, data.field, function (data) {
+                var icon = 5;
+                if (data.code) {
+                    icon = 6;
+                }
+                layer.msg(data.msg, {icon: icon, time: 1500}, function () {   //提示的插件，可以使用alert代替
+                    if (data.code) {
+                        setTimeout(function () {
+                            //刷新父页面
+                            parent.location.reload();
+                        }, 500);
+                    } else {
+                        obj.removeAttr("disabled").removeClass("layui-disabled");
+                    }
+                });
+            }, 'json');
+            return false;
+        });
+    });
+
+
+</script>
+{/block}

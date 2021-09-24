@@ -1,0 +1,64 @@
+{extend name="base/base" /}
+{block name="main"}
+<form action="" id="form" class="layui-form" method="post">
+    <table class="layui-table mag0">
+        <colgroup>
+            <col width="25%">
+            <col width="45%">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>参数说明</th>
+            <th>参数值</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>清理范围</td>
+            <td>
+                {form:checkbox name="path[]" list="['cache'=>'缓存','log'=>'log','temp'=>'视图模板']"}
+            </td>
+        </tr>
+        <tr>
+            <td>空文件夹</td>
+            <td>
+                {form:radio name="delete" list="['0'=>'保留','1'=>'删除']"}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding-right: 15%">
+                <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</form>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        //监听提交
+        form.on('submit(save)', function (data) {
+            var obj = $(this);
+            obj.attr("disabled", "disabled").addClass("layui-disabled");
+            $.post("{:url('/admin/cleanCache')}", data.field, function (data) {
+                var icon = 5;
+                if (data.code) {
+                    icon = 6;
+                }
+                layer.msg(data.msg, {icon: icon, time: 1500}, function () {
+                    if (data.code) {
+                        document.getElementById("form").reset();
+                    }
+                    obj.removeAttr("disabled").removeClass("layui-disabled");
+                });
+            });
+            return false;
+        });
+    });
+</script>
+{/block}

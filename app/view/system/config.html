@@ -1,0 +1,79 @@
+{extend name="base/base" /}
+{block name="main"}
+<form action="" id="form" class="layui-form" method="post">
+    <table class="layui-table mag0">
+        <colgroup>
+            <col width="25%">
+            <col width="45%">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>参数说明</th>
+            <th>参数值</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>配置状态</td>
+            <td>
+                {form:radio name="status" list="['0'=>'禁用','1'=>'开启']" value="$data['status']"}
+            </td>
+        </tr>
+        <tr>
+            <td>应用调试模式</td>
+            <td>
+                {form:radio name="debug" list="['0'=>'关闭','1'=>'开启']"
+                value="$data['value']['debug']"}
+            </td>
+        </tr>
+        <tr>
+            <td>应用Trace</td>
+            <td>
+                {form:radio name="trace" list="['0'=>'关闭','1'=>'开启']"
+                value="$data['value']['trace']"}
+            </td>
+        </tr>
+        <tr>
+            <td>应用Trace类型</td>
+            <td>
+                {form:radio name="trace_type" list="['0'=>'Html','1'=>'Console']"
+                value="$data['value']['trace_type']"}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding-right: 15%">
+                <a class="layui-btn" lay-submit lay-filter="save">立即提交</a>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</form>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form', 'jquery', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery, layer = layui.layer;
+        //监听提交
+        form.on('submit(save)', function (data) {
+            var obj = $(this);
+            obj.attr("disabled", "disabled").addClass("layui-disabled");
+            $.post("{:url('/admin/config')}", data.field, function (data) {
+                var icon = 5;
+                if (data.code) {
+                    icon = 6;
+                }
+                layer.msg(data.msg, {icon: icon, time: 1500}, function () {
+                    if (data.code) {
+                        location.reload();
+                    } else {
+                        obj.removeAttr("disabled").removeClass("layui-disabled");
+                    }
+                });
+            });
+            return false;
+        });
+    });
+</script>
+{/block}

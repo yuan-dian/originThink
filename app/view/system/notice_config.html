@@ -1,0 +1,62 @@
+{extend name="base/base" /}
+{block name="main"}
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>公告管理</legend>
+</fieldset>
+<div class="layui-row layui-tab-content">
+    <div class="layui-col-md12">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">启用状态</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="status" lay-skin="switch" lay-text="开启|关闭" value="1" {eq name="data.value.status" value="1"}checked{/eq}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <textarea id="notice" style="display: none;" name="notice">{$data.value.notice}</textarea>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <a class="layui-btn sync-text" lay-submit lay-filter="save">立即提交</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form', 'jquery','layer','layedit'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layer = parent.layer === undefined ? layui.layer : top.layer;
+        var layedit = layui.layedit;
+        var tIndex = layedit.build('notice'); //建立编辑器
+        
+        $('.sync-text').on('click',function(){
+            layedit.sync(tIndex); //同步编辑器文本到textarea
+        });
+        //监听提交
+        form.on('submit(save)', function (data){
+            var obj = $(this);
+            obj.attr("disabled", "disabled").addClass("layui-disabled");
+            $.post("{:url('/admin/noticeConfig')}", data.field, function (data) {
+                var icon = 5;
+                if (data.code) {
+                    icon = 6;
+                }
+                layer.msg(data.msg, {icon: icon, time: 1500}, function () {
+                    if (data.code) {
+                        location.reload();
+                    } else {
+                        obj.removeAttr("disabled").removeClass("layui-disabled");
+                    }
+                });
+            });
+            return false;
+        });
+    });
+</script>
+{/block}
