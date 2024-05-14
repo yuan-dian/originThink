@@ -43,6 +43,8 @@ class Index extends Common
      */
     public function home()
     {
+        $version = $this->app->version();
+        View::assign('version', $version);
         return View::fetch();
     }
 
