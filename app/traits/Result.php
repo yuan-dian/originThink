@@ -10,6 +10,7 @@ namespace app\traits;
 
 
 use think\facade\Request;
+use think\response\Json;
 
 trait Result
 {
@@ -18,9 +19,9 @@ trait Result
      * @param null $url
      * @param string $data
      * @param int $wait
-     * @return array|string
+     * @return Json
      */
-    public static function success($msg = '', $url = null, $data = '', $wait = 3)
+    public static function success($msg = '', $url = null, $data = '', $wait = 3): Json
     {
         $msg = [
             'code' => 1,
@@ -29,7 +30,7 @@ trait Result
             'data' => $data,
             'wait' => $wait,
         ];
-        return $msg;
+        return json($msg);
     }
 
     /**
@@ -37,9 +38,9 @@ trait Result
      * @param null $url
      * @param string $data
      * @param int $wait
-     * @return array|string
+     * @return Json
      */
-    public static function error($msg = '', $url = null, $data = '', $wait = 3)
+    public static function error($msg = '', $url = null, $data = '', $wait = 3): Json
     {
         if (is_null($url)) {
             $url = Request::isAjax() ? '' : 'javascript:history.back(-1);';
@@ -51,6 +52,6 @@ trait Result
             'data' => $data,
             'wait' => $wait,
         ];
-        return $msg;
+        return json($msg);
     }
 }

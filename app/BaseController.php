@@ -3,6 +3,7 @@ declare (strict_types = 1);
 
 namespace app;
 
+use app\traits\Result;
 use think\App;
 use think\exception\ValidateException;
 use think\Validate;
@@ -12,6 +13,7 @@ use think\Validate;
  */
 abstract class BaseController
 {
+    use Result;
     /**
      * Request实例
      * @var \think\Request
