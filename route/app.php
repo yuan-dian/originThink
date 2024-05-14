@@ -17,6 +17,9 @@ Route::get('think', function () {
 Route::get('hello/:name', 'index/hello');
 
 Route::group('admin', function () {
+    Route::rule('index$', 'Index/index');
+    Route::rule('home$', 'Index/home');
+
     Route::rule('userList$', 'User/userList');
     Route::rule('userInfo$', 'User/userInfo');
     Route::rule('edit$', 'User/edit');
@@ -40,9 +43,6 @@ Route::group('admin', function () {
 })->middleware(app\middleware\CheckAuth::class)->ext('html');
 
 Route::group('admin', function () {
-    Route::rule('index$', 'Index/index');
-    Route::rule('home$', 'Index/home');
-
     Route::rule('login$', 'Login/login');
     //重置密码
     Route::rule('editPassword', 'User/editPassword');
