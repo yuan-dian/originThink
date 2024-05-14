@@ -45,14 +45,14 @@ class Login extends BaseController
 
     /**
      * 用户退出
-     * @return array
+     * @return
      * @author 原点 <467490186@qq.com>
      */
     public function logout()
     {
         session('user_auth', null);
         session('user_auth_sign', null);
-        return ['msg' => '退出成功', 'url' => url('/admin/login')];
+        return show([], 1, '修改成功', ['url' => (string) url('/admin/login')]);
     }
 
     /**
@@ -71,9 +71,9 @@ class Login extends BaseController
 
         $psd = UserModel::where('uid', '=', get_user_id())->value('password');
         if (password_verify($password, $psd)) {
-            $this->success('解锁成功');
+            return $this->success('解锁成功');
         } else {
-            $this->error('密码错误');
+            return $this->error('密码错误');
         }
     }
 

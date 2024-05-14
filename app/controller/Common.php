@@ -11,6 +11,7 @@ namespace app\controller;
 use app\model\Config;
 use app\BaseController;
 use think\facade\Env;
+use think\facade\Session;
 use think\facade\View;
 
 class Common extends BaseController
@@ -23,8 +24,12 @@ class Common extends BaseController
      */
     protected function initialize()
     {
-        $this->uid = $this->request->LoginUid;
-        $this->group_id = $this->request->LoginGroupId;
+        $user = Session::get('user_auth');
+        if (!$user || Session::get('user_auth_sign') != sign($user)) { //验证是否登录
+            return alert_error('登录后查看', url('/admin/login')->build());
+        }
+        $this->uid = $user['uid'];
+        $this->group_id = $user['group_id'];
         $this->config();
         $site_config = $this->siteConfig();
         $this->assign('site_config', $site_config);

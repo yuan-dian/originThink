@@ -173,9 +173,9 @@ class System extends Common
         $res = AuthRule::where('id', '=', $id)->delete();
         if ($res) {
             Cache::clear(config('auth.cache_tag'));//清除Auth类设置的缓存
-            $this->success('删除成功', url('/admin/menu'));
+            return $this->success('删除成功', url('/admin/menu'));
         } else {
-            $this->error('删除失败');
+            return $this->error('删除失败');
         }
     }
 
@@ -273,9 +273,9 @@ class System extends Common
             $res = $query->save();
             if ($res) {
                 cache('notice_config', null);
-                $this->success('修改成功', url('/admin/noticeConfig'));
+                return show([], 1, '修改成功');
             } else {
-                $this->error('修改失败');
+                return show([], 0, '修改失败');
             }
         }
     }

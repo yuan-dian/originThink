@@ -91,4 +91,29 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    /**
+     * 成功输出
+     * @param $meg
+     * @param $url
+     * @return \think\response\Json
+     * @date 2024/5/14 下午5:22
+     * @author 原点 467490186@qq.com
+     */
+    public function success($meg, $url = ''): \think\response\Json
+    {
+        return show([], 1, $meg, );
+    }
+
+    /**
+     * 失败输出
+     * @param $meg
+     * @return \think\response\Json
+     * @date 2024/5/14 下午5:22
+     * @author 原点 467490186@qq.com
+     */
+    public function error($meg): \think\response\Json
+    {
+        return show([], 0, $meg);
+    }
+
 }

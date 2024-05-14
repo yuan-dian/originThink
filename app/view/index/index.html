@@ -38,7 +38,7 @@
                         <dd pc><a href="javascript:;" class="functionSetting"><i class="layui-icon">&#xe620;</i><cite>功能设定</cite><span class="layui-badge-dot"></span></a></dd>
                         <dd><a href="javascript:;" class="showNotice"><i class="layui-icon">&#xe645;</i><cite>系统公告</cite><span class="layui-badge-dot"></span></a></dd>
                         <dd pc><a href="javascript:;" class="changeSkin"><i class="layui-icon">&#xe61b;</i><cite>更换皮肤</cite></a></dd>
-                        <dd><a onclick="loginout()" class="signOut"><i class="seraph icon-tuichu"></i><cite>退出</cite></a></dd>
+                        <dd><a class="signOut loginOut"><i class="seraph icon-tuichu"></i><cite>退出</cite></a></dd>
                     </dl>
                 </li>
             </ul>
@@ -109,7 +109,7 @@
 <script type="text/javascript" src="/js/index.js"></script>
 <script type="text/javascript" src="/js/cache.js"></script>
 <script>
-    layui.use(['layer'], function () {
+    layui.use(['layer', 'jquery'], function () {
         $ = layui.jquery;
         $(window).resize(function () {
             $(".navBar").height($(window).height() - 210);
@@ -118,7 +118,7 @@
         //判断是否处于锁屏状态【如果关闭以后则未关闭浏览器之前不再显示】
         var notice = '';
         {if ($notice_config.value.status == 1) and (empty($notice_config.value.notice) === false)}
-        notice = '{$notice_config.value.notice|raw}';
+            notice = '{$notice_config.value.notice|raw}';
         {/if}
 
         if(window.sessionStorage.getItem("lockcms") != "true" && window.sessionStorage.getItem("showNotice") != "true"){
@@ -192,15 +192,15 @@
                 $("#unlock").click();
             }
         });
-    })
 
-    function loginout() {
-        $.post("{:url('/admin/logout')}", '', function (data) {
-            layer.msg(data.msg, {time: 1500}, function () {
-                location.href = data.url;
-            });
-        }, 'json')
-    }
+        $(".loginOut").click(function(){
+            $.post("{:url('/admin/logout')}", '', function (data) {
+                layer.msg(data.msg, {time: 1500}, function () {
+                     location.href = data.url;
+                });
+            })
+        })
+    })
 </script>
 </body>
 </html>
