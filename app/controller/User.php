@@ -109,7 +109,7 @@ class User extends Common
 
     /**
      * 验证用户名是否存在
-     * @return array
+     * @return
      * @throws \think\exception\DbException
      * @author 原点 <467490186@qq.com>
      */
@@ -118,11 +118,10 @@ class User extends Common
         $username = $this->request->get('username', '', 'trim');
         $res = UserModel::where('user', '=', $username)->field('uid')->find();
         if ($res) {
-            $msg = ['code' => 1, 'msg' => '账号已存在'];
+            return $this->success('账号已存在');
         } else {
-            $msg = ['status' => 0, 'info' => '验证通过'];
+            return $this->success('验证通过');
         }
-        return $msg;
     }
 
     /**
@@ -132,16 +131,13 @@ class User extends Common
     public function delete()
     {
         $uid = $this->request->param('uid', 0, 'intval');
-        if ($uid) {
-            if ($uid != 1) {
-                $res = UserService::delete($uid);
-                return $res;
-            } else {
-                $this->error('无法删除超级管理员');
-            }
-        } else {
-            $this->error('参数错误');
+        if (!$uid) {
+            return $this->error('参数错误');
         }
+        if ($uid == 1) {
+            return $this->error('超级管理员无法删除');
+        }
+        return UserService::delete($uid);
     }
 
     /**

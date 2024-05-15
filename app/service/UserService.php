@@ -233,12 +233,6 @@ class UserService
      */
     public static function delete($uid)
     {
-        if (!$uid) {
-            return Result::error('参数错误');
-        }
-        if ($uid == 1) {
-            return Result::error('超级管理员无法删除');
-        }
         $res = User::destroy($uid);
         if ($res) {
             AuthGroupAccess::where('uid', '=', $uid)->delete();
