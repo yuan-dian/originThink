@@ -10,12 +10,6 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-Route::get('think', function () {
-    return 'hello,ThinkPHP6!';
-});
-
-Route::get('hello/:name', 'index/hello');
-
 Route::group('admin', function () {
     Route::rule('index$', 'Index/index');
     Route::rule('home$', 'Index/home');
@@ -32,14 +26,14 @@ Route::group('admin', function () {
 
     //系统管理
     Route::rule('cleanCache$', 'System/cleanCache');
-    Route::rule('log$', 'System/loginLog');     //清除缓存
-    Route::rule('downlog$', 'System/downLoginLog');     //清除缓存
-    Route::rule('menu$', 'System/menu');     //清除缓存
-    Route::rule('editMenu$', 'System/editMenu');     //清除缓存
-    Route::rule('deleteMenu$', 'System/deleteMenu');     //清除缓存
-    Route::rule('config$', 'System/config');     //清除缓存
-    Route::rule('siteConfig', 'System/siteConfig');     //清除缓存
-    Route::rule('noticeConfig', 'System/noticeConfig');     //清除缓存
+    Route::rule('log$', 'System/loginLog');
+    Route::rule('downlog$', 'System/downLoginLog');
+    Route::rule('menu$', 'System/menu');
+    Route::rule('editMenu$', 'System/editMenu');
+    Route::rule('deleteMenu$', 'System/deleteMenu');
+    Route::rule('config$', 'System/config');
+    Route::rule('siteConfig', 'System/siteConfig');
+    Route::rule('noticeConfig', 'System/noticeConfig');
 })->middleware(app\middleware\CheckAuth::class)->ext('html');
 
 Route::group('admin', function () {

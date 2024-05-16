@@ -13,6 +13,7 @@ use app\model\Config;
 use app\model\LoginLog;
 use think\facade\App;
 use think\facade\Cache;
+use tools\Tools;
 
 class System extends Common
 {
@@ -22,7 +23,6 @@ class System extends Common
      */
     public function cleanCache()
     {
-
         if (!$this->request->isPost()) {
             return $this->fetch();
         } else {
@@ -57,12 +57,12 @@ class System extends Common
         if ($this->request->isAjax()) {
             $data = [
                 'starttime' => $this->request->get('starttime', '', 'trim'),
-                'endtime' => $this->request->get('endtime', '', 'trim'),
-                'key' => $this->request->get('key', '', 'trim'),
-                'limit' => $this->request->get('limit', 10, 'intval')
+                'endtime'   => $this->request->get('endtime', '', 'trim'),
+                'key'       => $this->request->get('key', '', 'trim'),
+                'limit'     => $this->request->get('limit', 10, 'intval')
             ];
             $list = LoginLog::withSearch(['name', 'create_time'], [
-                'name' => $data['key'],
+                'name'        => $data['key'],
                 'create_time' => [$data['starttime'], $data['endtime']],
             ])->paginate($data['limit'], false, ['query' => $data]);
             return show($list->items(), 0, '', ['count' => $list->total()]);
@@ -77,21 +77,21 @@ class System extends Common
     {
         $data = [
             'starttime' => $this->request->get('starttime', '', 'trim'),
-            'endtime' => $this->request->get('endtime', '', 'trim'),
-            'key' => $this->request->get('key', '', 'trim'),
+            'endtime'   => $this->request->get('endtime', '', 'trim'),
+            'key'       => $this->request->get('key', '', 'trim'),
         ];
         $list = LoginLog::withSearch(['name', 'create_time'], [
-            'name' => $data['key'],
+            'name'        => $data['key'],
             'create_time' => [$data['starttime'], $data['endtime']],
         ])->hidden(['id'])->select();
         $header = [
-            'UID' => 'integer',
-            '账号' => 'string',
-            '昵称' => 'string',
+            'UID'        => 'integer',
+            '账号'       => 'string',
+            '昵称'       => 'string',
             '最后登录IP' => 'string',
-            '登陆时间' => 'string'
+            '登陆时间'   => 'string'
         ];
-        return download_excel($list->toArray(), $header, 'login_log.xlsx');
+        Tools::download_excel($list->toArray(), $header, 'login_log.xlsx');
     }
 
     /**
@@ -124,13 +124,13 @@ class System extends Common
     {
         if ($this->request->isPost()) {
             $data = [
-                'name' => $this->request->post('name', '', 'trim'),
-                'title' => $this->request->post('title', '', 'trim'),
-                'pid' => $this->request->post('pid', 0, 'intval'),
+                'name'   => $this->request->post('name', '', 'trim'),
+                'title'  => $this->request->post('title', '', 'trim'),
+                'pid'    => $this->request->post('pid', 0, 'intval'),
                 'status' => $this->request->post('status', 0, 'intval'),
-                'menu' => $this->request->post('menu', '', 'trim'),
-                'icon' => $this->request->post('icon', '', 'trim'),
-                'sort' => $this->request->post('sort', 0, 'intval'),
+                'menu'   => $this->request->post('menu', '', 'trim'),
+                'icon'   => $this->request->post('icon', '', 'trim'),
+                'sort'   => $this->request->post('sort', 0, 'intval'),
             ];
             $id = $this->request->post('id', 0, 'intval');
             if ($id) { //编辑
@@ -196,9 +196,9 @@ class System extends Common
             return $this->fetch();
         } else {
             $save = [
-                'value' => [
-                    'debug' => $this->request->post('debug', 0, 'intval'),
-                    'trace' => $this->request->post('trace', 0, 'intval'),
+                'value'  => [
+                    'debug'      => $this->request->post('debug', 0, 'intval'),
+                    'trace'      => $this->request->post('trace', 0, 'intval'),
                     'trace_type' => $this->request->post('trace_type', 0, 'intval'),
                 ],
                 'status' => $this->request->post('status', 0, 'intval')
@@ -211,7 +211,6 @@ class System extends Common
                 return show([], 0, '修改失败');
             }
         }
-
     }
 
     /**
@@ -230,10 +229,10 @@ class System extends Common
         } else {
             $save = [
                 'value' => [
-                    'title' => $this->request->post('title', '', 'trim'),
-                    'name' => $this->request->post('name', '', 'trim'),
+                    'title'     => $this->request->post('title', '', 'trim'),
+                    'name'      => $this->request->post('name', '', 'trim'),
                     'copyright' => $this->request->post('copyright', '', 'trim'),
-                    'icp' => $this->request->post('icp', '', 'trim')
+                    'icp'       => $this->request->post('icp', '', 'trim')
                 ],
             ];
             $res = Config::update($save, ['name' => 'site_config']);
