@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <textarea id="notice" style="display: none;" name="notice">{$data.value.notice}</textarea>
+                <textarea name="notice" class="layui-textarea">{$data.value.notice}</textarea>
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
@@ -23,21 +23,13 @@
         </form>
     </div>
 </div>
-
-
 {/block}
 {block name="script"}
 <script>
-    layui.use(['form', 'jquery','layer','layedit'], function () {
+    layui.use(['form', 'jquery','layer'], function () {
         var form = layui.form;
         var $ = layui.jquery;
         var layer = parent.layer === undefined ? layui.layer : top.layer;
-        var layedit = layui.layedit;
-        var tIndex = layedit.build('notice'); //建立编辑器
-        
-        $('.sync-text').on('click',function(){
-            layedit.sync(tIndex); //同步编辑器文本到textarea
-        });
         //监听提交
         form.on('submit(save)', function (data){
             var obj = $(this);

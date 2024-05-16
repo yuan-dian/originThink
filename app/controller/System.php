@@ -104,9 +104,10 @@ class System extends Common
      */
     public function menu()
     {
-        if ($this->request->isPost()) {
+        if ($this->request->isAjax()) {
             $list = AuthRule::order('sort desc')->select();
-            return show($list, 0, '获取成功');
+            $data = list_to_tree($list->toArray(), 'id', 'pid', 'children');
+            return show($data, 0, '获取成功');
         }
         return $this->fetch();
     }
